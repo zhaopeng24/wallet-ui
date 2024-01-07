@@ -8,14 +8,17 @@ const PasswordInput: FC<InputProps> = (props) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const validatePassword = (value: string = '') => value.match(/.d[6]/)
+  // 8-16位字母和数字的密码
+  const validatePassword = (value: string = '') => value.match(/^[a-zA-Z0-9]{8,16}$/)
 
   const isInvalid = useMemo(() => {
     if (value === '') return false;
     return validatePassword(value) ? false : true;
   }, [value]);
 
-
+  const tip = useMemo(() => {
+    return <span className="text-[#819DF580]">Password strength: <span className="text-[#87FF28]">Good</span></span>
+  }, [])
   return (
     <Input
       label="Password"
@@ -32,7 +35,7 @@ const PasswordInput: FC<InputProps> = (props) => {
       isInvalid={isInvalid}
       className='relative'
       type={isVisible ? "text" : "password"}
-      description="Password strength Good"
+      description={tip}
       { ...props }
     />
   );

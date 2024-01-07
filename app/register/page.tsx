@@ -3,20 +3,34 @@ import {Button} from '@nextui-org/button';
 import Header from '@/components/Header'
 import PasswordInput from '@/components/PasswordInput'
 import {Input} from "@nextui-org/react";
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { LoadingContext } from '@/app/providers'
+
 
 const Register = () => {
-
+    const [password, setPasswork] = useState('')
+    const [surePassword, setSurePasswork] = useState('')
+    const [email, setEmail] = useState('')
     const [code, setCode] = useState('')
+    const { setLoading } = useContext(LoadingContext)
 
+    function handleRegisterBtnClick () {
+        // 检查值
+        console.log(password, surePassword, email, code)
+        // setLoading(true)
+
+        // 分步骤调用接口
+    }
     return (
         <div className='h-full bg-[url(/imgs/bg.png)]'>
             <Header title='Sign Up' />
             <div className='mian p-[32px]'>
-                <PasswordInput className='mb-[30px]' label="Password" />
-                <PasswordInput className='mb-[30px]' label="Confirm Password" />
+                <PasswordInput value={password} onValueChange={setPasswork} className='mb-[30px]' label="Password" />
+                <PasswordInput value={surePassword} onValueChange={setSurePasswork} className='mb-[30px]' label="Confirm Password" />
                 <Input
                     isClearable
+                    value={email}
+                    onValueChange={setEmail}
                     type="email"
                     label="Email"
                     variant="bordered"
@@ -40,7 +54,7 @@ const Register = () => {
             </div>
             <div className='absolute bottom-[120px] left-0 right-0 p-[32px] text-[12px]'>
                 <div className='mb-4 text-center opacity-80'>By proceeding, you agree to our <span className='text-white font-bold'>Term and Conditions</span></div>
-                <Button fullWidth size="lg" className='bg-[#819DF5] rounded-[80px]'>Register</Button>
+                <Button fullWidth size="lg" className='bg-[#819DF5] rounded-[80px]' onClick={handleRegisterBtnClick}>Register</Button>
             </div>
         </div>
     )
