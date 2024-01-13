@@ -169,7 +169,7 @@ const Register = () => {
 
 
   return (
-    <div className='h-full bg-[url(/imgs/bg.png)]'>
+    <div className='container h-full bg-[url(/imgs/bg.png)]'>
       <Header title='Sign Up' />
       <div className='mian p-8'>
         <PasswordInput value={password} onValueChange={setPasswork} className='mb-6' label="Password" />
