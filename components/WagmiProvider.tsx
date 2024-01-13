@@ -1,7 +1,7 @@
 'use client'
 
 import { WagmiConfig } from 'wagmi'
-import { wagmiConfig } from '../config/wagmi/wagmi'
+import { wagmiConfig } from '@/config/wagmi/wagmi'
 
 type Props = {
   children: React.ReactNode
