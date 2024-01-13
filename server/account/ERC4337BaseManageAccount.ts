@@ -2,7 +2,7 @@ import { Global } from '../Global';
 import { HttpUtils } from '../utils/HttpUtils';
 import { BigNumber, ContractInterface, ethers } from 'ethers';
 import { divideAndMultiplyByTenPowerN, ETH } from '@/utils/util';
-import { UserOperation } from '../../app/modals/UserOperation';
+import { UserOperation } from '@/modals/UserOperation';
 import { Asset, Config } from '../config/Config';
 import { sprintf } from 'sprintf-js';
 import { AccountInterface, ContractCallParams } from './AccountInterface';

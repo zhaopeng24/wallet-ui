@@ -17,6 +17,7 @@ export class EOAManageAccount extends ERC4337BaseManageAccount implements Accoun
 
   constructor() {
     super();
+    this._eoaKey = ''
     console.log('EOAManageAccount init');
   }
 
@@ -41,8 +42,8 @@ export class EOAManageAccount extends ERC4337BaseManageAccount implements Accoun
       await this.deployContractWalletIfNotExist(this.ethersWallet.address);
     } else {
       console.log('eoakey is null');
-      this.ethersWallet = null;
-      this.contractWalletAddress = null;
+      this.ethersWallet = undefined;
+      this.contractWalletAddress = '';
     }
     this.contractAddressExist = false;
   }

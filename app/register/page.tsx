@@ -1,8 +1,8 @@
 'use client'
-import { Button } from '@nextui-org/button';
 import Header from '@/components/Header'
 import PasswordInput from '@/components/PasswordInput'
-import { Input } from "@nextui-org/react";
+import { Input } from "@nextui-org/input";
+import { Button } from "@nextui-org/button";
 import { useContext, useState } from 'react';
 import { LoadingContext } from '@/app/providers'
 import EmailInput from '@/components/EmailInput';
@@ -14,8 +14,6 @@ import { Register as makeRegister } from '@/server/register';
 import { MPCManageAccount } from '@/server/account/MPCManageAccount';
 import { JSONBigInt } from '@/server/js/common_utils';
 import { parseNumbers } from '@/server/js/mpc_wasm_utils';
-import { ethers } from 'ethers';
-import { TxUtils } from '@/server/utils/TxUtils';
 
 const Register = () => {
   const [password, setPasswork] = useState('')

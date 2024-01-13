@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@ethersproject/bytes": "^5.7.0",

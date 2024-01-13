@@ -1,7 +1,7 @@
 import { Asset } from '../config/Config';
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractInterface, ethers } from 'ethers';
-import { UserOperation } from '../../app/modals/UserOperation';
+import { UserOperation } from '@/modals/UserOperation';
 
 export interface ContractCallParams {
   ethValue: string;
