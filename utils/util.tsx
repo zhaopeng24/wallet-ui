@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 
 export const ETH = (value: string) => {
   return ethers.utils.parseEther(value);
@@ -38,18 +38,18 @@ export function checkNumber(value: string) {
  */
 export function formatTimestamp(time: number, ago?: boolean) {
   const m = new Map([
-    [1, 'Jan'],
-    [2, 'Feb'],
-    [3, 'Mar'],
-    [4, 'Apr'],
-    [5, 'May'],
-    [6, 'Jun'],
-    [7, 'Jul'],
-    [8, 'Aug'],
-    [9, 'Sep'],
-    [10, 'Oct'],
-    [11, 'Nov'],
-    [12, 'Dec'],
+    [1, "Jan"],
+    [2, "Feb"],
+    [3, "Mar"],
+    [4, "Apr"],
+    [5, "May"],
+    [6, "Jun"],
+    [7, "Jul"],
+    [8, "Aug"],
+    [9, "Sep"],
+    [10, "Oct"],
+    [11, "Nov"],
+    [12, "Dec"],
   ]);
 
   let now = secondsOfNow();
@@ -68,29 +68,29 @@ export function formatTimestamp(time: number, ago?: boolean) {
     } else {
       const month = date.getMonth() + 1;
       const day = date.getDate();
-      return m.get(month) + ' ' + day;
+      return m.get(month) + " " + day;
     }
   }
 
   if (hours > 0) {
-    let t = hours + 'h';
-    if (ago) t += ' ago';
+    let t = hours + "h";
+    if (ago) t += " ago";
     return t;
   }
 
   if (minutes > 0) {
-    let t = minutes + 'm';
-    if (ago) t += ' ago';
+    let t = minutes + "m";
+    if (ago) t += " ago";
     return t;
   }
 
   if (seconds > 0) {
-    let t = seconds + 's';
-    if (ago) t += ' ago';
+    let t = seconds + "s";
+    if (ago) t += " ago";
     return t;
   }
 
-  return 'just now';
+  return "just now";
 }
 
 /**
@@ -130,23 +130,23 @@ export function randomInteger(min: number, max: number) {
 export function getAssetImage(asset: any): string {
   let image = asset.image;
   if (!image) image = asset.id;
-  return '/assets/' + image + '.png';
+  return "/assets/" + image + ".png";
 }
 
 export function getPortraitImage(profile: any): string {
   let image = profile ? profile.portrait : null;
-  if (!image) image = '/portrait-default.png';
+  if (!image) image = "/portrait-default.png";
   return image;
 }
 
 export function getBannerImage(profile: any): string {
   let image = profile ? profile.banner : null;
-  if (!image) image = '/banner-default.png';
+  if (!image) image = "/banner-default.png";
   return image;
 }
 
 export function getMenuIcon(name: string): string {
-  return '/icon/' + name + '.png';
+  return "/icon/" + name + ".png";
 }
 
 /**
@@ -155,7 +155,8 @@ export function getMenuIcon(name: string): string {
  * @returns
  */
 export function urlToLink(str: string): any {
-  const re = /(f|ht){1}(tp|tps):\/\/([\w-]+\S)+[\w-]+([\w-?%#&=]*)?(\/[\w- ./?%#&=]*)?/g;
+  const re =
+    /(f|ht){1}(tp|tps):\/\/([\w-]+\S)+[\w-]+([\w-?%#&=]*)?(\/[\w- ./?%#&=]*)?/g;
 
   str = str.replace(re, function (url) {
     return `<a href=${url} target="_blank" style="color: white">${url}</a>`;
@@ -165,7 +166,7 @@ export function urlToLink(str: string): any {
 }
 
 export function numberWithCommas(x: number): string {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 /**
@@ -194,7 +195,9 @@ export function getMediaAmount(quillRef: any) {
 export function convertSlug(str: string): any {
   const pattern = /@\w+(-\w+)*/g;
   str = str.replace(pattern, function (slug) {
-    return `<a className='activity-page-slug-link' href='/profile/${slug.substring(1)}' id="url-${slug}">${slug}</a>`;
+    return `<a className='activity-page-slug-link' href='/profile/${slug.substring(
+      1
+    )}' id="url-${slug}">${slug}</a>`;
   });
 
   return str;
@@ -209,7 +212,7 @@ export function convertHashTag(str: string): any {
   const pattern = /#\w+(-\w+)*/g;
   str = str.replace(pattern, function (hashtag) {
     return `<a className='activity-page-slug-link' href='/plan/${hashtag.substring(
-      1,
+      1
     )}' id="url-${hashtag}">${hashtag}</a>`;
   });
 
@@ -223,7 +226,8 @@ export function convertHashTag(str: string): any {
  */
 export function convertUrls(str: string): string {
   // match all of URLs
-  const urlRegex = /(f|ht){1}(tp|tps):\/\/([\w-]+\S)+[\w-]+([\w-?%#&=]*)?(\/[\w- ./?%#&=]*)?/g;
+  const urlRegex =
+    /(f|ht){1}(tp|tps):\/\/([\w-]+\S)+[\w-]+([\w-?%#&=]*)?(\/[\w- ./?%#&=]*)?/g;
 
   // match all of <a> tag content
   const hrefRegex = /<a\s+[^>]*?href\s*=\s*(['"])(.*?)\1/g;
@@ -248,7 +252,9 @@ export function convertUrls(str: string): string {
     else if (audioSrcs && audioSrcs.includes(`<audio src="${url}"`)) return url;
     else if (
       iframeSrcs &&
-      iframeSrcs.includes(`<iframe class="ql-video" frameborder="0" allowfullscreen="true" src="${url}"`)
+      iframeSrcs.includes(
+        `<iframe class="ql-video" frameborder="0" allowfullscreen="true" src="${url}"`
+      )
     )
       return url;
     else return `<a href=${url} target="_blank" id="url-${url}">${url}</a>`;
@@ -264,11 +270,11 @@ export function isValidUrl(url: string) {
 
 // find the first image in the plan content
 export function getFirstImage(content: any) {
-  let image = '';
-  let start = content.indexOf('<img');
+  let image = "";
+  let start = content.indexOf("<img");
 
   if (start !== -1) {
-    let end = content.indexOf('>', start);
+    let end = content.indexOf(">", start);
     if (end !== -1) image = content.substring(start + 10, end - 1);
   }
 
@@ -277,12 +283,12 @@ export function getFirstImage(content: any) {
 
 export function divideAndMultiplyByTenPowerN(input: string, n: number): string {
   if (n >= input.length) {
-    const leadingZeros = '0'.repeat(n - input.length + 1);
+    const leadingZeros = "0".repeat(n - input.length + 1);
     input = leadingZeros + input;
   }
   const integerPart = input.slice(0, -n);
   const decimalPart = input.slice(-n);
-  return integerPart + '.' + decimalPart;
+  return integerPart + "." + decimalPart;
 }
 
 /**
@@ -291,10 +297,33 @@ export function divideAndMultiplyByTenPowerN(input: string, n: number): string {
  * @returns truncated string
  * @dev truncates string to 8 characters(using for address)
  */
-export function truncateString(str: `0x${string}` | undefined | string): string {
-  if (!str) return '';
+export function truncateString(
+  str: `0x${string}` | undefined | string
+): string {
+  if (!str) return "";
   if (str.length > 8) {
-    return str.substring(0, 4) + '...' + str.substring(str.length - 4);
+    return str.substring(0, 4) + "..." + str.substring(str.length - 4);
   }
   return str;
+}
+
+export function copyToClipboard(value: string) {
+  // 创建一个新的textarea元素
+  var textarea = document.createElement("textarea");
+
+  // 设置textarea的值为要复制的内容
+  textarea.value = value;
+
+  // 将textarea元素添加到DOM中
+  document.body.appendChild(textarea);
+
+  // 选择textarea中的文本
+  textarea.select();
+  textarea.setSelectionRange(0, 99999); // 支持移动端
+
+  // 复制文本到剪贴板
+  document.execCommand("copy");
+
+  // 移除textarea元素
+  document.body.removeChild(textarea);
 }

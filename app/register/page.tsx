@@ -3,7 +3,7 @@ import Header from '@/components/Header'
 import PasswordInput from '@/components/PasswordInput'
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LoadingContext } from '@/app/providers'
 import EmailInput from '@/components/EmailInput';
 import { EmailPattern } from '@/consts/pattern';
@@ -22,6 +22,21 @@ const Register = () => {
   const [code, setCode] = useState('')
 
   const { setLoading } = useContext(LoadingContext)
+
+  const ccc = ()=>{
+    toast(
+      (t) => (
+        <span className="text-xs text-[#1C2F04]">
+          You have already signed up please login directly.
+        </span>
+      ),
+      { style: { borderRadius: '10px', marginTop: '20px' }, duration: 2000 },
+    );
+  }
+  // window.ccc = ccc;
+  useEffect(()=>{
+    ccc()
+  },[])
 
   function handleRegisterBtnClick() {
     if (Global.account?.existLocalStorageKey()) {
