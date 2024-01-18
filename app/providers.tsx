@@ -3,7 +3,7 @@
 import FullScreenLoading from '@/components/FullScreenLoading';
 import { Global } from '@/server/Global';
 import { Config } from '@/server/config/Config';
-import { NextUIProvider } from '@nextui-org/react'
+import {NextUIProvider} from '@nextui-org/react';
 import { createContext, useCallback, useEffect, useState } from 'react'
 const polygonConfig = require('@/config/' + Config.DEFAULT_NETWORK.toLowerCase() + '.json');
 

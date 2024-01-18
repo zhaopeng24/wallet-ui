@@ -5,7 +5,7 @@ import { usePublicClient } from 'wagmi'
 const MuiUsage = () => {
   return (
     <Button variant='contained' className='text-red-700'>
-      Hello world
+      Hello world Dev
     </Button>
   )
 }

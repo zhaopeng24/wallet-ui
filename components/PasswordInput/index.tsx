@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from "react";
-import { Input, InputProps } from "@nextui-org/react";
+import { Input, InputProps } from "@nextui-org/input";
 import { EyeFilledIcon } from "./EyeFilledIcon";
 import { EyeSlashFilledIcon } from "./EyeSlashFilledIcon";
 import { PwdPattern } from "@/consts/pattern";

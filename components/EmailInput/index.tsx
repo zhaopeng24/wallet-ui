@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from "react";
-import { Input, InputProps } from "@nextui-org/react";
+import { Input, InputProps } from "@nextui-org/input";
 import { EmailPattern } from "@/consts/pattern";
 
 const EmailInput: FC<InputProps> = (props) => {
