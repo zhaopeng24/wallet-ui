@@ -5,7 +5,7 @@ import Link from 'next/link';
 const Home = () => {
 
   return (
-    <div className='home h-full bg-[url(/imgs/home-bg.png)] bg-cover'>
+    <div className='h-full bg-[url(/imgs/home-bg.png)] bg-cover'>
       <div className='mian p-8 mb-32'>
         <img className='w-40 mb-16' src='/imgs/home-logo.png' alt="" />
         <img className='w-44 mb-6' src='/imgs/home-text1.png' alt="" />
