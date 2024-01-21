@@ -1,4 +1,6 @@
 import { ethers } from 'ethers';
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export const ETH = (value: string) => {
   return ethers.utils.parseEther(value);
@@ -297,4 +299,8 @@ export function truncateString(str: `0x${string}` | undefined | string): string 
     return str.substring(0, 4) + '...' + str.substring(str.length - 4);
   }
   return str;
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
