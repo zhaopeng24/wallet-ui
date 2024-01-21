@@ -211,7 +211,7 @@ const Register = () => {
           <Button onClick={handleSendCode} size="lg" className='w-32 text-white p-7 ml-4 bg-[#819DF5]'>Send</Button>
         </div>
       </div>
-      <div className='absolute bottom-20 left-0 right-0 p-8 text-xs'>
+      <div className='p-8 text-xs'>
         <div className='mb-4 text-center opacity-80'>By proceeding, you agree to our <span className='text-white font-bold'>Term and Conditions</span></div>
         <Button fullWidth size="lg" className='bg-[#819DF5] rounded-3xl' onClick={handleRegisterBtnClick}>Register</Button>
       </div>
