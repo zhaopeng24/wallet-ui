@@ -1,6 +1,6 @@
 import Link from "next/link"
 import EthSVG from "@/components/icons/EthSVG"
-
+import LinkArrowSVG from "@/components/icons/LinkArrow"
 interface ItemProps {
   icon: React.ReactNode
   chain: string
@@ -39,7 +39,7 @@ export default function Holdings() {
 function Item({ icon, chain, symbol, amount, dollar }: ItemProps) {
   return (
     <>
-      <Link href={`/${chain}`} className="flex flex-row justify-between py-5">
+      <div className="flex flex-row justify-between py-5">
         <div className="flex flex-row gap-x-5">
           <div>{icon}</div>
           <div className="flex flex-col">
@@ -47,11 +47,20 @@ function Item({ icon, chain, symbol, amount, dollar }: ItemProps) {
             <span className="text-[#819DF580]">{symbol}</span>
           </div>
         </div>
-        <div>
-          <div>$ {dollar} </div>
-          <div className="text-sm text-[#819DF580]">{amount} ETH</div>
+        <div className="flex flex-row gap-x-2">
+          <div>
+            <div>$ {dollar} </div>
+            <div className="text-sm text-[#819DF580]">{amount} {symbol}</div>
+          </div>
+          <div className="flex items-center justify-center">
+            <Link href={`/holdings/${chain}`} className="w-full h-full">
+              <LinkArrowSVG />
+            </Link>
+
+          </div>
         </div>
-      </Link>
+      </div>
+
 
     </>
   )
