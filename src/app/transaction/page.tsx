@@ -31,7 +31,7 @@ const TransactionDetail = () => {
   );
 };
 
-export default () => {
+export default function Transaction() {
   return (
     <div className={classNames(Style.transaction)}>
       <Navbar title={"Transaction History"}></Navbar>
@@ -39,4 +39,4 @@ export default () => {
       <Menu></Menu>
     </div>
   );
-};
+}
