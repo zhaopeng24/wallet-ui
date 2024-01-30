@@ -5,13 +5,21 @@ import Header from "./components/Header"
 import Asset from "./components/Asset"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { getAssetBalance } from "@/api/hold"
+import { useClientFetchData } from "@/lib/hooks/useClientFetchData"
+import { Response, AssetBalance } from "@/api/types/hold"
 
 export default function DashBoardLayout({ children }: { children: React.ReactNode }) {
   const currentPath = usePathname()
+  const {isLoading, result} = useClientFetchData<Response<AssetBalance>>(getAssetBalance, {
+    chainId: 1,
+    address: "0x61f8a7B1634F3AfD82c13F01b995187432E85eEf"
+  })
   return (
     <MainLayout className="">
       <div className="flex flex-col w-full justify-center items-center">
         <Header />
+        {isLoading ? <div>Loading</div> : result.code}
         <Asset />
         <div className="flex flex-row gap-x-10 mt-12 mb-8 text-lg">
           <Link href={'/dashboard/holdings'}>

@@ -95,7 +95,7 @@ const LoginPage = () => {
       console.log("result.body result:", result.body["result"]);
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
-      router.push("/home");
+      router.push("/dashboard/holdings");
     } catch (error: any) {
       //   message.error((error as Error).message);
       return;
