@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { classNames } from "@/utils/classNames";
 import { Menu } from "@/components/Menu";
+import { useEffect } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
@@ -18,20 +19,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
-
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark min-h-[900px]">
       <body
         className={classNames(
           inter.className,
-          "sm:flex sm:flex-col sm:items-center"
+          "sm:flex sm:items-center sm:justify-center"
         )}
       >
-        <div
-          className={
-            "sm:w-[400px] sm:h-[900px] h-full rounded-lg sm:absolute sm:top-1/2 sm:-translate-y-1/2"
-          }
-        >
+        <div className={"sm:w-[400px] sm:h-[900px] h-full rounded-lg"}>
           <Providers>{children}</Providers>
         </div>
       </body>
