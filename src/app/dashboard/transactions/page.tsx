@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export default function Transactions() {
   return (
-    <div className="flex flex-row w-full justify-between px-8">
+    <div className="flex flex-row w-full justify-between px-8 py-5">
       <Item />
     </div>
   )
