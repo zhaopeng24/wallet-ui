@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation"
 import { getAssetBalance } from "@/api/hold"
 import { useClientFetchData } from "@/lib/hooks/useClientFetchData"
 import { Response, AssetBalance } from "@/api/types/hold"
+import FullScreenLoading from "@/components/FullScreenLoading"
 
 export default function DashBoardLayout({ children }: { children: React.ReactNode }) {
   const currentPath = usePathname()
@@ -19,8 +20,12 @@ export default function DashBoardLayout({ children }: { children: React.ReactNod
     <MainLayout className="">
       <div className="flex flex-col w-full justify-center items-center">
         <Header />
-        {isLoading ? <div>Loading</div> : result.code}
-        <Asset />
+        {isLoading ? <FullScreenLoading />: ""}
+        <Asset 
+          balance={isLoading? "0" : result.result.SumBalanceUSD}
+          PastDay={isLoading? "0" : result.result.PastDay}
+          InTotal={isLoading? "0" : result.result.InTotal}
+        />
         <div className="flex flex-row gap-x-10 mt-12 mb-8 text-lg">
           <Link href={'/dashboard/holdings'}>
             <div className={`py-3 ${currentPath.includes("holdings") ? "text-white border-b-2 border-white" : "text-[#819DF580]"}`}>Holdings</div>

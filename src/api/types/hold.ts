@@ -11,7 +11,7 @@ export type AssetBalance = {
   NativeBalance: Balance,
   TokenBalance: Balance[],
   PastDay: string,
-  Intotal: string
+  InTotal: string
 }
 
 export type Balance = {
