@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import PasswordInput from "@/components/PasswordInput";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { LoadingContext } from "@/app/providers";
 import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
@@ -17,12 +17,18 @@ import { AccountInterface } from "@/server/account/AccountInterface";
 import { Login } from "@/server/login";
 import { useRouter } from "next/navigation";
 
+const CountdownTime = 60;
+
 const LoginPage = () => {
   const router = useRouter();
   const [password, setPasswork] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const { setLoading } = useContext(LoadingContext);
+
+  const [countdownTime, setCountdownTime] = useState(CountdownTime);
+  const canSend = countdownTime === CountdownTime;
+  const timer = useRef<any>();
 
   function handleLoginBtnClick() {
     // 检查值
@@ -48,7 +54,6 @@ const LoginPage = () => {
       );
       return;
     }
-    debugger;
     mpcLogin();
     // 分步骤调用接口
   }
@@ -106,16 +111,50 @@ const LoginPage = () => {
     console.log(email);
     if (!email) {
       // 邮箱不能为空
+      toast(
+        (t) => (
+          <span className="text-xs text-[#1C2F04]">
+            Please enter your email address
+          </span>
+        ),
+        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
+      );
       return;
     }
     if (email.match(EmailPattern)) {
+      setLoading(true, "Sending Code...");
       const res = await SendEmailCode(email);
-      console.log(res);
+      setLoading(false);
+      if (res.body.code == 200) {
+        setCountdownTime(CountdownTime - 1);
+        if (timer.current) {
+          clearInterval(timer.current);
+          timer.current = null;
+        }
+        timer.current = setInterval(() => {
+          setCountdownTime((t) => {
+            if (t <= 1) {
+              clearInterval(timer.current);
+              return CountdownTime;
+            }
+            return t - 1;
+          });
+        }, 1000);
+      }
     } else {
       // 邮箱格式不正确
       return;
     }
   }
+
+  useEffect(() => {
+    return () => {
+      if (timer.current) {
+        clearInterval(timer.current);
+        timer.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div className="h-full bg-[url(/imgs/bg.png)]">
@@ -146,12 +185,14 @@ const LoginPage = () => {
             maxLength={6}
             onValueChange={setCode}
           />
+
           <Button
             onClick={handleSendCode}
             size="lg"
             className="w-32 text-white p-7 ml-4 bg-[#819DF5]"
+            isDisabled={!canSend}
           >
-            Send
+            {countdownTime == CountdownTime ? "Send" : `${countdownTime} s`}
           </Button>
         </div>
         <div className="text-[#819DF5] text-xs text-right">
