@@ -59,8 +59,8 @@ export default function Page() {
     }, [])
     return (
         <div>
-            {TransferList?.map((item: TransferItem) => {
-                return <MyCard UpdatedAt={item.UpdatedAt} extraData={item.extraData} />
+            {TransferList?.map((item: TransferItem,index:number) => {
+                return <MyCard key={index} UpdatedAt={item.UpdatedAt} extraData={item.extraData} />
             })}
 
         </div>
