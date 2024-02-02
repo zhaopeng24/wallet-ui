@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image"
 import ChainDropDown from "./ChainDropdown"
 
@@ -11,7 +12,7 @@ export default function Header({ userName, address }: HeaderProps) {
     <div className="w-full flex justify-between mt-8">
       <div className="flex flex-grow gap-x-5 ml-6">
         <div className="flex items-center rounded-full">
-          <Image src={'/imgs/user-icon.png'} alt="user icon" width={24} height={24} />
+          <Image src={'/imgs/user-icon.svg'} alt="user icon" width={24} height={24} />
         </div>
 
         <div className="flex flex-col">
