@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+import React, { useEffect } from "react"
 import MainLayout from "@/components/basic/MainLayout"
 import Header from "./components/Header"
 import Asset from "./components/Asset"
@@ -12,7 +12,7 @@ import FullScreenLoading from "@/components/FullScreenLoading"
 
 export default function DashBoardLayout({ children }: { children: React.ReactNode }) {
   const currentPath = usePathname()
-  const {isLoading, result} = useClientFetchData<Response<AssetBalance>>(getAssetBalance, {
+  const { isLoading, result, resetFetch } = useClientFetchData<Response<AssetBalance>>(getAssetBalance, {
     chainId: 1,
     address: "0x61f8a7B1634F3AfD82c13F01b995187432E85eEf"
   })
@@ -20,11 +20,11 @@ export default function DashBoardLayout({ children }: { children: React.ReactNod
     <MainLayout className="">
       <div className="flex flex-col w-full justify-center items-center">
         <Header />
-        {isLoading ? <FullScreenLoading />: ""}
-        <Asset 
-          balance={isLoading? "0" : result.result.SumBalanceUSD}
-          PastDay={isLoading? "0" : result.result.PastDay}
-          InTotal={isLoading? "0" : result.result.InTotal}
+        {isLoading ? <FullScreenLoading /> : ""}
+        <Asset
+          balance={isLoading ? "0" : result.result.SumBalanceUSD}
+          PastDay={isLoading ? "0" : result.result.PastDay}
+          InTotal={isLoading ? "0" : result.result.InTotal}
         />
         <div className="flex flex-row gap-x-10 mt-12 mb-8 text-lg">
           <Link href={'/dashboard/holdings'}>
