@@ -92,7 +92,6 @@ const Register = () => {
       setLoading(false);
       return;
     }
-    debugger;
     Global.authorization = res.body.result;
     // 2.初始化私钥
     setLoading(true, "initialize private key...");
@@ -107,7 +106,6 @@ const Register = () => {
     const key2 = JSONBigInt.stringify(parseNumbers(keys["p2JsonData"]));
     const key3 = JSONBigInt.stringify(parseNumbers(keys["p3JsonData"]));
     console.log(key1, key2, key3);
-    debugger;
     Global.tempLocalPassword = _password;
     // 3.key1保存到本地
     if (!mpc.saveKey2LocalStorage(key1, Global.tempLocalPassword)) {
