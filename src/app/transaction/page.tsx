@@ -5,6 +5,8 @@ import { Menu } from "@/components/Menu";
 import { Navbar } from "@/components/Navbar";
 import { TransactionMain } from "./components/TransactionMain";
 import { SuccessCrossDetail } from "./components/Detail";
+import { Bridge } from "@/components/Bridge";
+import { useState } from "react";
 
 const ViewOnBrower = () => {
   return (
@@ -32,11 +34,14 @@ const TransactionDetail = () => {
 };
 
 export default function Transaction() {
+  const [open,setOpen] = useState(false);
   return (
     <div className={classNames(Style.transaction)}>
       <Navbar title={"Transaction History"}></Navbar>
       <TransactionDetail></TransactionDetail>
       <Menu></Menu>
+      <Bridge open={open} onClose={()=>setOpen(false)}></Bridge>
+      <button onClick={()=>setOpen(true)}>xxx</button>
     </div>
   );
 }

@@ -7,7 +7,7 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --mask-z-index:1000;
-  --mask-animation-duration:0.5s;
+  --mask-animation-duration:0.3s;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,3 +22,5 @@ html,
 body {
   height: 100%;
 }
+
+/* #wallet-ui{} */

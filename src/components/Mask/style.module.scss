@@ -8,7 +8,8 @@
   z-index: var(--mask-z-index);
   display: block;
   background: rgba(0, 0, 0, 0.55);
-  transition: opacity var(--mask-animation-duration) ease,display var(--mask-animation-duration) ease;
+  transition: opacity var(--mask-animation-duration) ease;
+  display: none;
 }
 
 .mask-hide {
@@ -16,6 +17,6 @@
 }
 
 .mask-show {
-  // display: block;
+  display: block;
   opacity: 1;
 }

@@ -1,7 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Style from "./style.module.scss";
 import { noop } from "@/utils/util";
 import { nexttick } from "@/utils/nexttick";
+import { createPortal } from "react-dom";
+import { classNames } from "@/utils/classNames";
+import { useDisplayNone } from "@/hooks/useDisplayNone";
 
 type MaskProps = {
   open?: boolean;
@@ -21,53 +24,32 @@ const showMaskElement = (ele: HTMLElement) => {
   });
 };
 
-const addMaskElement = (
-  ele: HTMLElement,
-  callbacks: Record<string, Function>
-) => {
-  const maskEle = document.createElement("div");
-  maskEle.classList.add(Style["mask"]);
-  maskEle.addEventListener("click", function () {
-    // hideMaskElement(maskEle);
-    callbacks.onClose();
-  });
-  maskEle.addEventListener("transitionend", function (event) {
-    const opcity = window.getComputedStyle(maskEle).getPropertyValue("opacity");
-    if (event.propertyName === "opacity" && opcity === "0") {
-      maskEle.style.display = "none";
-    }
-  });
-  ele.appendChild(maskEle);
-  return maskEle;
-};
-
 export const Mask = ({ open = false, onClose = noop }: MaskProps) => {
-  const maskRef = useRef<HTMLElement>();
-  const callbackRef = useRef<Record<string, Function>>();
-  callbackRef.current = {
-    onClose,
-  };
+  const maskRef = useRef<HTMLDivElement>();
+  const [isBrowser, setIsBrowser] = useState(false);
+  // const [animationType, setAnimationType] = useState(open);
+  const { animationType, onTransitionEnd } = useDisplayNone({
+    target: maskRef.current,
+    open,
+    attr: "opacity",
+  });
   useEffect(() => {
-    const ele = document.getElementById("wallet-ui");
-    if (!ele) {
-      return;
-    }
-    maskRef.current = addMaskElement(ele, callbackRef?.current ?? {});
-    if (!open) {
-      maskRef.current.style.display = "none";
-    }
+    setIsBrowser(true);
   }, []);
-
-  useEffect(() => {
-    if (!maskRef.current) {
-      console.log("aaa");
-      return;
-    }
-    if (open) {
-      showMaskElement(maskRef.current);
-    } else {
-      hideMaskElement(maskRef.current);
-    }
-  }, [open]);
-  return <></>;
+  return isBrowser ? (
+    createPortal(
+      <div
+        ref={maskRef}
+        className={classNames(
+          Style["mask"],
+          Style[animationType ? "mask-show" : "mask-hide"]
+        )}
+        onClick={onClose}
+        onTransitionEnd={onTransitionEnd}
+      ></div>,
+      document.getElementById("wallet-ui") as HTMLDivElement
+    )
+  ) : (
+    <></>
+  );
 };

@@ -27,7 +27,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           "sm:flex sm:items-center sm:justify-center"
         )}
       >
-        <div className={"sm:w-[400px] sm:h-[900px] h-full rounded-lg"}>
+        <div
+          id={"wallet-ui"}
+          className={"sm:w-[400px] sm:h-[900px] h-full rounded-lg relative"}
+        >
           <Providers>{children}</Providers>
         </div>
       </body>
