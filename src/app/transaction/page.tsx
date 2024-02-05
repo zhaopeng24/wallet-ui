@@ -40,7 +40,7 @@ export default function Transaction() {
       <Navbar title={"Transaction History"}></Navbar>
       <TransactionDetail></TransactionDetail>
       <Menu></Menu>
-      <Bridge open={open} onClose={()=>setOpen(false)}></Bridge>
+      <Bridge open={open} onClose={()=>setOpen(false)} title="Other Providers"></Bridge>
       <button onClick={()=>setOpen(true)}>xxx</button>
     </div>
   );

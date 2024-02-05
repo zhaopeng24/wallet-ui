@@ -46,7 +46,10 @@ export const Popup = ({
         className={classNames(
           Style["popup"],
           styles[position],
-          Style[animationType ? `popup-${position}-show` : `popup-${position}-hide`]
+          position === "top" || position === "bottom" ? "layout" : "",
+          Style[
+            animationType ? `popup-${position}-show` : `popup-${position}-hide`
+          ]
         )}
         onTransitionEnd={onTransitionEnd}
       >

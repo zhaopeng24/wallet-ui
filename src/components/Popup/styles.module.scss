@@ -1,8 +1,15 @@
 .popup {
-  position: absolute;
+  position: fixed;
   display: none;
   transition: transform var(--mask-animation-duration) ease;
   z-index: calc(var(--mask-z-index) + 10);
+  width: 100%;
+  border-radius: 8px 8px 0px 0px;
+  padding-top: 12px;
+  padding-bottom: 22px;
+  // background: #08080C8A;
+  // background: #08080C;
+  background: linear-gradient(to bottom, #08080C, #08080C8A);
 }
 
 .popup-left-show {
@@ -35,9 +42,8 @@
 }
 
 .popup-top {
-  width: 100%;
   top: 0;
-  left: 0;
+  left: auto;
 }
 .popup-left {
   height: 100%;
@@ -50,7 +56,6 @@
   right: 0;
 }
 .popup-bottom {
-  width: 100%;
   bottom: 0;
-  left: 0;
+  left: auto;
 }
