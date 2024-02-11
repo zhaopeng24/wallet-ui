@@ -26,9 +26,9 @@ export default function DashBoardLayout() {
 
   useEffect(() => {
     const fetchAdd = async () => {
-      // const address = await account.calcContractWalletAddress()
+      const address = await account.calcContractWalletAddress()
       console.log(`this is address ${address}`)
-      setAddress("xxx")
+      setAddress(address)
     }
     fetchAdd()
     console.log(`current chain id is ${currentChainId}`)
