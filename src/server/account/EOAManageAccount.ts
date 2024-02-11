@@ -1,15 +1,18 @@
-import { ethers } from 'ethers';
-import { AccountInterface } from './AccountInterface';
-import { ERC4337BaseManageAccount } from './ERC4337BaseManageAccount';
-import { Config } from '../config/Config';
-import { CryptologyUtils } from '../utils/CryptologyUtils';
+import { ethers } from "ethers";
+import { AccountInterface } from "./AccountInterface";
+import { ERC4337BaseManageAccount } from "./ERC4337BaseManageAccount";
+import { Config } from "../config/Config";
+import { CryptologyUtils } from "../utils/CryptologyUtils";
 
-const { arrayify } = require('@ethersproject/bytes');
+const { arrayify } = require("@ethersproject/bytes");
 
 /**
  * Account Manage
  */
-export class EOAManageAccount extends ERC4337BaseManageAccount implements AccountInterface {
+export class EOAManageAccount
+  extends ERC4337BaseManageAccount
+  implements AccountInterface
+{
   /**
    * EOA address key for sign and manage wallet
    */
@@ -17,8 +20,7 @@ export class EOAManageAccount extends ERC4337BaseManageAccount implements Accoun
 
   constructor() {
     super();
-    this._eoaKey = ''
-    console.log('EOAManageAccount init');
+    this._eoaKey = "";
   }
 
   get eoaKey(): string {
@@ -35,15 +37,13 @@ export class EOAManageAccount extends ERC4337BaseManageAccount implements Accoun
     this.eoaKey = eoaKey;
     this.contractWalletAddressSalt = 0;
     this.ethersProvider = new ethers.providers.JsonRpcProvider(Config.RPC_API);
-    if (eoaKey != null && eoaKey !== '') {
-      console.log('eoaKey not null');
+    if (eoaKey != null && eoaKey !== "") {
       this.ethersWallet = new ethers.Wallet(eoaKey, this.ethersProvider);
       this.contractWalletAddress = await this.calcContractWalletAddress();
       await this.deployContractWalletIfNotExist(this.ethersWallet.address);
     } else {
-      console.log('eoakey is null');
       this.ethersWallet = undefined;
-      this.contractWalletAddress = '';
+      this.contractWalletAddress = "";
     }
     this.contractAddressExist = false;
   }
@@ -53,7 +53,9 @@ export class EOAManageAccount extends ERC4337BaseManageAccount implements Accoun
   }
 
   async getOwnerAddressNonce(): Promise<number> {
-    return await this.ethersWallet.getTransactionCount(await this.getOwnerAddress());
+    return await this.ethersWallet.getTransactionCount(
+      await this.getOwnerAddress()
+    );
   }
 
   async ownerSign(hash: string): Promise<string> {

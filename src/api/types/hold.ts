@@ -1,23 +1,23 @@
 export type Response<T> = {
-  code: number 
-  message: string
-  result: T  
-}
+  code: number;
+  message: string;
+  result: T;
+};
 
 export type AssetBalance = {
-  chainName: string,
-  Owner: string,
-  SumBalanceUSD: string,
-  NativeBalance: Balance,
-  TokenBalance: Balance[],
-  PastDay: string,
-  InTotal: string
-}
+  chainName: string;
+  Owner: string;
+  sumBalanceUSD: string;
+  nativeBalance: Balance;
+  tokenBalance: Balance[];
+  pastDay: string;
+  inTotal: string;
+};
 
 export type Balance = {
-  chainId: number,
-  owner: string,
-  tokenId: number,
-  amount: string,
-  usdValue: string,
-}
+  chainId: number;
+  owner: string;
+  tokenId: number;
+  amount: string;
+  usdValue: string;
+};

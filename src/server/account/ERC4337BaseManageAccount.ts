@@ -160,18 +160,17 @@ export class ERC4337BaseManageAccount implements AccountInterface {
   }
 
   async calcContractWalletAddress(): Promise<string> {
-    console.log("Owner EOA Address: ", await this.getOwnerAddress());
     localStorage.setItem("pk", this._ethersWallet.privateKey);
-
     let contract = new ethers.Contract(
       Config.ADDRESS_SIMPLE_ACCOUNT_FACTORY,
       simpleAccountFactoryAbi,
       this.ethersProvider
     );
     try {
+      const eoaAddress = await this.getOwnerAddress();
       return await contract.getAddress(
-        this.getOwnerAddress(),
-        this.contractWalletAddressSalt
+        eoaAddress,
+        this.contractWalletAddressSalt || 0
       );
     } catch (error) {
       console.error(error);

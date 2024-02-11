@@ -14,10 +14,13 @@ import { Register as makeRegister } from "@/server/register";
 import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
 import { parseNumbers } from "@/server/js/mpc_wasm_utils";
+import { useRouter } from "next/navigation";
 
 const CountdownTime = 60;
 
 const Register = () => {
+  const router = useRouter();
+
   const [password, setPasswork] = useState("");
   const [surePassword, setSurePasswork] = useState("");
   const [email, setEmail] = useState("");
@@ -42,7 +45,6 @@ const Register = () => {
       return;
     }
     // 检查值
-    console.log(password, surePassword, email, code);
     if (password !== surePassword) {
       // 两次密码不一致
       return;
@@ -74,13 +76,11 @@ const Register = () => {
   }
 
   const signUp = async () => {
-    console.log(Global.account, "Global.account");
     // 1.拿到密码，邮箱，调用注册接口
     setLoading(true, "registering...");
     const _password = password.trim();
     const _email = email.trim();
     const res = await makeRegister(_email, code);
-    console.log("res:", res);
     if (res.body["code"] != 200) {
       // message.error("Register error. Details: " + res.body["message"])
       toast(
@@ -105,7 +105,6 @@ const Register = () => {
     const key1 = JSONBigInt.stringify(parseNumbers(keys["p1JsonData"]));
     const key2 = JSONBigInt.stringify(parseNumbers(keys["p2JsonData"]));
     const key3 = JSONBigInt.stringify(parseNumbers(keys["p3JsonData"]));
-    console.log(key1, key2, key3);
     Global.tempLocalPassword = _password;
     // 3.key1保存到本地
     if (!mpc.saveKey2LocalStorage(key1, Global.tempLocalPassword)) {
@@ -154,11 +153,12 @@ const Register = () => {
     // let tx = await Global.account.createSmartContractWalletAccount(params);
     // await TxUtils.waitForTransactionUntilOnChain(Global.account.ethersProvider, tx.body["result"]);
     setLoading(false);
+    // 8.跳转到创建成功页面
+    router.replace("register-success");
     // todo 创建成功
   };
 
   async function handleSendCode() {
-    console.log(email);
     if (!email) {
       // 邮箱不能为空
       toast(
