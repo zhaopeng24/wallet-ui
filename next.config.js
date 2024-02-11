@@ -13,7 +13,7 @@ const nextConfig = {
     return config
   },
   images: {
-    domains: ['images.dog.ceo'],
+    domains: ['images.dog.ceo', 'decentralized-storage-01.web3idea.xyz'],
   },
   typescript: {
     ignoreBuildErrors: true,

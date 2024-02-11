@@ -74,10 +74,10 @@ const LoginPage = () => {
 
   const mpcLogin = async () => {
     try {
-      setLoading(true, "login...");
+      // setLoading(true, "login...");
       //   await Global.changeAccountType(2);
       const mpcAccount = Global.account as MPCManageAccount;
-      setLoading(true, "Decrpty local MPC key...");
+      // setLoading(true, "Decrpty local MPC key...");
 
       const mpcPassword = password.trim();
       const mpcKey1 = getLocalMPCKey(mpcAccount, mpcPassword);
@@ -86,21 +86,21 @@ const LoginPage = () => {
         return;
       }
 
-      setLoading(true, "Login wallet server...");
+      // setLoading(true, "Login wallet server...");
       const result = await Login(email, code);
       if (result.body["code"] != 200) {
         // message.error(result.body['message']);
         return;
       }
-      setLoading(true, "Init local MPC key...");
+      // setLoading(true, "Init local MPC key...");
       Global.authorization = result.body["result"];
       Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
 
-      setLoading(true, "Jump to home page");
+      // setLoading(true, "Jump to home page");
       console.log("result.body result:", result.body["result"]);
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
-      router.push("/dashboard/holdings");
+      router.push("/dashboard");
     } catch (error: any) {
       //   message.error((error as Error).message);
       return;

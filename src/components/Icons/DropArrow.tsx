@@ -1,17 +1,17 @@
 import * as React from "react"
 
-function ArrowSVG(props: React.SVGAttributes<unknown>) {
+function DropArrow(props: React.SVGAttributes<unknown>) {
   return (
     <svg
-      width={24}
-      height={24}
-      viewBox="0 0 24 24"
+      width={20}
+      height={20}
+      viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path
-        d="M14 8l-4 4 4 4"
+        d="M13.333 8.333L10 11.666 6.666 8.333"
         stroke="#fff"
         strokeWidth={1.5}
         strokeLinecap="round"
@@ -21,4 +21,4 @@ function ArrowSVG(props: React.SVGAttributes<unknown>) {
   )
 }
 
-export default ArrowSVG
+export default DropArrow
