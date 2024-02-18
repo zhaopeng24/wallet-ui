@@ -1,7 +1,7 @@
 export enum EMessage {
 	MSG = 'msg',
-	TRANSFER = 'transfer',
-	CROSSCHAIN = 'crossChaim'
+	TRANSFER = 'transferAbstraction',
+	CROSSCHAIN = 'crossChainAbstraction'
 }
 
 export interface IConversations {
@@ -23,12 +23,13 @@ interface IOps {
 	target_chain: string;
 }
 export interface IResult {
-	category: string;
+	// category: EMessage;
+	category: String;
 	detail: {
 		reply: string;
 		ops: IOps[];
 	};
 }
 export enum Ecategory {
-	crossChainAbstraction = 'crossChainAbstraction'
+	CROSSCHAIN = 'crossChainAbstraction'
 }

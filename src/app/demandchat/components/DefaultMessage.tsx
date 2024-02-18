@@ -22,13 +22,13 @@ const DefaultMessage: React.FC<IDefaultMessageProps> = ({ commandCb }) => {
 				<Image className='' src={`/imgs/msg-prefix.png`} alt='msg prefix' />
 			</div>
 			<div className='flex flex-1  rounded-lg flex-col px-5 py-4 m-6 bg-[#0E1437]'>
-				<p className='leading-7 text-[14px] text-white'>Hi, how can I help you today?</p>
-				<p className='leading-7 text-[14px] text-white'>Feel free to try the following command:</p>
+				<p className='leading-6 text-[14px] text-white'>Hi, how can I help you today?</p>
+				<p className='leading-6 text-[14px] text-white'>Feel free to try the following command:</p>
 
 				{defaultCommands.map((command) => (
 					<p
 						key={command}
-						className='leading-7 text-[14px] text-[#819DF5]'
+						className='leading-6 text-[14px] text-[#819DF5]'
 						onClick={(e) => handleCommandClick(e, command)}
 					>
 						{command}

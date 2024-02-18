@@ -72,8 +72,8 @@ const DemandPage = () => {
 				</div>
 				<div className={classNames(`${Style.deliver}`)}></div>
 
-				<div className='grid grid-cols-2 gap-4 mt-4'>
-					<div className={classNames(`${Style.stakeAnytime} flex flex-col  mb-1 rounded-lg text-center`)}>
+				<div className='grid grid-cols-2 gap-3 mt-4'>
+					<div className={classNames(`${Style.stakeAnytime} flex flex-col rounded-lg text-center`)}>
 						<div className='flex justify-end'>
 							<div
 								className={classNames(
@@ -109,7 +109,7 @@ const DemandPage = () => {
 						</div>
 					</div>
 
-					<div className={classNames(`${Style.stakeFlexible} flex flex-col  mb-1 rounded-lg text-center`)}>
+					<div className={classNames(`${Style.stakeFlexible} flex flex-col rounded-lg text-center`)}>
 						<div className='flex justify-end'>
 							<div
 								className={classNames(

@@ -38,14 +38,14 @@ const MessageItem: React.FC<MessageItemProps> = ({ content, msgType, handleConfi
 					</div>
 				</div>
 			) : (
-				<div className='flex flex-col mb-4 mx-6'>
+				<div className='flex flex-col mb-4 mx-5'>
 					<div className='flex-1'>
 						<div className='flex justify-end'>
 							<div
 								style={{
 									wordWrap: 'break-word'
 								}}
-								className='max-w-full inline-block bg-[#456ADE] px-4 py-2 whitespace-normal rounded-lg text-white text-[14px] leading-7'
+								className='max-w-full inline-block bg-[#456ADE] px-7 py-2 whitespace-normal rounded-lg text-white text-[14px] leading-6'
 							>
 								{content}
 							</div>

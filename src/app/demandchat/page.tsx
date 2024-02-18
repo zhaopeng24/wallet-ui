@@ -7,7 +7,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import FullScreenLoading from '@/components/FullScreenLoading';
 import { Image, Textarea } from '@nextui-org/react';
-import { IConversations, EMessage } from './tyeps';
+import { IConversations, EMessage, IResult } from './tyeps';
 import DefaultMessage from './components/DefaultMessage';
 import MessageItem from './components/MessageItem';
 
@@ -22,22 +22,56 @@ const DemandChatPage = () => {
 
 	const handleRequest = async () => {
 		// const {result} = awa
+		const result: IResult = {
+			category: 'crossChainAbstraction',
+			detail: {
+				reply: 'Ok I will transfer 50 USDC to 0x5134F00C95b8e794db38E1eE39397d8086cee7Ed from Goerli to Fuji, and transfer 50 USDC to 0x5134F00C95b8e794db38E1eE39397d8086cee7Ed on Fuji',
+				ops: [
+					{
+						type: 'chain-internal-transfer',
+						source_chain: 'Fuji',
+						token: 'USDC',
+						amount: '50',
+						receiver: '0x5134F00C95b8e794db38E1eE39397d8086cee7Ed',
+						target_chain: 'Fuji'
+					},
+					{
+						type: 'cross-chain-transfer',
+						source_chain: 'Goerli',
+						token: 'USDC',
+						amount: '50',
+						receiver: '0x5134F00C95b8e794db38E1eE39397d8086cee7Ed',
+						target_chain: 'Fuji'
+					}
+				]
+			}
+		};
 		// 模拟回复
-		setTimeout(() => {
-			const response = {
-				content:
-					'OK, I can launch a transfer transaction for you to help you send 1000 USDC to Alice (0x4F4aB...76e1B) on Ethereum Mainnet',
-				msgType: EMessage.TRANSFER,
-				isResponse: true
-			};
-			const response1 = {
-				content:
-					'As you only have ETH on Ethereum, I will swap your ETH to 1000 USDC and send to Alice (0x19...cc63 on Avalance) cross chain',
+		const { category, detail } = result;
+		if (category === EMessage.CROSSCHAIN) {
+			const newConversation: IConversations = {
+				content: detail.reply,
 				msgType: EMessage.CROSSCHAIN,
-				isResponse: true
+				response: result
 			};
-			setConversation((pre) => [...pre, Math.random() > 0.5 ? response : response1]);
-		}, 1000);
+			setConversation((pre) => [...pre, newConversation]);
+		}
+
+		// setTimeout(() => {
+		// 	const response = {
+		// 		content:
+		// 			'OK, I can launch a transfer transaction for you to help you send 1000 USDC to Alice (0x4F4aB...76e1B) on Ethereum Mainnet',
+		// 		msgType: EMessage.TRANSFER,
+		// 		result: true
+		// 	};
+		// 	const response1 = {
+		// 		content:
+		// 			'As you only have ETH on Ethereum, I will swap your ETH to 1000 USDC and send to Alice (0x19...cc63 on Avalance) cross chain',
+		// 		msgType: EMessage.CROSSCHAIN,
+		// 		isResponse: true
+		// 	};
+		// 	setConversation((pre) => [...pre, Math.random() > 0.5 ? response : response1]);
+		// }, 1000);
 	};
 	const handleCommandCb = (command: string) => {
 		const commandMsg = { content: command };
