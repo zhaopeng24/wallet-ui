@@ -1,6 +1,6 @@
-import { Global } from '../Global';
+import { Global } from "../Global";
 
-const commonConfig = require('@/config/common.json');
+const commonConfig = require("@/config/common.json");
 
 export interface Asset {
   name: string;
@@ -35,31 +35,33 @@ export class Config {
 
   // 启动默认网络
   public static DEFAULT_NETWORK = "Polygon";
-  public static TOKEN_PAYMASTER_TOKEN_NAME = 'USDC';
-  public static LOCAL_STORAGE_EOA_KEY = 'smarter-wallet-eoa-key-v01';
-  public static LOCAL_STORAGE_MPC_KEY1 = 'smarter-wallet-mpc-key1-v01';
-  public static LOCAL_STORAGE_MPC_KEY3_HASH = 'smarter-wallet-mpc-key3-hash-v01';
+  public static TOKEN_PAYMASTER_TOKEN_NAME = "USDC";
+  public static LOCAL_STORAGE_EOA_KEY = "smarter-wallet-eoa-key-v01";
+  public static LOCAL_STORAGE_MPC_KEY1 = "smarter-wallet-mpc-key1-v01";
+  public static LOCAL_STORAGE_MPC_KEY3_HASH =
+    "smarter-wallet-mpc-key3-hash-v01";
 
   public static CURRENT_CHAIN_NAME = this.DEFAULT_NETWORK;
 
   public static async init(rawData: string) {
     const commonConfigJSON = JSON.parse(JSON.stringify(commonConfig));
     this.MPC_WASM_URL = commonConfigJSON.mpc.wasm.url;
-    this.DECENTRALIZE_STORAGE_API = commonConfigJSON.storage.decentralize_storage_api;
+    this.DECENTRALIZE_STORAGE_API =
+      commonConfigJSON.storage.decentralize_storage_api;
     await this.flush(rawData);
   }
 
   // 切换网络时调用
   private static async flush(rawData: string) {
-    console.log('config flush. Data:', rawData);
-
     const configData = JSON.parse(rawData);
-    this.ADDRESS_SIMPLE_ACCOUNT_FACTORY = configData.address.address_simple_account_factory;
+    this.ADDRESS_SIMPLE_ACCOUNT_FACTORY =
+      configData.address.address_simple_account_factory;
     this.ADDRESS_TOKEN_PAYMASTER = configData.address.address_token_paymaster;
     this.ADDRESS_ENTRYPOINT = configData.address.address_entrypoint;
     this.ADDRESS_AUTO_TRADING = configData.address.address_auto_trading;
     this.MAIN_TOKEN_TX_LIST_API = configData.api.matic_tx_list_api;
-    this.MAIN_TOKEN_TX_LIST_INTERNAL_API = configData.api.matic_tx_list_internal_api;
+    this.MAIN_TOKEN_TX_LIST_INTERNAL_API =
+      configData.api.matic_tx_list_internal_api;
     this.ERC20_TX_FROM_LIST_API = configData.api.erc20_tx_from_list_api;
     this.ERC20_TX_TO_LIST_API = configData.api.erc20_tx_to_list_api;
     this.BUNDLER_API = configData.api.bundler_api;

@@ -78,7 +78,7 @@ const LoginPage = () => {
       //   await Global.changeAccountType(2);
       const mpcAccount = Global.account as MPCManageAccount;
       // setLoading(true, "Decrpty local MPC key...");
-
+      debugger;
       const mpcPassword = password.trim();
       const mpcKey1 = getLocalMPCKey(mpcAccount, mpcPassword);
       if (mpcKey1 == null || mpcKey1 === "") {
@@ -97,7 +97,6 @@ const LoginPage = () => {
       Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
 
       // setLoading(true, "Jump to home page");
-      console.log("result.body result:", result.body["result"]);
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
       router.push("/dashboard");
@@ -108,7 +107,6 @@ const LoginPage = () => {
   };
 
   async function handleSendCode() {
-    console.log(email);
     if (!email) {
       // 邮箱不能为空
       toast(
