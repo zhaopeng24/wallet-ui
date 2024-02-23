@@ -22,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("loading...");
 
+  // todo 把loading状态放到zustand里面
   const setLoadingFn = useCallback((loading: boolean, text?: string) => {
     setLoading(loading);
     if (loading) {
@@ -32,11 +33,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       setText("Loading...");
     }
   }, []);
+
   useEffect(() => {
-    console.log("调用了一次useEffect");
     function init() {
       Config.init(JSON.stringify(polygonConfig)).then(async () => {
-        //MPCManageAccount.init();
         await Global.changeAccountType(2);
       });
     }

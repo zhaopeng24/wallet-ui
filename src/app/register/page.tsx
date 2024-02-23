@@ -8,13 +8,13 @@ import { LoadingContext } from "@/app/providers";
 import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
 import { SendEmailCode } from "@/server/register";
-import toast, { Toaster } from "react-hot-toast";
 import { Global } from "@/server/Global";
 import { Register as makeRegister } from "@/server/register";
 import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
 import { parseNumbers } from "@/server/js/mpc_wasm_utils";
 import { useRouter } from "next/navigation";
+import Toast from "@/utils/toast";
 
 const CountdownTime = 60;
 
@@ -34,45 +34,22 @@ const Register = () => {
 
   function handleRegisterBtnClick() {
     if (Global.account?.existLocalStorageKey()) {
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">
-            You have already signed up please login directly.
-          </span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast("You have already signed up please login directly.");
       return;
     }
-    // 检查值
     if (password !== surePassword) {
-      // 两次密码不一致
+      Toast("The two passwords are inconsistent");
       return;
     }
     if (!email) {
-      // 邮箱不能为空
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">
-            Please enter your email address
-          </span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast("Please enter your email address");
       return;
     }
     if (!code) {
-      // 验证码不能为空
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">Please enter code</span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast("Please enter code");
       return;
     }
     signUp();
-    // 分步骤调用接口
   }
 
   const signUp = async () => {
@@ -82,13 +59,7 @@ const Register = () => {
     const _email = email.trim();
     const res = await makeRegister(_email, code);
     if (res.body["code"] != 200) {
-      // message.error("Register error. Details: " + res.body["message"])
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">{res.body["message"]}</span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast(res.body["message"] || "Register error");
       setLoading(false);
       return;
     }
@@ -98,7 +69,7 @@ const Register = () => {
     const mpc = Global.account as MPCManageAccount;
     const keys = await mpc.generateKeys();
     if (keys == null || keys === "") {
-      // message.error("Generate MPC keys error");
+      Toast("Generate MPC keys error");
       setLoading(false);
       return;
     }
@@ -108,7 +79,7 @@ const Register = () => {
     Global.tempLocalPassword = _password;
     // 3.key1保存到本地
     if (!mpc.saveKey2LocalStorage(key1, Global.tempLocalPassword)) {
-      // message.error("Save key to local storage error")
+      Toast("Save key to local storage error");
       setLoading(false);
       return;
     }
@@ -118,7 +89,7 @@ const Register = () => {
       Global.tempLocalPassword
     );
     if (save2IPFS.status != 200) {
-      //message.error("Save key to decentralize storage error")
+      Toast("Save key to decentralize storage error");
       setLoading(false);
       return;
     }
@@ -128,16 +99,13 @@ const Register = () => {
       save2IPFS.body["result"]["result"]
     );
     if (save2Server.body["code"] != 200) {
-      // message.error("Save MPC key to wallet server error. Details: " + save2Server.body["message"])
+      Toast(
+        "Save MPC key to wallet server error. Details: " +
+          save2Server.body["message"]
+      );
       setLoading(false);
       return;
     }
-    // if (!mpc.saveKeyThirdHash2LocalStorage(save2IPFS.body["result"]["result"], Global.tempLocalPassword)) {
-    //   // message.error("Save third key hash to local storage error")
-    //   // messageApi.destroy();
-    //   return;
-    // }
-
     // 6.计算MPC地址
     setLoading(true, "calculate MPC address...");
     // const address = await mpc.getOwnerAddress()
@@ -154,21 +122,14 @@ const Register = () => {
     // await TxUtils.waitForTransactionUntilOnChain(Global.account.ethersProvider, tx.body["result"]);
     setLoading(false);
     // 8.跳转到创建成功页面
-    router.replace("register-success");
+    router.replace("/register/success");
     // todo 创建成功
   };
 
   async function handleSendCode() {
     if (!email) {
       // 邮箱不能为空
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">
-            Please enter your email address
-          </span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast("Please enter your email address");
       return;
     }
     if (email.match(EmailPattern)) {
@@ -192,7 +153,7 @@ const Register = () => {
         }, 1000);
       }
     } else {
-      // 邮箱格式不正确
+      Toast("Please enter the correct email address");
       return;
     }
   }
@@ -267,7 +228,6 @@ const Register = () => {
           Register
         </Button>
       </div>
-      <Toaster />
     </div>
   );
 };

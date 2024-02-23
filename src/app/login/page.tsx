@@ -8,7 +8,7 @@ import { LoadingContext } from "@/app/providers";
 import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
 import { SendEmailCode } from "@/server/register";
-import toast, { Toaster } from "react-hot-toast";
+
 import { Global } from "@/server/Global";
 import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
@@ -16,6 +16,7 @@ import Link from "next/link";
 import { AccountInterface } from "@/server/account/AccountInterface";
 import { Login } from "@/server/login";
 import { useRouter } from "next/navigation";
+import Toast from "@/utils/toast";
 
 const CountdownTime = 60;
 
@@ -31,54 +32,34 @@ const LoginPage = () => {
   const timer = useRef<any>();
 
   function handleLoginBtnClick() {
-    // 检查值
     if (!email) {
-      // 邮箱不能为空
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">
-            Please enter your email address
-          </span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast("Please enter your email address");
       return;
     }
     if (!code) {
-      // 验证码不能为空
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">Please enter code</span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast("Please enter code");
       return;
     }
     mpcLogin();
-    // 分步骤调用接口
   }
 
   const getLocalMPCKey = (mpcAccount: AccountInterface, mpcPassword: any) => {
     try {
       const mpcKey1 = mpcAccount.getKeyFromLocalStorage(mpcPassword);
       if (mpcKey1 == null || mpcKey1 === "") {
-        // message.error('Local password incorrect');
+        Toast("Local password incorrect");
         return "";
       }
       return mpcKey1;
     } catch (e) {
-      //   message.error('Local password incorrect');
       return "";
     }
   };
 
   const mpcLogin = async () => {
     try {
-      // setLoading(true, "login...");
-      //   await Global.changeAccountType(2);
       const mpcAccount = Global.account as MPCManageAccount;
-      // setLoading(true, "Decrpty local MPC key...");
-      debugger;
+      setLoading(true, "Decrpty local MPC key...");
       const mpcPassword = password.trim();
       const mpcKey1 = getLocalMPCKey(mpcAccount, mpcPassword);
       if (mpcKey1 == null || mpcKey1 === "") {
@@ -86,19 +67,21 @@ const LoginPage = () => {
         return;
       }
 
-      // setLoading(true, "Login wallet server...");
+      setLoading(true, "Login wallet server...");
       const result = await Login(email, code);
       if (result.body["code"] != 200) {
-        // message.error(result.body['message']);
+        Toast(result.body["message"] || "Login failed");
         return;
       }
-      // setLoading(true, "Init local MPC key...");
+      setLoading(true, "Init local MPC key...");
       Global.authorization = result.body["result"];
       Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
 
-      // setLoading(true, "Jump to home page");
+      setLoading(true, "Jump to home page");
+      // todo 保存一些必要的值
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
+
       router.push("/dashboard");
     } catch (error: any) {
       //   message.error((error as Error).message);
@@ -108,15 +91,7 @@ const LoginPage = () => {
 
   async function handleSendCode() {
     if (!email) {
-      // 邮箱不能为空
-      toast(
-        (t) => (
-          <span className="text-xs text-[#1C2F04]">
-            Please enter your email address
-          </span>
-        ),
-        { style: { borderRadius: "10px", marginTop: "20px" }, duration: 2000 }
-      );
+      Toast("Please enter your email address");
       return;
     }
     if (email.match(EmailPattern)) {
@@ -140,7 +115,7 @@ const LoginPage = () => {
         }, 1000);
       }
     } else {
-      // 邮箱格式不正确
+      Toast("Please enter the correct email address");
       return;
     }
   }
@@ -213,7 +188,6 @@ const LoginPage = () => {
           Login
         </Button>
       </div>
-      <Toaster />
     </div>
   );
 };
