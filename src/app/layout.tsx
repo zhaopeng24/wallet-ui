@@ -3,8 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { classNames } from "@/utils/classNames";
-import { Menu } from "@/components/Menu";
-import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
   return (
-    <html lang="en" className="dark min-h-[900px]">
+    <html lang="en" className="dark">
       <body
         className={classNames(
           inter.className,
@@ -29,6 +28,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       >
         <div className={"sm:w-[400px] sm:min-h-[900px] h-full rounded-lg"}>
           <Providers>{children}</Providers>
+          <Toaster />
         </div>
       </body>
     </html>
