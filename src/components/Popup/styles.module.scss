@@ -1,0 +1,61 @@
+.popup {
+  position: fixed;
+  display: none;
+  transition: transform var(--mask-animation-duration) ease;
+  z-index: calc(var(--mask-z-index) + 10);
+  width: 100%;
+  border-radius: 8px 8px 0px 0px;
+  padding-top: 12px;
+  padding-bottom: 22px;
+  // background: #08080C8A;
+  // background: #08080C;
+  background: linear-gradient(to bottom, #08080C, #08080C8A);
+}
+
+.popup-left-show {
+  transform: translate(0, 0px);
+}
+.popup-left-hide {
+  transform: translate(-100%, 0px);
+}
+.popup-right-show {
+  transform: translate(0, 0px);
+}
+.popup-right-hide {
+  transform: translate(100%, 0px);
+}
+
+.popup-top-show {
+  transform: translate(0px, 0);
+}
+
+.popup-top-hide {
+  transform: translate(0px, -100%);
+}
+
+.popup-bottom-show {
+  transform: translate(0px, 0px);
+}
+
+.popup-bottom-hide {
+  transform: translate(0px, 100%);
+}
+
+.popup-top {
+  top: 0;
+  left: auto;
+}
+.popup-left {
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.popup-right {
+  height: 100%;
+  top: 0;
+  right: 0;
+}
+.popup-bottom {
+  bottom: 0;
+  left: auto;
+}

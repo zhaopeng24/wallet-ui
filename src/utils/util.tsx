@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export const ETH = (value: string) => {
   return ethers.utils.parseEther(value);
@@ -333,3 +333,5 @@ export function copyToClipboard(value: string) {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const noop: () => void = () => {};
