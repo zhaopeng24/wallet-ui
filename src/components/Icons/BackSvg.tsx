@@ -10,9 +10,9 @@ export const BackSvg = () => {
       <path
         d="M14 8L10 12L14 16"
         stroke="white"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

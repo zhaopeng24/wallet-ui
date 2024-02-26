@@ -1,0 +1,84 @@
+.bridge {
+  padding: 0 32px;
+  .title {
+    height: 55px;
+    line-height: 55px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .buttons {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.bridge-list {
+  display: flex;
+  flex-direction: row;
+  padding: 12px 16px;
+  .left {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+    .name {
+      height: 60px;
+      font-size: 14px;
+      line-height: 60px;
+      color: #819df5;
+      font-weight: 700;
+    }
+    .fee {
+      height: 24px;
+      line-height: 24px;
+      font-size: 12px;
+    }
+    .time {
+      height: 24px;
+      line-height: 24px;
+      font-size: 12px;
+    }
+  }
+  .right {
+    flex:1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
+.bridge-item {
+  padding: 12px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 160px;
+  width: 100px;
+  .name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 60px;
+    font-size: 12px;
+    color: #819df5;
+    font-weight: 700;
+  }
+  .fee {
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .time {
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
+
+.selected{
+  background: #819DF580;
+  border-radius: 8px;
+}
