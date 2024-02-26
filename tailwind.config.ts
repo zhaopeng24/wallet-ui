@@ -11,9 +11,9 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      padding: "2rem",
       screens: {
-        '2xl': '500px',
+        "2xl": "500px",
       },
     },
     extend: {
@@ -23,9 +23,17 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
-        customBlue: '#23377C',
-        royalBlue:'#425EB1'
+        customBlue: "#23377C",
+        royalBlue: "#425EB1",
       },
+      // screens: {
+      //   'md-max': {
+      //     raw: '(max-width: 768px)',
+      //   },
+      //   'lg-max': {
+      //     raw: '(max-width: 1024px)',
+      //   },
+      // },
     },
   },
   darkMode: "class",
