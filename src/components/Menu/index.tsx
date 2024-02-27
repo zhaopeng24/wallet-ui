@@ -13,7 +13,7 @@ export const Menu = ({ menu = "setting" }) => {
     setMenu(menu);
   }, [menu]);
   return (
-    <div className="fixed bottom-0 w-[400px] border-t-[0.5px] border-solid	border-[rgba(255,255,255,0.2)]">
+    <div className="fixed bottom-0 border-t-[0.5px] border-solid	border-[rgba(255,255,255,0.2)] w-full pb-4">
       <div className="flex flex-row justify-around">
         {menus.map((item) => (
           <div
