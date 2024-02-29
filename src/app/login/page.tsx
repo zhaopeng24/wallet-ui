@@ -81,7 +81,7 @@ const LoginPage = () => {
       // todo 保存一些必要的值
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
-
+      setLoading(false);
       router.push("/dashboard");
     } catch (error: any) {
       //   message.error((error as Error).message);

@@ -69,7 +69,7 @@ export class MPCManageAccount
       this.ethersProvider
     );
     this.contractWalletAddress = await this.calcContractWalletAddress();
-    localStorage.setItem("address", this.contractWalletAddress);
+    localStorage.setItem("walletAddress", this.contractWalletAddress);
     console.log("mpc.contractWalletAddress", this.contractWalletAddress);
   }
 
