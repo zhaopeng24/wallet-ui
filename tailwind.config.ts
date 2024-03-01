@@ -25,6 +25,8 @@ const config: Config = {
       colors: {
         customBlue: "#23377C",
         royalBlue: "#425EB1",
+        purpleBlue:"#819DF580",
+        mainPurpleBlue:"#819DF5"
       },
       // screens: {
       //   'md-max': {
