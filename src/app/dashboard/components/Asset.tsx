@@ -13,7 +13,7 @@ export default function Asset({ balance, PastDay, InTotal }: AssetProps) {
     return false;
   };
   return (
-    <div className="mt-8 ml-4 w-full text-sm">
+    <div className="mt-8 ml-4 text-sm">
       <div className="flex">
         <div className="text-2xl font-bold">
           ${balance ? balance.slice(0, 6) : "0"}

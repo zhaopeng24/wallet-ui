@@ -1,24 +1,26 @@
 "use client";
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import MainLayout from "@/components/basic/MainLayout";
 import Header from "./components/Header";
 import Asset from "./components/Asset";
-import { getAssetBalance, getV1Config } from "@/api/hold";
+import { getAssetBalance } from "@/api/hold";
 import { useClientFetchData } from "@/lib/hooks/useClientFetchData";
 import { Response, AssetBalance } from "@/api/types/hold";
 import Holdings from "./components/Holdings";
 import Transactions from "./components/Transactions";
-import { LoadingContext } from "../providers";
 import { cn } from "@/utils/util";
+import { useChains } from "@/store/useChains";
 
 export default function DashBoardLayout() {
-  const { setLoading } = useContext(LoadingContext);
+  const { currentChain, chains } = useChains();
+
   const address = useMemo(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("walletAddress")!;
     }
     return "";
   }, []);
+
   const [currentChainId, setCurrentChainId] = useState<number>(1);
 
   const {
@@ -36,10 +38,7 @@ export default function DashBoardLayout() {
     chainId: currentChainId,
     address: address ? address : "",
   });
-  const {
-    isLoading: isLoadingConfig,
-    result: configResult = { result: { chain: [] } },
-  } = useClientFetchData<any>(getV1Config, {});
+
   const [isHoldings, setIsHoldings] = useState<boolean>(true);
 
   return (
@@ -98,7 +97,7 @@ export default function DashBoardLayout() {
         {isHoldings ? (
           <Holdings
             tokenBalance={result?.result.tokenBalance || []}
-            chains={configResult?.result.chain || []}
+            chains={chains}
           />
         ) : (
           <Transactions chainId={currentChainId} address={address} />

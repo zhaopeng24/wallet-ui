@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import ChainDropDown from "./ChainDropdown";
 
 interface HeaderProps {
@@ -9,11 +8,7 @@ interface HeaderProps {
   setCurrentChainId: (params: any) => void;
 }
 
-export default function Header({
-  address,
-  setChainId,
-  setCurrentChainId,
-}: HeaderProps) {
+export default function Header({ address }: HeaderProps) {
   const formatAddress = (s: string) => {
     if (s) {
       const head = s.slice(0, 7);
@@ -69,11 +64,7 @@ export default function Header({
           {formatAddress(address)}
         </div>
       </div>
-      <ChainDropDown
-        setChainId={setChainId}
-        address={address}
-        setCurrentChainId={setCurrentChainId}
-      />
+      <ChainDropDown address={address} />
     </div>
   );
 }

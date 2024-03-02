@@ -1,13 +1,12 @@
 "use client";
 
+import { getPackage } from "@/api/assets";
 import FullScreenLoading from "@/components/FullScreenLoading";
 import { Global } from "@/server/Global";
 import { Config } from "@/server/config/Config";
+import { useChains } from "@/store/useChains";
 import { NextUIProvider } from "@nextui-org/react";
-import { createContext, useCallback, useEffect, useState } from "react";
-const polygonConfig = require("@/config/" +
-  Config.DEFAULT_NETWORK.toLowerCase() +
-  ".json");
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 
 interface ILoadingContextProps {
   loading: boolean;
@@ -21,6 +20,9 @@ export const LoadingContext = createContext<ILoadingContextProps>({
 export function Providers({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("loading...");
+  const [inited, setInited] = useState(false);
+
+  const { setChains } = useChains((state) => state);
 
   // todo 把loading状态放到zustand里面
   const setLoadingFn = useCallback((loading: boolean, text?: string) => {
@@ -35,10 +37,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    function init() {
-      Config.init(JSON.stringify(polygonConfig)).then(async () => {
-        await Global.changeAccountType(2);
-      });
+    async function init() {
+      console.log("layout init!!!");
+      setLoading(true);
+      setText("loading...");
+      const data = await getPackage();
+      const { chain, common } = data.body.result;
+      const { config } = common;
+      // 参数初始化 重要！
+      Config.init(config.url.mpc, config.url.storage);
+      await Global.init();
+
+      setChains(chain);
+      setLoading(false);
+      setInited(true);
     }
     init();
   }, []);
@@ -46,7 +58,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NextUIProvider className="h-full">
       <LoadingContext.Provider value={{ loading, setLoading: setLoadingFn }}>
-        {children}
+        {inited ? children : null}
         {loading ? <FullScreenLoading text={text} /> : null}
       </LoadingContext.Provider>
     </NextUIProvider>

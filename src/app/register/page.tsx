@@ -7,9 +7,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { LoadingContext } from "@/app/providers";
 import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
-import { SendEmailCode } from "@/server/register";
 import { Global } from "@/server/Global";
-import { Register as makeRegister } from "@/server/register";
+import { Register as makeRegister, SendEmailCode } from "@/api/auth";
 import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
 import { parseNumbers } from "@/server/js/mpc_wasm_utils";
@@ -50,6 +49,10 @@ const Register = () => {
       return;
     }
     signUp();
+  }
+
+  function handleLogin() {
+    router.replace("/login");
   }
 
   const signUp = async () => {
@@ -108,18 +111,8 @@ const Register = () => {
     }
     // 6.计算MPC地址
     setLoading(true, "calculate MPC address...");
-    // const address = await mpc.getOwnerAddress()
-    // let account = ethers.Wallet.createRandom();
-    // await Global.account.initAccount(account.privateKey);
-    // Global.account.isLoggedIn = true;
-
-    // 7.根据MPC地址计算钱包地址
+    // 7.根据MPC地址计算钱包地址 todo 不用这一步
     await mpc.registerInitMpc();
-    // let params = {
-    //   "address": address
-    // }
-    // let tx = await Global.account.createSmartContractWalletAccount(params);
-    // await TxUtils.waitForTransactionUntilOnChain(Global.account.ethersProvider, tx.body["result"]);
     setLoading(false);
     // 8.跳转到创建成功页面
     router.replace("/register/success");
@@ -219,6 +212,14 @@ const Register = () => {
           By proceeding, you agree to our{" "}
           <span className="text-white font-bold">Term and Conditions</span>
         </div>
+
+        <div className="mb-4 text-center">
+          <span className="opacity-50">Existing account? </span>
+          <span onClick={handleLogin} className="text-white">
+            Log In
+          </span>
+        </div>
+
         <Button
           fullWidth
           size="lg"
