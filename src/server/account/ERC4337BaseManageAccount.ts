@@ -31,8 +31,8 @@ export class ERC4337BaseManageAccount implements AccountInterface {
   /**
    * smart contract address for saving the asset
    */
-  private _contractWalletAddress: string;
-  private _contractWalletAddressSalt: number;
+  private _contractWalletAddress: string = "";
+  private _contractWalletAddressSalt: number = 0;
 
   /**
    * if the wallet has already been created
@@ -155,16 +155,18 @@ export class ERC4337BaseManageAccount implements AccountInterface {
   async createSmartContractWalletAccount(
     params: any
   ): Promise<{ status: number; body?: any }> {
-    let api = Config.BACKEND_API + "/ca/create";
+    let api = Config.CREATEWALLET_API + "/ca/create";
     return await HttpUtils.post(api, params);
   }
 
   async calcContractWalletAddress(): Promise<string> {
-    localStorage.setItem("pk", this._ethersWallet.privateKey);
+    const addressSimpleAccountFactory = Config.ADDRESS_SIMPLE_ACCOUNT_FACTORY;
+    const ethersProvider = this.ethersProvider;
+    // localStorage.setItem("pk", this._ethersWallet.privateKey);
     let contract = new ethers.Contract(
-      Config.ADDRESS_SIMPLE_ACCOUNT_FACTORY,
+      addressSimpleAccountFactory,
       simpleAccountFactoryAbi,
-      this.ethersProvider
+      ethersProvider
     );
     try {
       const eoaAddress = await this.getOwnerAddress();
@@ -509,12 +511,13 @@ export class ERC4337BaseManageAccount implements AccountInterface {
   /**
    * transaction list API
    */
+  // todo delete
   async getMainTokenTxList(): Promise<{ status: number; body?: any }> {
     return await HttpUtils.get(
       sprintf(Config.MAIN_TOKEN_TX_LIST_API, this.contractWalletAddress)
     );
   }
-
+  // todo delete
   async getMainTokenInternalTxList(): Promise<{ status: number; body?: any }> {
     return await HttpUtils.get(
       sprintf(
@@ -523,7 +526,7 @@ export class ERC4337BaseManageAccount implements AccountInterface {
       )
     );
   }
-
+  // todo delete
   async getTokenTxListFromThisAddr(
     tokenContractAddress: string
   ): Promise<{ status: number; body?: any }> {
@@ -535,7 +538,7 @@ export class ERC4337BaseManageAccount implements AccountInterface {
       )
     );
   }
-
+  // todo delete
   async getTokenTxListToThisAddr(
     tokenContractAddress: string
   ): Promise<{ status: number; body?: any }> {

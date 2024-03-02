@@ -7,14 +7,12 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { LoadingContext } from "@/app/providers";
 import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
-import { SendEmailCode } from "@/server/register";
+import { SendEmailCode, Login } from "@/api/auth";
 
 import { Global } from "@/server/Global";
 import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
-import Link from "next/link";
 import { AccountInterface } from "@/server/account/AccountInterface";
-import { Login } from "@/server/login";
 import { useRouter } from "next/navigation";
 import Toast from "@/utils/toast";
 
@@ -75,16 +73,16 @@ const LoginPage = () => {
       }
       setLoading(true, "Init local MPC key...");
       Global.authorization = result.body["result"];
-      Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
 
+      Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
       setLoading(true, "Jump to home page");
       // todo 保存一些必要的值
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
-
+      setLoading(false);
       router.push("/dashboard");
     } catch (error: any) {
-      //   message.error((error as Error).message);
+      // message.error((error as Error).message)
       return;
     }
   };
@@ -118,6 +116,10 @@ const LoginPage = () => {
       Toast("Please enter the correct email address");
       return;
     }
+  }
+
+  function handleSignup() {
+    router.replace("/register");
   }
 
   useEffect(() => {
@@ -174,10 +176,10 @@ const LoginPage = () => {
       </div>
       <div className="mt-8 p-8 text-xs">
         <div className="mb-4 text-center">
-          <span className="opacity-50">Don`t have an account? </span>{" "}
-          <Link href={"/register"}>
-            <span className="text-white">Sign Up</span>
-          </Link>{" "}
+          <span className="opacity-50">Don`t have an account? </span>
+          <span onClick={handleSignup} className="text-white">
+            Sign Up
+          </span>
         </div>
         <Button
           fullWidth

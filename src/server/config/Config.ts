@@ -1,6 +1,4 @@
-import { Global } from "../Global";
-
-const commonConfig = require("@/config/common.json");
+import { IChain } from "@/store/useChains";
 
 export interface Asset {
   name: string;
@@ -18,57 +16,43 @@ class Assets {
 export class Config {
   public static ADDRESS_SIMPLE_ACCOUNT_FACTORY: string;
   public static ADDRESS_TOKEN_PAYMASTER: string;
-  public static ADDRESS_ENTRYPOINT: string;
-  public static ADDRESS_AUTO_TRADING: string;
-  public static MAIN_TOKEN_TX_LIST_API: string;
-  public static MAIN_TOKEN_TX_LIST_INTERNAL_API: string;
-  public static ERC20_TX_FROM_LIST_API: string;
-  public static ERC20_TX_TO_LIST_API: string;
   public static BUNDLER_API: string;
   public static RPC_API: string;
   public static BACKEND_API: string;
-  public static AUTO_TRADING_API: string;
-  public static DECENTRALIZE_STORAGE_API: string;
+  public static CREATEWALLET_API: string;
   public static BLOCKCHAIN_SCAN: string;
   public static TOKENS: Assets;
-  public static MPC_WASM_URL: string;
 
-  // 启动默认网络
-  public static DEFAULT_NETWORK = "Polygon";
-  public static TOKEN_PAYMASTER_TOKEN_NAME = "USDC";
-  public static LOCAL_STORAGE_EOA_KEY = "smarter-wallet-eoa-key-v01";
+  public static DECENTRALIZE_STORAGE_API: string;
+  public static MPC_WASM_URL: string;
+  // 常量
   public static LOCAL_STORAGE_MPC_KEY1 = "smarter-wallet-mpc-key1-v01";
   public static LOCAL_STORAGE_MPC_KEY3_HASH =
     "smarter-wallet-mpc-key3-hash-v01";
+  // 启动默认网络
+  public static TOKEN_PAYMASTER_TOKEN_NAME = "USDC";
 
-  public static CURRENT_CHAIN_NAME = this.DEFAULT_NETWORK;
-
-  public static async init(rawData: string) {
-    const commonConfigJSON = JSON.parse(JSON.stringify(commonConfig));
-    this.MPC_WASM_URL = commonConfigJSON.mpc.wasm.url;
-    this.DECENTRALIZE_STORAGE_API =
-      commonConfigJSON.storage.decentralize_storage_api;
-    await this.flush(rawData);
+  // todo 这部分接口应该可以不用这样写
+  public static async init(mpcUrl: string, storageApi: string) {
+    this.MPC_WASM_URL = mpcUrl;
+    this.DECENTRALIZE_STORAGE_API = storageApi;
   }
 
   // 切换网络时调用
-  private static async flush(rawData: string) {
-    const configData = JSON.parse(rawData);
+  public static async flush(networkData: IChain) {
+    const configData = networkData;
+    // 这里尽量保留旧代码的了，因为怕修改成新的会对代码有影响；注释掉的是查无使用的
+    // todo 优化
     this.ADDRESS_SIMPLE_ACCOUNT_FACTORY =
-      configData.address.address_simple_account_factory;
-    this.ADDRESS_TOKEN_PAYMASTER = configData.address.address_token_paymaster;
-    this.ADDRESS_ENTRYPOINT = configData.address.address_entrypoint;
-    this.ADDRESS_AUTO_TRADING = configData.address.address_auto_trading;
-    this.MAIN_TOKEN_TX_LIST_API = configData.api.matic_tx_list_api;
-    this.MAIN_TOKEN_TX_LIST_INTERNAL_API =
-      configData.api.matic_tx_list_internal_api;
-    this.ERC20_TX_FROM_LIST_API = configData.api.erc20_tx_from_list_api;
-    this.ERC20_TX_TO_LIST_API = configData.api.erc20_tx_to_list_api;
-    this.BUNDLER_API = configData.api.bundler_api;
-    this.RPC_API = configData.api.rpc_api;
-    this.BACKEND_API = configData.api.backend_api;
-    this.AUTO_TRADING_API = configData.api.auto_trading_api;
-    this.BLOCKCHAIN_SCAN = configData.api.blockchain_scan;
-    this.TOKENS = configData.token;
+      configData.erc4337ContractAddress.simpleAccountFactory;
+    this.ADDRESS_TOKEN_PAYMASTER =
+      configData.erc4337ContractAddress.tokenPaymaster.swt;
+    this.BUNDLER_API = configData.bundlerApi;
+    this.RPC_API = configData.rpcApi;
+    // this.BACKEND_API = configData.createWalletApi;
+    this.CREATEWALLET_API = configData.createWalletApi;
+    this.BLOCKCHAIN_SCAN = configData.blockScanUrl;
+    // todo 要改数据格式
+    this.TOKENS = configData.tokens;
   }
 }

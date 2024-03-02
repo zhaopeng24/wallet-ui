@@ -69,38 +69,32 @@ export class MPCManageAccount
       this.ethersProvider
     );
     this.contractWalletAddress = await this.calcContractWalletAddress();
-    localStorage.setItem("address", this.contractWalletAddress);
+    localStorage.setItem("walletAddress", this.contractWalletAddress);
     console.log("mpc.contractWalletAddress", this.contractWalletAddress);
   }
 
   async initAccount(mpcKey: string) {
     this.mpcWasmInstance = await this.generateMPCWasmInstance();
-
     if (!mpcKey) {
+      this.contractWalletAddress = "";
       return;
     }
-
     console.log("mpc key:", mpcKey);
     await super.initAccount(mpcKey);
-
     this._mpcKey = mpcKey;
     this.contractWalletAddressSalt = 0;
+
+    //
     this.ethersProvider = new ethers.providers.JsonRpcProvider(Config.RPC_API);
     let account = ethers.Wallet.createRandom();
     this.ethersWallet = new ethers.Wallet(
       account.privateKey,
       this.ethersProvider
     );
-    if (mpcKey !== "") {
-      console.log("mpc not null");
-      const initP1KeyDataRes = await mpcWasmUtils.wasmInitP1KeyData(mpcKey);
-      console.log("initP1KeyData: ", initP1KeyDataRes);
-      this.contractWalletAddress = await this.calcContractWalletAddress();
-      // this.deployContractWalletIfNotExist(await this.getOwnerAddress());
-    } else {
-      console.log("mpc is null");
-      this.contractWalletAddress = null;
-    }
+    const initP1KeyDataRes = await mpcWasmUtils.wasmInitP1KeyData(mpcKey);
+    console.log("initP1KeyData: ", initP1KeyDataRes);
+    // this.contractWalletAddress = await this.calcContractWalletAddress();
+    // this.deployContractWalletIfNotExist(await this.getOwnerAddress());
     this.contractAddressExist = false;
   }
 
@@ -282,24 +276,6 @@ export class MPCManageAccount
     console.log("generateMPCWasmInstance start");
     const response = await fetch(Config.MPC_WASM_URL);
     let buffer = await response.arrayBuffer();
-    // let buffer = null;
-    // try {
-    //   // @ts-ignore
-    //   const bufferStr = (await yuxStorage.getItem('MPC_WASM')) as string;
-    //   if (bufferStr) {
-    //     buffer = str2ab(bufferStr);
-    //   } else {
-    //     console.log('no cache of MPC_WASM')
-    //   }
-    // } catch (e) {
-    // }
-
-    // if (buffer == null || buffer.byteLength === 0) {
-    //   const response = await fetch(Config.MPC_WASM_URL);
-    //   buffer = await response.arrayBuffer();
-    //   // @ts-ignore
-    //   await yuxStorage.setItem('MPC_WASM', ab2str(buffer));
-    // }
     await mpcWasmUtils.initWasm(buffer);
   }
 
@@ -394,7 +370,6 @@ export class MPCManageAccount
   }
 
   deleteKeyFromLocalStorage(): void {
-    localStorage.removeItem(Config.LOCAL_STORAGE_EOA_KEY);
     localStorage.removeItem(Config.LOCAL_STORAGE_MPC_KEY1);
     localStorage.removeItem(Config.LOCAL_STORAGE_MPC_KEY3_HASH);
   }

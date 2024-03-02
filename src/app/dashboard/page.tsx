@@ -1,131 +1,108 @@
-"use client"
-import React, { useEffect, useState } from "react"
-import MainLayout from "@/components/basic/MainLayout"
-import Header from "./components/Header"
-import Asset from "./components/Asset"
-import { getAssetBalance, getV1Config } from "@/api/hold"
-import { useClientFetchData } from "@/lib/hooks/useClientFetchData"
-import { Response, AssetBalance } from "@/api/types/hold"
-import FullScreenLoading from "@/components/FullScreenLoading"
-import { Global } from "@/server/Global"
-import { MPCManageAccount } from "@/server/account/MPCManageAccount"
-import Holdings from "./components/Holdings"
-import Transactions from "./components/Transactions"
+"use client";
+import React, { useMemo, useState } from "react";
+import MainLayout from "@/components/basic/MainLayout";
+import Header from "./components/Header";
+import Asset from "./components/Asset";
+import { getAssetBalance } from "@/api/hold";
+import { useClientFetchData } from "@/lib/hooks/useClientFetchData";
+import { Response, AssetBalance } from "@/api/types/hold";
+import Holdings from "./components/Holdings";
+import Transactions from "./components/Transactions";
+import { cn } from "@/utils/util";
+import { useChains } from "@/store/useChains";
 
 export default function DashBoardLayout() {
-  const [address, setAddress] = useState<string>()
-  const account = Global.account as MPCManageAccount;
-  const [currentChainId, setCurrentChainId] = useState<number>(1)
+  const { currentChain, chains } = useChains();
 
-  const { isLoading, result, resetFetch } = useClientFetchData<Response<AssetBalance>>(getAssetBalance, {
+  const address = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("walletAddress")!;
+    }
+    return "";
+  }, []);
+
+  const [currentChainId, setCurrentChainId] = useState<number>(1);
+
+  const {
+    isLoading,
+    result = {
+      result: {
+        sumBalanceUSD: "0",
+        inTotal: "0",
+        pastDay: "0",
+        tokenBalance: [],
+      },
+    },
+    resetFetch,
+  } = useClientFetchData<Response<AssetBalance>>(getAssetBalance, {
     chainId: currentChainId,
-    address: address ? address : ""
-  })
-  const { isLoading: isLoadingConfig, result: configResult } = useClientFetchData<any>(getV1Config, {})
-  const [isHoldings, setIsHoldings] = useState<boolean>(true)
+    address: address ? address : "",
+  });
 
-  useEffect(() => {
-    const fetchAdd = async () => {
-      const address = await account.calcContractWalletAddress()
-      console.log(`this is address ${address}`)
-      setAddress(address)
-    }
-    fetchAdd()
-    console.log(`current chain id is ${currentChainId}`)
-  }, [account, isLoading])
-
-  useEffect(() => {
-    if (!isLoadingConfig) {
-      // console.log(`this is config result ${JSON.stringify(configResult, null, 2)}`)
-    }
-  }, [isLoadingConfig, configResult])
+  const [isHoldings, setIsHoldings] = useState<boolean>(true);
 
   return (
-    <MainLayout className="">
-      {/* <div className="flex flex-col w-full justify-center items-center">
-        <Header address={address} setChainId={resetFetch} />
-        {isLoading ? <FullScreenLoading /> : ""}
-        <Asset
-          balance={isLoading ? "0" : result.result.sumBalanceUSD}
-          PastDay={isLoading ? "0" : result.result.pastDay}
-          InTotal={isLoading ? "0" : result.result.inTotal}
+    <MainLayout activeMenu="dashboard">
+      <div className="px-2">
+        <Header
+          address={address}
+          setChainId={resetFetch}
+          setCurrentChainId={setCurrentChainId}
         />
-        <div className="flex flex-row gap-x-10 mt-12 mb-8 text-lg">
+        <Asset
+          balance={isLoading ? "0" : result?.result.sumBalanceUSD}
+          PastDay={isLoading ? "0" : result.result.pastDay}
+          InTotal={isLoading ? "0" : result?.result.inTotal}
+        />
+        <div className="flex mt-8 text-base border-b-1 border-b-slate-500 border-opacity-30">
           <div
-            className={`py-3 hover:cursor-pointer ${isHoldings ? "text-white border-b-2 border-white" : "text-[#819DF580]"}`}
+            className="flex-1 text-center cursor-pointer"
             onClick={() => {
               if (!isHoldings) {
-                setIsHoldings(true)
+                setIsHoldings(true);
               }
             }}
-          >Holdings</div>
-
+          >
+            <div
+              className={cn(
+                "mx-4 p-3 relative bottom-[-1px]",
+                !isHoldings
+                  ? "text-[#819DF580] p-3"
+                  : "text-white border-b-2 border-white py-3"
+              )}
+            >
+              Holdings
+            </div>
+          </div>
           <div
-            className={`py-3 hover:cursor-pointer ${isHoldings ? "text-[#819DF580]" : "text-white border-b-2 border-white"}`}
+            className="flex-1 text-center cursor-pointer"
             onClick={() => {
               if (isHoldings) {
-                setIsHoldings(false)
+                setIsHoldings(false);
               }
             }}
-          >Transactions</div>
-        </div>
-        {isHoldings ?
-          <Holdings
-            tokenBalance={result.result.tokenBalance}
-          /> :
-          <Transactions />}
-      </div> */}
-      {address ?
-        <div className="flex flex-col w-full justify-center items-center">
-          <Header address={address} setChainId={resetFetch} setCurrentChainId={setCurrentChainId} />
-          {isLoading ? <FullScreenLoading /> : ""}
-          <Asset
-            balance={isLoading ? "0" : result.result.sumBalanceUSD}
-            PastDay={isLoading ? "0" : result.result.pastDay}
-            InTotal={isLoading ? "0" : result.result.inTotal}
-          />
-          <div className="flex flex-row gap-x-10 mt-12 mb-8 text-lg">
+          >
             <div
-              className={`py-3 hover:cursor-pointer ${isHoldings ? "text-white border-b-2 border-white" : "text-[#819DF580]"}`}
-              onClick={() => {
-                if (!isHoldings) {
-                  setIsHoldings(true)
-                }
-              }}
-            >Holdings</div>
-
-            <div
-              className={`py-3 hover:cursor-pointer ${isHoldings ? "text-[#819DF580]" : "text-white border-b-2 border-white"}`}
-              onClick={() => {
-                if (isHoldings) {
-                  setIsHoldings(false)
-                }
-              }}
-            >Transactions</div>
+              className={cn(
+                "mx-4 p-3 relative bottom-[-1px]",
+                isHoldings
+                  ? "text-[#819DF580] p-3"
+                  : "text-white border-b-2 border-white py-3"
+              )}
+            >
+              Transactions
+            </div>
           </div>
-          {/* {!isLoadingConfig ?
-            <div>
-              {isHoldings ?
-                <Holdings
-                  tokenBalance={result?.result.tokenBalance}
-                  chains={configResult.result.chain}
-                /> :
-                <Transactions />
-              }              
-            </div> : <div></div>
-          } */}
-          {!isLoadingConfig && isHoldings ?
-            <Holdings
-              tokenBalance={result?.result.tokenBalance}
-              chains={configResult.result.chain}
-            /> :
-            <Transactions
-              chainId={currentChainId}
-              address={address}
-            />}
         </div>
-        : <FullScreenLoading />}
-
+        {isHoldings ? (
+          <Holdings
+            tokenBalance={result?.result.tokenBalance || []}
+            chains={chains}
+          />
+        ) : (
+          <Transactions chainId={currentChainId} address={address} />
+        )}
+      </div>
     </MainLayout>
-  )
+  );
 }
