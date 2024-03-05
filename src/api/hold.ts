@@ -21,16 +21,6 @@ export async function getAssetBalance(
   }
 }
 
-export async function getV1Config() {
-  try {
-    const res = await fetch("https://asset-dev.web3idea.xyz/api/v1/package");
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.log("get config error");
-  }
-}
-
 export async function getTxDetail(chainId: number, address: string) {
   try {
     const dataR = {

@@ -6,6 +6,7 @@ import { Global } from "@/server/Global";
 import { Config } from "@/server/config/Config";
 import { useChains } from "@/store/useChains";
 import { NextUIProvider } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
 
 interface ILoadingContextProps {
@@ -21,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("loading...");
   const [inited, setInited] = useState(false);
+  const router = useRouter();
 
   const { setChains } = useChains((state) => state);
 
@@ -45,12 +47,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       const { chain, common } = data.body.result;
       const { config } = common;
       // 参数初始化 重要！
-      Config.init(config.url.mpc, config.url.storage);
+      Config.init(config.url.mpc.wasm, config.url.storage);
       await Global.init();
-
       setChains(chain);
       setLoading(false);
       setInited(true);
+      if (!Global.authorization) {
+        router.replace("/login");
+      }
     }
     init();
   }, []);
