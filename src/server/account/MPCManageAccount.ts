@@ -16,7 +16,8 @@ const { arrayify } = require("@ethersproject/bytes");
  */
 export class MPCManageAccount
   extends ERC4337BaseManageAccount
-  implements AccountInterface {
+  implements AccountInterface
+{
   /**
    * key for sign and get MPC address
    */
@@ -86,7 +87,7 @@ export class MPCManageAccount
     console.log("initP1KeyData: ", initP1KeyDataRes);
     const ownerAddress = await this.getOwnerAddress();
     await this.deployContractWalletIfNotExist(ownerAddress);
-    this.contractWalletAddress = await this.calcContractWalletAddress();
+    // this.contractWalletAddress = await this.calcContractWalletAddress();
   }
 
   async getOwnerAddress(): Promise<string> {
@@ -100,7 +101,9 @@ export class MPCManageAccount
     }
     // get address
     // params: p1 key, p2 id, random prim1, random prim2
-    console.log("start to get random prim(each client only needs to get it once)");
+    console.log(
+      "start to get random prim(each client only needs to get it once)"
+    );
     let primResult;
     // 从 localStorage 获取数据
     const primKey = "primResult";
@@ -159,7 +162,6 @@ export class MPCManageAccount
     console.log("Address: " + address);
     console.log("PubKey: " + pubKey);
     mpcWasmUtils.wasmInitPubKey(pubKey);
-    // console.log(`initPubKey: ${initPubKeyRes}`);
     this.mpcAddress = address;
     return address;
   }

@@ -28,10 +28,10 @@ export default function Header({ address }: HeaderProps) {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_204_4507)">
+          <g clipPath="url(#clip0_204_4507)">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M20 4H12L4 12H12L4 20H12L20 12L12 12L20 4Z"
               fill="white"
             />
@@ -50,7 +50,7 @@ export default function Header({ address }: HeaderProps) {
               gradientUnits="userSpaceOnUse"
             >
               <stop />
-              <stop offset="0.812517" stop-opacity="0" />
+              <stop offset="0.812517" stopOpacity="0" />
             </linearGradient>
             <clipPath id="clip0_204_4507">
               <rect width="24" height="24" fill="white" />

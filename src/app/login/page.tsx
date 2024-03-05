@@ -7,7 +7,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { LoadingContext } from "@/app/providers";
 import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
-import { SendEmailCode, Login } from "@/api/auth";
+import { SendEmailCode, Login, CalcWalletAddress } from "@/api/auth";
 
 import { Global } from "@/server/Global";
 import { MPCManageAccount } from "@/server/account/MPCManageAccount";
@@ -15,11 +15,18 @@ import { JSONBigInt } from "@/server/js/common_utils";
 import { AccountInterface } from "@/server/account/AccountInterface";
 import { useRouter } from "next/navigation";
 import Toast from "@/utils/toast";
+import { useChains } from "@/store/useChains";
+import { useAddress } from "@/store/useAddress";
 
 const CountdownTime = 60;
 
 const LoginPage = () => {
   const router = useRouter();
+
+  const { currentChain, chains } = useChains((state) => state);
+  const { setMpcAddress, setAddressList, setCurrentAddress } = useAddress(
+    (state) => state
+  );
   const [password, setPasswork] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -64,7 +71,6 @@ const LoginPage = () => {
         setLoading(false);
         return;
       }
-
       setLoading(true, "Login wallet server...");
       const result = await Login(email, code);
       if (result.body["code"] != 200) {
@@ -73,12 +79,19 @@ const LoginPage = () => {
       }
       setLoading(true, "Init local MPC key...");
       Global.authorization = result.body["result"];
+      await Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
 
-      Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
       setLoading(true, "Jump to home page");
-      // todo 保存一些必要的值
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
+
+      const mpc = Global.account;
+      const mpcAddress = mpc.mpcAddress;
+      setMpcAddress(mpcAddress);
+      const res = await CalcWalletAddress(mpcAddress);
+      const data = res.body.result;
+      setAddressList(data);
+      setCurrentAddress(currentChain?.ID!);
       setLoading(false);
       router.push("/dashboard");
     } catch (error: any) {

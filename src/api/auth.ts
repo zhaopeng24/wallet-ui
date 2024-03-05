@@ -22,3 +22,10 @@ export function SendEmailCode(email: string) {
     email: email,
   });
 }
+
+// 给邮箱发送验证码
+export function CalcWalletAddress(ownerAddress: string) {
+  return HttpUtils.post(`${HOST}/api/v1/ca/calc`, {
+    ownerAddress,
+  });
+}

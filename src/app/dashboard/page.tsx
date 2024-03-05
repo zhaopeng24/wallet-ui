@@ -1,58 +1,70 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import MainLayout from "@/components/basic/MainLayout";
 import Header from "./components/Header";
 import Asset from "./components/Asset";
-import { getAssetBalance } from "@/api/hold";
 import { useClientFetchData } from "@/lib/hooks/useClientFetchData";
 import { Response, AssetBalance } from "@/api/types/hold";
 import Holdings from "./components/Holdings";
 import Transactions from "./components/Transactions";
 import { cn } from "@/utils/util";
-import { useChains } from "@/store/useChains";
+import { IBalance, useChains } from "@/store/useChains";
+import { useAddress } from "@/store/useAddress";
+import { LoadingContext } from "../providers";
+import { getBalance } from "@/api/assets";
 
 export default function DashBoardLayout() {
-  const { currentChain, chains } = useChains();
+  const { currentChain, chains, setBalances, currentBalance } = useChains();
+  const { currentAddress, addressList } = useAddress();
+  const { setLoading } = useContext(LoadingContext);
 
-  const address = useMemo(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("walletAddress")!;
-    }
-    return "";
-  }, []);
+  console.log(currentChain, currentAddress, currentBalance);
 
-  const [currentChainId, setCurrentChainId] = useState<number>(1);
-
-  const {
-    isLoading,
-    result = {
-      result: {
-        sumBalanceUSD: "0",
-        inTotal: "0",
-        pastDay: "0",
-        tokenBalance: [],
-      },
-    },
-    resetFetch,
-  } = useClientFetchData<Response<AssetBalance>>(getAssetBalance, {
-    chainId: currentChainId,
-    address: address ? address : "",
-  });
+  function setCurrentChainId() {}
+  function resetFetch() {}
 
   const [isHoldings, setIsHoldings] = useState<boolean>(true);
+
+  async function getChainBalance(chainId: number, address: string) {
+    const res = await getBalance(chainId, address);
+    const data = res.body.result as IBalance;
+    return data;
+  }
+  useEffect(() => {
+    async function init() {
+      // todo 获取每个链的余额
+      const arr = [];
+      setLoading(true);
+      for (let i = 0; i < chains.length; i++) {
+        const chain = chains[i];
+        const address = addressList.find(
+          (item) => item.chainId === chain.ID
+        )?.walletAddress;
+        if (!address) {
+          continue;
+        }
+        const balance = await getChainBalance(chains[i].ID, address);
+        arr.push(balance);
+        console.log(balance);
+      }
+      setBalances(arr);
+      setLoading(false);
+    }
+    init();
+  }, []);
 
   return (
     <MainLayout activeMenu="dashboard">
       <div className="px-2">
         <Header
-          address={address}
+          address={currentAddress!}
           setChainId={resetFetch}
           setCurrentChainId={setCurrentChainId}
         />
         <Asset
-          balance={isLoading ? "0" : result?.result.sumBalanceUSD}
-          PastDay={isLoading ? "0" : result.result.pastDay}
-          InTotal={isLoading ? "0" : result?.result.inTotal}
+          balance={currentBalance?.sumBalanceUSD || "0"}
+          PastDay={currentBalance?.pastDay || "0"}
+          InTotal={currentBalance?.inTotal || "0"}
         />
         <div className="flex mt-8 text-base border-b-1 border-b-slate-500 border-opacity-30">
           <div
@@ -96,11 +108,11 @@ export default function DashBoardLayout() {
         </div>
         {isHoldings ? (
           <Holdings
-            tokenBalance={result?.result.tokenBalance || []}
+            tokenBalance={currentBalance?.tokenBalance || []}
             chains={chains}
           />
         ) : (
-          <Transactions chainId={currentChainId} address={address} />
+          <Transactions chainId={currentChain?.ID} address={currentAddress} />
         )}
       </div>
     </MainLayout>

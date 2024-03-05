@@ -35,23 +35,41 @@ export interface IChain {
   rpcApi: string;
 }
 
+interface ITokenBalance {
+  amount: string;
+  chainId: number;
+  owner: string;
+  tokenId: number;
+  usdValue: string;
+}
+
+export interface IBalance {
+  chainName: string;
+  inTotal: string;
+  owner: string;
+  pastDay: string;
+  sumBalanceUSD: string;
+  NativeBalance: ITokenBalance;
+  tokenBalance: ITokenBalance[];
+}
+
 interface IStore {
-  address: string;
   chains: IChain[];
   setChains: (data: IChain[]) => void;
   currentChain: IChain | null;
   setCurrentChain: (id: number) => void;
+  balances: IBalance[];
+  setBalances: (balances: IBalance[]) => void;
+  currentBalance: IBalance | null;
 }
 
 export const useChains = create<IStore>((set) => ({
-  address: "",
   chains: [],
   setChains: (data) => {
     set((store) => {
       // 把第一个设置为当前链
       const first = data[0];
       Config.flush(first);
-      // todo 遍历每个chain生成地址map
       return {
         chains: data,
         currentChain: data[0],
@@ -66,4 +84,16 @@ export const useChains = create<IStore>((set) => ({
       };
     });
   },
+  balances: [],
+  setBalances: (balances) => {
+    set((store) => {
+      return {
+        balances: balances,
+        currentBalance: balances.find(
+          (item) => item.chainName === store.currentChain?.name
+        ),
+      };
+    });
+  },
+  currentBalance: null,
 }));
