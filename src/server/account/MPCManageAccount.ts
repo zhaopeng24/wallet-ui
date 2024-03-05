@@ -140,7 +140,6 @@ export class MPCManageAccount
       prim1,
       prim2
     );
-    debugger;
     // console.log("Generate address Request Message: ", addressGenMessage);
     let addressGenMessageJson = JSONBigInt.parse(addressGenMessage);
     console.log("addressGenMessage:", addressGenMessageJson["data"]);

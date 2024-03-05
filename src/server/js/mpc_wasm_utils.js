@@ -20,7 +20,6 @@ export async function wasmInitP1KeyData(key) {
 
 export async function wasmKeyGenRequestMessage(partnerDataId, prime1, prime2) {
   console.log("start run keyGenRequestMessage...");
-  debugger;
   return keyGenRequestMessage(partnerDataId, prime1, prime2);
 }
 

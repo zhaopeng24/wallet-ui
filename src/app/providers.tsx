@@ -57,7 +57,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
             erc4337ContractAddress.simpleAccountFactory
           );
           console.log(address);
-          debugger;
           addressMap.set(c.ID, address);
         }
       }

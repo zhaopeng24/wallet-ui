@@ -170,7 +170,6 @@ export class ERC4337BaseManageAccount implements AccountInterface {
       simpleAccountFactoryAbi,
       ethersProvider
     );
-    debugger;
     try {
       const eoaAddress = await this.getOwnerAddress();
       return await contract.getAddress(
