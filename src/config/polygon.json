@@ -6,7 +6,7 @@
   },
   "api": {
     "blockchain_scan": "https://polygonscan.com/tx/",
-    "backend_api": "https://auth-dev.web3idea.xyz/mumbai/api/v1",
+    "backend_api": "https://auth-dev.web3idea.xyz/api/v1",
     "auto_trading_api": "https://smarter-api-at.web3idea.xyz",
     "rpc_api": "https://polygon-rpc.web3idea.xyz",
     "bundler_api": "https://smarter-api-polygon.web3idea.xyz/bundler/",
