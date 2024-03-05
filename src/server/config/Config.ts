@@ -34,7 +34,9 @@ export class Config {
 
   // todo 这部分接口应该可以不用这样写
   public static async init(mpcUrl: string, storageApi: string) {
-    this.MPC_WASM_URL = mpcUrl;
+    this.MPC_WASM_URL =
+      "https://decentralized-storage-01.web3idea.xyz/package/mpc/wasm/v0_2/mpc.wasm";
+    // this.MPC_WASM_URL = mpcUrl;
     this.DECENTRALIZE_STORAGE_API = storageApi;
   }
 
@@ -49,7 +51,7 @@ export class Config {
       configData.erc4337ContractAddress.tokenPaymaster.swt;
     this.BUNDLER_API = configData.bundlerApi;
     this.RPC_API = configData.rpcApi;
-    // this.BACKEND_API = configData.createWalletApi;
+    this.BACKEND_API = "https://auth-dev.web3idea.xyz/api/v1";
     this.CREATEWALLET_API = configData.createWalletApi;
     this.BLOCKCHAIN_SCAN = configData.blockScanUrl;
     // todo 要改数据格式

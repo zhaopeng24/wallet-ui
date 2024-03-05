@@ -74,6 +74,7 @@ export class MPCManageAccount
   }
 
   async initAccount(mpcKey: string) {
+    console.log("initAccount");
     this.mpcWasmInstance = await this.generateMPCWasmInstance();
     if (!mpcKey) {
       this.contractWalletAddress = "";
@@ -83,33 +84,33 @@ export class MPCManageAccount
     await super.initAccount(mpcKey);
     this._mpcKey = mpcKey;
     this.contractWalletAddressSalt = 0;
-
-    //
-    this.ethersProvider = new ethers.providers.JsonRpcProvider(Config.RPC_API);
-    let account = ethers.Wallet.createRandom();
-    this.ethersWallet = new ethers.Wallet(
-      account.privateKey,
-      this.ethersProvider
-    );
     const initP1KeyDataRes = await mpcWasmUtils.wasmInitP1KeyData(mpcKey);
     console.log("initP1KeyData: ", initP1KeyDataRes);
-    // this.contractWalletAddress = await this.calcContractWalletAddress();
     // this.deployContractWalletIfNotExist(await this.getOwnerAddress());
-    this.contractAddressExist = false;
+
+    // 这个估计不需要了
+    // this.contractAddressExist = false;
+    // this.ethersProvider = new ethers.providers.JsonRpcProvider(Config.RPC_API);
+    // let account = ethers.Wallet.createRandom();
+    // this.ethersWallet = new ethers.Wallet(
+    //   account.privateKey,
+    //   this.ethersProvider
+    // );
+    // this.contractWalletAddress = await this.calcContractWalletAddress();
   }
 
   async getOwnerAddress(): Promise<string> {
-    if (Global.authorization == null || Global.authorization === "") {
-      console.log("have not login wallet server");
-      return null;
-    }
+    // todo 暂时去掉
+    // if (Global.authorization == null || Global.authorization === "") {
+    //   console.log("have not login wallet server");
+    //   return null;
+    // }
     if (this.mpcAddress != null && this.mpcAddress !== "") {
       return this.mpcAddress;
     }
     // get address
     // params: p1 key, p2 id, random prim1, random prim2
     console.log("start to get address");
-
     console.log(
       "start to get random prim(each client only needs to get it once)"
     );
@@ -139,6 +140,7 @@ export class MPCManageAccount
       prim1,
       prim2
     );
+    debugger;
     // console.log("Generate address Request Message: ", addressGenMessage);
     let addressGenMessageJson = JSONBigInt.parse(addressGenMessage);
     console.log("addressGenMessage:", addressGenMessageJson["data"]);

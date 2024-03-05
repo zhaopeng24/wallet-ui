@@ -45,9 +45,22 @@ export function Providers({ children }: { children: React.ReactNode }) {
       const { chain, common } = data.body.result;
       const { config } = common;
       // 参数初始化 重要！
-      Config.init(config.url.mpc, config.url.storage);
+      Config.init(config.url.mpc.wasm, config.url.storage);
       await Global.init();
-
+      const addressMap = new Map<number, string>();
+      const mpc = Global.account;
+      for (const c of chain) {
+        const { rpcApi, erc4337ContractAddress } = c;
+        if (erc4337ContractAddress) {
+          const address = await mpc.makeContractWalletAddress(
+            rpcApi,
+            erc4337ContractAddress.simpleAccountFactory
+          );
+          console.log(address);
+          debugger;
+          addressMap.set(c.ID, address);
+        }
+      }
       setChains(chain);
       setLoading(false);
       setInited(true);

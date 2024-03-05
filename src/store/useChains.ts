@@ -1,3 +1,4 @@
+import { Global } from "@/server/Global";
 import { Config } from "@/server/config/Config";
 import { create } from "zustand";
 
@@ -51,16 +52,6 @@ export const useChains = create<IStore>((set) => ({
       const first = data[0];
       Config.flush(first);
       // todo 遍历每个chain生成地址map
-      // const addressMap = new Map<number, string>();
-      // data.forEach((chain) => {
-      //   const address = chain.tokens.find(
-      //     (token) => token.name === Config.TOKEN_PAYMASTER_TOKEN_NAME
-      //   )?.address;
-      //   if (address) {
-      //     addressMap.set(chain.ID, address);
-      //   }
-      // });
-
       return {
         chains: data,
         currentChain: data[0],
