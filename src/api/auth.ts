@@ -1,6 +1,6 @@
 import { HttpUtils } from "@/server/utils/HttpUtils";
 
-const HOST = "https://auth-dev.web3idea.xyz";
+const HOST = "https://auth-dev.web3idea.xyz/mumbai";
 
 export function Login(email: string, code: string) {
   return HttpUtils.post(`${HOST}/api/v1/sw/user/login`, {

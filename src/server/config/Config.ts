@@ -51,7 +51,7 @@ export class Config {
       configData.erc4337ContractAddress.tokenPaymaster.swt;
     this.BUNDLER_API = configData.bundlerApi;
     this.RPC_API = configData.rpcApi;
-    this.BACKEND_API = "https://auth-dev.web3idea.xyz/api/v1";
+    this.BACKEND_API = "https://auth-dev.web3idea.xyz/mumbai/api/v1";
     this.CREATEWALLET_API = configData.createWalletApi;
     this.BLOCKCHAIN_SCAN = configData.blockScanUrl;
     // todo 要改数据格式

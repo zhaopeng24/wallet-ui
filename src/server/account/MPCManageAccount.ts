@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import yuxStorage from "../utils/DBUtils";
 import { AccountInterface } from "./AccountInterface";
 import * as mpcWasmUtils from "../js/mpc_wasm_utils.js";
 import { JSONBigInt } from "../js/common_utils";
@@ -9,7 +8,6 @@ import { ERC4337BaseManageAccount } from "./ERC4337BaseManageAccount";
 import { hashMessage, joinSignature } from "ethers/lib/utils";
 import { CryptologyUtils } from "../utils/CryptologyUtils";
 import { Global } from "../Global";
-import { ab2str, str2ab } from "../utils/TxUtils";
 
 const { arrayify } = require("@ethersproject/bytes");
 
@@ -18,8 +16,7 @@ const { arrayify } = require("@ethersproject/bytes");
  */
 export class MPCManageAccount
   extends ERC4337BaseManageAccount
-  implements AccountInterface
-{
+  implements AccountInterface {
   /**
    * key for sign and get MPC address
    */
@@ -76,7 +73,8 @@ export class MPCManageAccount
   async initAccount(mpcKey: string) {
     console.log("initAccount");
     this.mpcWasmInstance = await this.generateMPCWasmInstance();
-    if (!mpcKey) {
+    if (mpcKey === "" || mpcKey === null) {
+      console.log("mpcKey is null");
       this.contractWalletAddress = "";
       return;
     }
@@ -86,34 +84,23 @@ export class MPCManageAccount
     this.contractWalletAddressSalt = 0;
     const initP1KeyDataRes = await mpcWasmUtils.wasmInitP1KeyData(mpcKey);
     console.log("initP1KeyData: ", initP1KeyDataRes);
-    // this.deployContractWalletIfNotExist(await this.getOwnerAddress());
-
-    // 这个估计不需要了
-    // this.contractAddressExist = false;
-    // this.ethersProvider = new ethers.providers.JsonRpcProvider(Config.RPC_API);
-    // let account = ethers.Wallet.createRandom();
-    // this.ethersWallet = new ethers.Wallet(
-    //   account.privateKey,
-    //   this.ethersProvider
-    // );
-    // this.contractWalletAddress = await this.calcContractWalletAddress();
+    const ownerAddress = await this.getOwnerAddress();
+    await this.deployContractWalletIfNotExist(ownerAddress);
+    this.contractWalletAddress = await this.calcContractWalletAddress();
   }
 
   async getOwnerAddress(): Promise<string> {
-    // todo 暂时去掉
-    // if (Global.authorization == null || Global.authorization === "") {
-    //   console.log("have not login wallet server");
-    //   return null;
-    // }
+    if (this._mpcKey == null || this._mpcKey === "") {
+      console.log("have not login wallet server");
+      return "";
+    }
+    console.log("start to get owner address");
     if (this.mpcAddress != null && this.mpcAddress !== "") {
       return this.mpcAddress;
     }
     // get address
     // params: p1 key, p2 id, random prim1, random prim2
-    console.log("start to get address");
-    console.log(
-      "start to get random prim(each client only needs to get it once)"
-    );
+    console.log("start to get random prim(each client only needs to get it once)");
     let primResult;
     // 从 localStorage 获取数据
     const primKey = "primResult";
@@ -131,10 +118,9 @@ export class MPCManageAccount
       primResult = primRequestResult.body["result"];
       localStorage.setItem(primKey, JSON.stringify(primResult));
     }
-    // console.log("primResult:", primResult);
     const prim1 = primResult["p"];
     const prim2 = primResult["q"];
-    console.log("prim1 prim2", prim1, prim2);
+    console.log("prim1 prim2", prim1, ";", prim2);
     const addressGenMessage = await mpcWasmUtils.wasmKeyGenRequestMessage(
       2,
       prim1,
