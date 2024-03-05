@@ -2,7 +2,7 @@ import { Global } from "@/server/Global";
 import { Config } from "@/server/config/Config";
 import { create } from "zustand";
 
-interface IToken {
+export interface IToken {
   tokenId: number;
   name: string;
   type: number;
@@ -35,7 +35,7 @@ export interface IChain {
   rpcApi: string;
 }
 
-interface ITokenBalance {
+export interface ITokenBalance {
   amount: string;
   chainId: number;
   owner: string;

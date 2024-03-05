@@ -11,6 +11,9 @@ export function getBalance(chainId: number, address: string) {
     address,
   });
 }
-export function getTxDetail() {
-  return HttpUtils.get(`${HOST}/api/v1/tx/list`);
+export function getTxDetail(chainId: number, address: string) {
+  return HttpUtils.post(`${HOST}/api/v1/tx/list`, {
+    chainId,
+    address,
+  });
 }
