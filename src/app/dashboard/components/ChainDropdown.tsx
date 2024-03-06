@@ -15,12 +15,8 @@ import MarkSVG from "@/components/Icons/MarkSVG";
 import DropArrow from "@/components/Icons/DropArrow";
 import { useChains } from "@/store/useChains";
 
-interface IProps {
-  address: string;
-}
-export default function ChainDropDown({ address }: IProps) {
-  const { currentChain, chains, setCurrentChain } = useChains();
-
+export default function ChainDropDown() {
+  const { currentChain, chains, setCurrentChain } = useChains((state) => state);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
@@ -42,48 +38,55 @@ export default function ChainDropDown({ address }: IProps) {
         onOpenChange={onOpenChange}
       >
         <ModalContent>
-          <ModalHeader className="flex justify-center items-center text-base">
-            Network
-          </ModalHeader>
-          <ModalBody className="px-4 pb-10">
-            <Listbox
-              items={chains}
-              aria-label="Dynamic Actions"
-              onAction={(key) => {
-                setCurrentChain(+key);
-              }}
-            >
-              {(item) => (
-                <ListboxItem key={item.ID}>
-                  <div className="flex items-center">
-                    <div className="flex-1 flex items-center">
-                      <Image
-                        src={item.icon}
-                        alt="logo"
-                        width={20}
-                        height={20}
-                        className="mr-2"
-                      />
-                      <div
-                        className={
-                          item.ID === currentChain?.ID ? " text-[#819DF5]" : ""
-                        }
-                      >
-                        {item.name}
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex justify-center items-center text-base">
+                Network
+              </ModalHeader>
+              <ModalBody className="px-4 pb-10">
+                <Listbox
+                  items={chains}
+                  aria-label="Dynamic Actions"
+                  onAction={(key) => {
+                    setCurrentChain(+key);
+                    onClose();
+                  }}
+                >
+                  {(item) => (
+                    <ListboxItem key={item.ID} className="mb-4">
+                      <div className="flex items-center">
+                        <div className="flex-1 flex items-center">
+                          <Image
+                            src={item.icon}
+                            alt="logo"
+                            width={20}
+                            height={20}
+                            className="mr-4"
+                          />
+                          <div
+                            className={
+                              item.ID === currentChain?.ID
+                                ? " text-[#819DF5]"
+                                : ""
+                            }
+                          >
+                            {item.name}
+                          </div>
+                        </div>
+                        <div
+                          className={`${
+                            item.ID === currentChain?.ID ? "" : "hidden"
+                          }`}
+                        >
+                          <MarkSVG />
+                        </div>
                       </div>
-                    </div>
-                    <div
-                      className={`${
-                        item.ID === currentChain?.ID ? "" : "hidden"
-                      }`}
-                    >
-                      <MarkSVG />
-                    </div>
-                  </div>
-                </ListboxItem>
-              )}
-            </Listbox>
-          </ModalBody>
+                    </ListboxItem>
+                  )}
+                </Listbox>
+              </ModalBody>
+            </>
+          )}
         </ModalContent>
       </Modal>
     </div>

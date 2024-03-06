@@ -22,8 +22,7 @@ const CountdownTime = 60;
 
 const LoginPage = () => {
   const router = useRouter();
-
-  const { currentChain, chains } = useChains((state) => state);
+  const { currentChain } = useChains((state) => state);
   const { setMpcAddress, setAddressList, setCurrentAddress } = useAddress(
     (state) => state
   );
@@ -64,27 +63,23 @@ const LoginPage = () => {
   const mpcLogin = async () => {
     try {
       const mpcAccount = Global.account as MPCManageAccount;
-      setLoading(true, "Decrpty local MPC key...");
+      setLoading(true, "Login...");
       const mpcPassword = password.trim();
       const mpcKey1 = getLocalMPCKey(mpcAccount, mpcPassword);
       if (mpcKey1 == null || mpcKey1 === "") {
         setLoading(false);
         return;
       }
-      setLoading(true, "Login wallet server...");
       const result = await Login(email, code);
       if (result.body["code"] != 200) {
         Toast(result.body["message"] || "Login failed");
+        setLoading(false);
         return;
       }
-      setLoading(true, "Init local MPC key...");
       Global.authorization = result.body["result"];
       await Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
-
-      setLoading(true, "Jump to home page");
       localStorage.setItem("email", email);
       Global.account.isLoggedIn = true;
-
       const mpc = Global.account;
       const mpcAddress = mpc.mpcAddress;
       setMpcAddress(mpcAddress);

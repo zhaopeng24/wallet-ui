@@ -52,8 +52,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       setChains(chain);
       setLoading(false);
       setInited(true);
+      // 当前路由不是login页，且没有登录态，跳转到登录页
       if (!Global.authorization) {
-        router.replace("/login");
+        router.replace("/");
       }
     }
     init();
