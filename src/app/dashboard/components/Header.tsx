@@ -20,7 +20,7 @@ export default function Header({ address }: HeaderProps) {
 
   return (
     <div className="w-full flex items-center mt-4">
-      <div className="p-2 rounded-full bg-black mr-2">
+      <div className="p-2 rounded-full bg-black mr-2 border border-white border-opacity-20">
         <svg
           width="24"
           height="24"

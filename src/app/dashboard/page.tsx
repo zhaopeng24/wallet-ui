@@ -106,11 +106,7 @@ export default function DashBoardLayout() {
             </div>
           </div>
         </div>
-        {isHoldings ? (
-          <Holdings />
-        ) : (
-          <Transactions chainId={currentChain?.ID} address={currentAddress} />
-        )}
+        {isHoldings ? <Holdings /> : <Transactions />}
       </div>
     </MainLayout>
   );

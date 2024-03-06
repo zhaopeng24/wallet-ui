@@ -1,9 +1,6 @@
 import ArrowUpSVG from "@/components/Icons/ArrowUp";
 import ArrowDownSVG from "@/components/Icons/ArrowDown";
-import FailSVG from "@/components/Icons/FailSVG";
 import LinkArrowSVG from "@/components/Icons/LinkArrow";
-import { getTxList } from "@/api/hold";
-import { useClientFetchData } from "@/lib/hooks/useClientFetchData";
 import { useContext, useEffect, useState } from "react";
 import { timeToNow } from "@/utils/days";
 import { useAddress } from "@/store/useAddress";

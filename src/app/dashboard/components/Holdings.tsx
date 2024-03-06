@@ -3,6 +3,7 @@ import LinkArrowSVG from "@/components/Icons/LinkArrow";
 import Image from "next/image";
 import { IToken, ITokenBalance, useChains } from "@/store/useChains";
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Holdings() {
   const { currentChain, currentBalance } = useChains((state) => state);
@@ -51,12 +52,16 @@ export default function Holdings() {
 
 function Item({ data }: { data: ITokenBalance & IToken }) {
   const { name, icon, amount, usdValue } = data;
+  const route = useRouter();
   const formatValue = (s: string): string => {
     if (s.length > 5) {
       return s.slice(0, 5);
     }
     return s;
   };
+  function handleToDetail() {
+    route.push(`/holdings/${name}`);
+  }
   return (
     <div className="flex items-center justify-between py-4">
       <div className="flex flex-1 items-center">
@@ -68,18 +73,15 @@ function Item({ data }: { data: ITokenBalance & IToken }) {
           alt="chain logo"
         />
         <span className="text-md">{name}</span>
-        {/* <span className="text-[#819DF580]">{symbol}</span> */}
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center" onClick={handleToDetail}>
         <div>
           <div>$ {formatValue(amount)} </div>
           <div className="text-sm text-[#819DF580]">
             {formatValue(usdValue)} usd
           </div>
         </div>
-        <Link href={`/holdings/${name}`}>
-          <LinkArrowSVG />
-        </Link>
+        <LinkArrowSVG />
       </div>
     </div>
   );
