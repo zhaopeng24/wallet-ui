@@ -10,13 +10,13 @@ import { EmailPattern } from "@/consts/pattern";
 import { SendEmailCode, Login, CalcWalletAddress } from "@/api/auth";
 
 import { Global } from "@/server/Global";
-import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
 import { AccountInterface } from "@/server/account/AccountInterface";
 import { useRouter } from "next/navigation";
 import Toast from "@/utils/toast";
 import { useChains } from "@/store/useChains";
 import { useAddress } from "@/store/useAddress";
+import { Config } from "@/server/config/Config";
 
 const CountdownTime = 60;
 
@@ -47,41 +47,30 @@ const LoginPage = () => {
     mpcLogin();
   }
 
-  const getLocalMPCKey = (mpcAccount: AccountInterface, mpcPassword: any) => {
-    try {
-      const mpcKey1 = mpcAccount.getKeyFromLocalStorage(mpcPassword);
-      if (mpcKey1 == null || mpcKey1 === "") {
-        Toast("Local password incorrect");
-        return "";
-      }
-      return mpcKey1;
-    } catch (e) {
-      return "";
-    }
-  };
-
   const mpcLogin = async () => {
     try {
-      const mpcAccount = Global.account as MPCManageAccount;
       setLoading(true, "Login...");
       const mpcPassword = password.trim();
-      const mpcKey1 = getLocalMPCKey(mpcAccount, mpcPassword);
+      const mpcKey1 = Global.keyManage.getKeyFromLocalStorage(mpcPassword);
       if (mpcKey1 == null || mpcKey1 === "") {
+        Toast("Please register first");
         setLoading(false);
         return;
       }
+
       const result = await Login(email, code);
       if (result.body["code"] != 200) {
         Toast(result.body["message"] || "Login failed");
         setLoading(false);
         return;
       }
+
       Global.authorization = result.body["result"];
+      Global.account.setAuthorization(Global.authorization);
+      Global.account.setBlockchainRpc(currentChain?.rpcApi!);
       await Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
       localStorage.setItem("email", email);
-      Global.account.isLoggedIn = true;
-      const mpc = Global.account;
-      const mpcAddress = mpc.mpcAddress;
+      const mpcAddress = await Global.account.getOwnerAddress();
       setMpcAddress(mpcAddress);
       const res = await CalcWalletAddress(mpcAddress);
       const data = res.body.result;
