@@ -37,10 +37,14 @@ export const useAddress = create<IStore>((set) => {
     currentAddress: null,
     setCurrentAddress: (chainId) => {
       set((store) => {
+        const address = store.addressList.find(
+          (item) => item.chainId === chainId
+        )?.walletAddress;
+        if (address) {
+          Global.account.deployContractWalletIfNotExist(address);
+        }
         return {
-          currentAddress: store.addressList.find(
-            (item) => item.chainId === chainId
-          )?.walletAddress,
+          currentAddress: address,
         };
       });
     },
