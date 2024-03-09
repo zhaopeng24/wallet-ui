@@ -40,19 +40,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function init() {
-      console.log("layout init!!!");
       setLoading(true);
       setText("loading...");
+      // 获取公共配置
       const data = await getPackage();
       const { chain, common } = data.body.result;
       const { config } = common;
-      // 参数初始化 重要！
+
       Config.init(config.url.mpc.wasm, config.url.storage);
-      await Global.init();
+      await Global.init({
+        mpcWasmUrl: Config.MPC_WASM_URL,
+        rpcUrl: "",
+        authorization: "",
+        backendApiUrl: Config.BACKEND_API,
+        storageApiUrl: Config.DECENTRALIZE_STORAGE_API,
+      });
+
       setChains(chain);
       setLoading(false);
       setInited(true);
-      // 当前路由不是login页，且没有登录态，跳转到登录页
+      // 如果未登录，先到首页去
       if (!Global.authorization) {
         router.replace("/");
       }

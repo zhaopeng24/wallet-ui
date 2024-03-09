@@ -81,6 +81,12 @@ export const useChains = create<IStore>((set) => ({
     set((store) => {
       return {
         currentChain: store.chains.find((item) => item.ID === id),
+        currentBalance:
+          store.balances.find(
+            (item) =>
+              item.chainName ===
+              store.chains.find((item) => item.ID === id)?.name
+          ) || null,
       };
     });
   },
@@ -89,9 +95,10 @@ export const useChains = create<IStore>((set) => ({
     set((store) => {
       return {
         balances: balances,
-        currentBalance: balances.find(
-          (item) => item.chainName === store.currentChain?.name
-        ),
+        currentBalance:
+          balances.find(
+            (item) => item.chainName === store.currentChain?.name
+          ) || null,
       };
     });
   },
