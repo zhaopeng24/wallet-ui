@@ -14,9 +14,12 @@ import Image from "next/image";
 import MarkSVG from "@/components/Icons/MarkSVG";
 import DropArrow from "@/components/Icons/DropArrow";
 import { useChains } from "@/store/useChains";
+import { useAddress } from "@/store/useAddress";
 
 export default function ChainDropDown() {
   const { currentChain, chains, setCurrentChain } = useChains((state) => state);
+  const { setCurrentAddress } = useAddress((state) => state);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
@@ -49,6 +52,7 @@ export default function ChainDropDown() {
                   aria-label="Dynamic Actions"
                   onAction={(key) => {
                     setCurrentChain(+key);
+                    setCurrentAddress(+key);
                     onClose();
                   }}
                 >
