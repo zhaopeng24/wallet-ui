@@ -6,6 +6,7 @@ import { Global } from "@/server/Global";
 import { Config } from "@/server/config/Config";
 import { useChains } from "@/store/useChains";
 import { NextUIProvider } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
 
 interface ILoadingContextProps {
@@ -21,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("loading...");
   const [inited, setInited] = useState(false);
+  const router = useRouter();
 
   const { setChains } = useChains((state) => state);
 
@@ -38,19 +40,29 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function init() {
-      console.log("layout init!!!");
       setLoading(true);
       setText("loading...");
+      // 获取公共配置
       const data = await getPackage();
       const { chain, common } = data.body.result;
       const { config } = common;
-      // 参数初始化 重要！
-      Config.init(config.url.mpc, config.url.storage);
-      await Global.init();
+
+      Config.init(config.url.mpc.wasm, config.url.storage);
+      await Global.init({
+        mpcWasmUrl: Config.MPC_WASM_URL,
+        rpcUrl: "",
+        authorization: "",
+        backendApiUrl: Config.BACKEND_API,
+        storageApiUrl: Config.DECENTRALIZE_STORAGE_API,
+      });
 
       setChains(chain);
       setLoading(false);
       setInited(true);
+      // 如果未登录，先到首页去
+      if (!Global.authorization) {
+        router.replace("/");
+      }
     }
     init();
   }, []);

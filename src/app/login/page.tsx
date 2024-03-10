@@ -7,19 +7,25 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { LoadingContext } from "@/app/providers";
 import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
-import { SendEmailCode, Login } from "@/api/auth";
+import { SendEmailCode, Login, CalcWalletAddress } from "@/api/auth";
 
 import { Global } from "@/server/Global";
-import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
 import { AccountInterface } from "@/server/account/AccountInterface";
 import { useRouter } from "next/navigation";
 import Toast from "@/utils/toast";
+import { useChains } from "@/store/useChains";
+import { useAddress } from "@/store/useAddress";
+import { Config } from "@/server/config/Config";
 
 const CountdownTime = 60;
 
 const LoginPage = () => {
   const router = useRouter();
+  const { currentChain } = useChains((state) => state);
+  const { setMpcAddress, setAddressList, setCurrentAddress } = useAddress(
+    (state) => state
+  );
   const [password, setPasswork] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -41,44 +47,35 @@ const LoginPage = () => {
     mpcLogin();
   }
 
-  const getLocalMPCKey = (mpcAccount: AccountInterface, mpcPassword: any) => {
-    try {
-      const mpcKey1 = mpcAccount.getKeyFromLocalStorage(mpcPassword);
-      if (mpcKey1 == null || mpcKey1 === "") {
-        Toast("Local password incorrect");
-        return "";
-      }
-      return mpcKey1;
-    } catch (e) {
-      return "";
-    }
-  };
-
   const mpcLogin = async () => {
     try {
-      const mpcAccount = Global.account as MPCManageAccount;
-      setLoading(true, "Decrpty local MPC key...");
+      setLoading(true, "Login...");
       const mpcPassword = password.trim();
-      const mpcKey1 = getLocalMPCKey(mpcAccount, mpcPassword);
+      const mpcKey1 = Global.keyManage.getKeyFromLocalStorage(mpcPassword);
       if (mpcKey1 == null || mpcKey1 === "") {
+        Toast("Please register first");
         setLoading(false);
         return;
       }
 
-      setLoading(true, "Login wallet server...");
       const result = await Login(email, code);
       if (result.body["code"] != 200) {
         Toast(result.body["message"] || "Login failed");
+        setLoading(false);
         return;
       }
-      setLoading(true, "Init local MPC key...");
-      Global.authorization = result.body["result"];
 
-      Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
-      setLoading(true, "Jump to home page");
-      // todo 保存一些必要的值
+      Global.authorization = result.body["result"];
+      Global.account.setAuthorization(Global.authorization);
+      Global.account.setBlockchainRpc(currentChain?.rpcApi!);
+      await Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
       localStorage.setItem("email", email);
-      Global.account.isLoggedIn = true;
+      const mpcAddress = await Global.account.getOwnerAddress();
+      setMpcAddress(mpcAddress);
+      const res = await CalcWalletAddress(mpcAddress);
+      const data = res.body.result;
+      setAddressList(data);
+      setCurrentAddress(currentChain?.ID!);
       setLoading(false);
       router.push("/dashboard");
     } catch (error: any) {

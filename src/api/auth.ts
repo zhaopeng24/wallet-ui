@@ -16,9 +16,14 @@ export function Register(email: string, code: string) {
   });
 }
 
-// 给邮箱发送验证码
 export function SendEmailCode(email: string) {
   return HttpUtils.post(`${HOST}/api/v1/sw/user/email-code`, {
     email: email,
+  });
+}
+
+export function CalcWalletAddress(ownerAddress: string) {
+  return HttpUtils.post(`${HOST}/api/v1/ca/calc`, {
+    ownerAddress,
   });
 }

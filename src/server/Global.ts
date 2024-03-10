@@ -1,20 +1,33 @@
-import { AccountInterface } from "./account/AccountInterface";
-import { MPCManageAccount } from "./account/MPCManageAccount";
+import { MPCManageAccount, MPCKeyManage } from "sw-fe-sdk";
 
-// 当前只有MPC账号了，其他代码没用删掉了
+interface IInitParams {
+  rpcUrl: string;
+  mpcWasmUrl: string;
+  authorization: string;
+  backendApiUrl: string;
+  storageApiUrl: string;
+}
 export class Global {
-  public static account: AccountInterface;
-  public static initialized: boolean = false;
+  public static account: MPCManageAccount;
+  public static keyManage: MPCKeyManage;
+
   public static tempLocalPassword: string;
   public static authorization: string;
 
-  public static async init() {
-    let initData = null;
-    if (this.account) {
-      initData = this.account.initData;
-    }
-    this.account = new MPCManageAccount();
-    this.account.initAccount(initData);
-    this.initialized = true;
+  public static async init(params: IInitParams) {
+    const { rpcUrl, mpcWasmUrl, authorization, backendApiUrl, storageApiUrl } =
+      params;
+
+    const createWalletApiUrl = backendApiUrl + "/ca/create";
+
+    this.account = new MPCManageAccount(
+      rpcUrl,
+      backendApiUrl,
+      mpcWasmUrl,
+      authorization,
+      createWalletApiUrl
+    );
+    this.account.initAccount("");
+    this.keyManage = new MPCKeyManage(backendApiUrl, storageApiUrl);
   }
 }

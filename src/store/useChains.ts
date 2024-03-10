@@ -1,7 +1,8 @@
+import { Global } from "@/server/Global";
 import { Config } from "@/server/config/Config";
 import { create } from "zustand";
 
-interface IToken {
+export interface IToken {
   tokenId: number;
   name: string;
   type: number;
@@ -34,33 +35,41 @@ export interface IChain {
   rpcApi: string;
 }
 
+export interface ITokenBalance {
+  amount: string;
+  chainId: number;
+  owner: string;
+  tokenId: number;
+  usdValue: string;
+}
+
+export interface IBalance {
+  chainName: string;
+  inTotal: string;
+  owner: string;
+  pastDay: string;
+  sumBalanceUSD: string;
+  NativeBalance: ITokenBalance;
+  tokenBalance: ITokenBalance[];
+}
+
 interface IStore {
-  address: string;
   chains: IChain[];
   setChains: (data: IChain[]) => void;
   currentChain: IChain | null;
   setCurrentChain: (id: number) => void;
+  balances: IBalance[];
+  setBalances: (balances: IBalance[]) => void;
+  currentBalance: IBalance | null;
 }
 
 export const useChains = create<IStore>((set) => ({
-  address: "",
   chains: [],
   setChains: (data) => {
     set((store) => {
       // 把第一个设置为当前链
       const first = data[0];
       Config.flush(first);
-      // todo 遍历每个chain生成地址map
-      // const addressMap = new Map<number, string>();
-      // data.forEach((chain) => {
-      //   const address = chain.tokens.find(
-      //     (token) => token.name === Config.TOKEN_PAYMASTER_TOKEN_NAME
-      //   )?.address;
-      //   if (address) {
-      //     addressMap.set(chain.ID, address);
-      //   }
-      // });
-
       return {
         chains: data,
         currentChain: data[0],
@@ -72,7 +81,26 @@ export const useChains = create<IStore>((set) => ({
     set((store) => {
       return {
         currentChain: store.chains.find((item) => item.ID === id),
+        currentBalance:
+          store.balances.find(
+            (item) =>
+              item.chainName ===
+              store.chains.find((item) => item.ID === id)?.name
+          ) || null,
       };
     });
   },
+  balances: [],
+  setBalances: (balances) => {
+    set((store) => {
+      return {
+        balances: balances,
+        currentBalance:
+          balances.find(
+            (item) => item.chainName === store.currentChain?.name
+          ) || null,
+      };
+    });
+  },
+  currentBalance: null,
 }));

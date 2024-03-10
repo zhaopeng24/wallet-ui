@@ -9,7 +9,6 @@ import EmailInput from "@/components/EmailInput";
 import { EmailPattern } from "@/consts/pattern";
 import { Global } from "@/server/Global";
 import { Register as makeRegister, SendEmailCode } from "@/api/auth";
-import { MPCManageAccount } from "@/server/account/MPCManageAccount";
 import { JSONBigInt } from "@/server/js/common_utils";
 import { parseNumbers } from "@/server/js/mpc_wasm_utils";
 import { useRouter } from "next/navigation";
@@ -32,7 +31,7 @@ const Register = () => {
   const { setLoading } = useContext(LoadingContext);
 
   function handleRegisterBtnClick() {
-    if (Global.account?.existLocalStorageKey()) {
+    if (Global.keyManage.existLocalStorageKey()) {
       Toast("You have already signed up please login directly.");
       return;
     }
@@ -69,8 +68,7 @@ const Register = () => {
     Global.authorization = res.body.result;
     // 2.初始化私钥
     setLoading(true, "initialize private key...");
-    const mpc = Global.account as MPCManageAccount;
-    const keys = await mpc.generateKeys();
+    const keys = await Global.account.generateKeys();
     if (keys == null || keys === "") {
       Toast("Generate MPC keys error");
       setLoading(false);
@@ -81,13 +79,16 @@ const Register = () => {
     const key3 = JSONBigInt.stringify(parseNumbers(keys["p3JsonData"]));
     Global.tempLocalPassword = _password;
     // 3.key1保存到本地
-    if (!mpc.saveKey2LocalStorage(key1, Global.tempLocalPassword)) {
+    if (
+      !Global.keyManage.saveKey2LocalStorage(key1, Global.tempLocalPassword)
+    ) {
       Toast("Save key to local storage error");
       setLoading(false);
       return;
     }
     // 4.key3保存到IPFS，拿到hash
-    const save2IPFS = await mpc.saveKey2DecentralizeStorage(
+    const save2IPFS = await Global.keyManage.saveKey2DecentralizeStorage(
+      Global.authorization,
       key3,
       Global.tempLocalPassword
     );
@@ -97,7 +98,8 @@ const Register = () => {
       return;
     }
     // 5.拿到hash + key2给到后端服务器
-    const save2Server = await mpc.saveKey2WalletServer(
+    const save2Server = await Global.keyManage.saveKey2WalletServer(
+      Global.authorization,
       key2,
       save2IPFS.body["result"]["result"]
     );
@@ -109,10 +111,6 @@ const Register = () => {
       setLoading(false);
       return;
     }
-    // 6.计算MPC地址
-    setLoading(true, "calculate MPC address...");
-    // 7.根据MPC地址计算钱包地址 todo 不用这一步
-    await mpc.registerInitMpc();
     setLoading(false);
     // 8.跳转到创建成功页面
     router.replace("/register/success");

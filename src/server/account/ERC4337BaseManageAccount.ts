@@ -159,6 +159,29 @@ export class ERC4337BaseManageAccount implements AccountInterface {
     return await HttpUtils.post(api, params);
   }
 
+  // 创建合约钱包地址
+  async makeContractWalletAddress(
+    rpcApi: string,
+    addressSimpleAccountFactory: string
+  ): Promise<string> {
+    const ethersProvider = new ethers.providers.JsonRpcProvider(rpcApi);
+    let contract = new ethers.Contract(
+      addressSimpleAccountFactory,
+      simpleAccountFactoryAbi,
+      ethersProvider
+    );
+    try {
+      const eoaAddress = await this.getOwnerAddress();
+      return await contract.getAddress(
+        eoaAddress,
+        this.contractWalletAddressSalt || 0
+      );
+    } catch (error) {
+      console.error(error);
+      return "";
+    }
+  }
+
   async calcContractWalletAddress(): Promise<string> {
     const addressSimpleAccountFactory = Config.ADDRESS_SIMPLE_ACCOUNT_FACTORY;
     const ethersProvider = this.ethersProvider;

@@ -1,83 +1,87 @@
 import Link from "next/link";
 import LinkArrowSVG from "@/components/Icons/LinkArrow";
 import Image from "next/image";
+import { IToken, ITokenBalance, useChains } from "@/store/useChains";
+import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 
-interface ItemProps {
-  chain: string;
-  symbol: string;
-  amount: string;
-  usdValue: string;
-  children: React.ReactNode;
-}
+export default function Holdings() {
+  const { currentChain, currentBalance } = useChains((state) => state);
 
-export default function Holdings({
-  tokenBalance,
-  chains,
-}: {
-  tokenBalance: any[];
-  chains?: any[];
-}) {
-  const chainList = chains?.reduce((acc, chain) => {
-    acc[chain.ID] = chain.tokens.reduce((tokenAcc, token) => {
-      tokenAcc[token.tokenId] = {
-        name: token.name,
-        icon: token.icon,
-      };
-      return tokenAcc;
-    }, {} as { [key: number]: any });
-    return acc;
-  }, {});
+  const holdingList = useMemo(() => {
+    if (currentBalance && currentChain) {
+      const tokens = currentChain.tokens;
+      const { NativeBalance, tokenBalance } = currentBalance;
+      const list = [];
+      if (NativeBalance) {
+        const tokenId = NativeBalance.tokenId;
+        const find = tokens.find((item) => item.tokenId === tokenId);
+        if (find) {
+          list.push({
+            ...NativeBalance,
+            ...find,
+          });
+        }
+      }
+      if (tokenBalance) {
+        tokenBalance.forEach((item) => {
+          const tokenId = item.tokenId;
+          const find = tokens.find((item) => item.tokenId === tokenId);
+          if (find) {
+            list.push({
+              ...item,
+              ...find,
+            });
+          }
+        });
+      }
+      return list;
+    } else {
+      return [];
+    }
+  }, [currentBalance]);
+  console.log(holdingList);
   return (
     <div className="w-full px-2">
-      {tokenBalance?.map((item, index) => (
-        <Item
-          key={index}
-          chain={chainList[item.chainId as number][item.tokenId as number].name}
-          symbol={"---"}
-          amount={item.amount}
-          usdValue={item.usdValue}
-        >
-          <Image
-            width={45}
-            height={45}
-            className="mr-4"
-            src={
-              chainList[item.chainId as number][item.tokenId as number]?.icon
-            }
-            alt="chain logo"
-          />
-        </Item>
+      {holdingList?.map((item, index) => (
+        <Item key={index} data={item}></Item>
       ))}
     </div>
   );
 }
 
-function Item({ chain, symbol, amount, usdValue, children }: ItemProps) {
+function Item({ data }: { data: ITokenBalance & IToken }) {
+  const { name, icon, amount, usdValue } = data;
+  const route = useRouter();
   const formatValue = (s: string): string => {
     if (s.length > 5) {
       return s.slice(0, 5);
     }
     return s;
   };
+  function handleToDetail() {
+    route.push(`/holdings/${name}`);
+  }
   return (
     <div className="flex items-center justify-between py-4">
-      <div className="flex">
-        {children}
-        <div className="flex flex-col">
-          <span className="text-md">{chain}</span>
-          <span className="text-[#819DF580]">{symbol}</span>
-        </div>
+      <div className="flex flex-1 items-center">
+        <Image
+          width={45}
+          height={45}
+          className="mr-4"
+          src={icon}
+          alt="chain logo"
+        />
+        <span className="text-md">{name}</span>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center" onClick={handleToDetail}>
         <div>
-          <div>$ {formatValue(usdValue)} </div>
+          <div>$ {formatValue(amount)} </div>
           <div className="text-sm text-[#819DF580]">
-            {formatValue(amount)} usd
+            {formatValue(usdValue)} usd
           </div>
         </div>
-        <Link href={`/holdings/${chain}`}>
-          <LinkArrowSVG />
-        </Link>
+        <LinkArrowSVG />
       </div>
     </div>
   );
