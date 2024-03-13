@@ -60,9 +60,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       setLoading(false);
       setInited(true);
       // 如果未登录，先到首页去
-      if (!Global.authorization) {
-        router.replace("/");
-      }
+      // if (!Global.authorization) {
+      //   router.replace("/");
+      // }
     }
     init();
   }, []);

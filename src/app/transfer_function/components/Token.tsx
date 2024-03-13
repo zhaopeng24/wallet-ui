@@ -1,11 +1,24 @@
-"use client";
-import { Arrow } from "@/components/Arrow";
-import Header from "@/components/Header";
 import DropArrow from "@/components/Icons/DropArrow";
 import EthSVG from "@/components/Icons/EthSVG";
-import { Popup } from "@/components/Popup";
-import { Avatar, Button, Input, Link, Select } from "@nextui-org/react";
-import { useState } from "react";
+import { IToken, ITokenBalance, useChains } from "@/store/useChains";
+import {
+  Avatar,
+  Button,
+  Input,
+  Link,
+  Listbox,
+  ListboxItem,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  Select,
+  useDisclosure,
+} from "@nextui-org/react";
+import { FC, useMemo, useState } from "react";
+import Image from "next/image";
+import { classNames } from "@/utils/classNames";
+import { useRouter } from "next/navigation";
 
 export function TokenItem({
   tokenAvatarUrl,
@@ -30,9 +43,9 @@ export function TokenItem({
     <div
       className="flex justify-between items-center hover:bg-slate-500/30 cursor-pointer p-2 rounded-lg"
       style={{ color: isChosen ? "#4FAAEB" : "white" }}
-      onClick={() => { 
-        pickToken(tokenName)
-        clickEvent()
+      onClick={() => {
+        pickToken(tokenName);
+        clickEvent();
       }}
     >
       <div className="flex gap-2 items-center">
@@ -52,53 +65,157 @@ export function TokenItem({
   );
 }
 
-export default function Token() {
-  const [isPopup, showPopup] = useState<boolean>(false);
-  const [token, pickToken] = useState<string>("");
-  const [amount, updateAmount] = useState<string>("");
+interface ITokenProps {
+  tokens?: IToken[];
+  balances?: ITokenBalance[];
+}
+const Token: FC<ITokenProps> = (props) => {
+  const { tokens = [], balances = [] } = props;
+  const router = useRouter();
+  const calcTokens = useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      const balance = balances.find((b) => b.tokenId === token.tokenId);
+      arr.push({
+        ...token,
+        amount: balance?.amount || "0",
+        usdValue: balance?.usdValue || "0",
+      });
+    }
+    return arr;
+  }, [tokens, balances]);
+
+  const [currentToken, setCurrentToken] = useState<
+    IToken & { amount: string; usdValue: string }
+  >();
+  const [amount, setAmount] = useState("");
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const usdBan = currentToken
+    ? (+currentToken?.usdValue / +currentToken?.amount) * +amount
+    : 0;
+  function handleTransferAll() {
+    if (currentToken) {
+      setAmount(currentToken.amount);
+    }
+  }
+  function handleNext() {
+    if (currentToken) {
+      sessionStorage.setItem("transfer_tokenId", currentToken.tokenId + "");
+      sessionStorage.setItem("transfer_amount", amount);
+      router.push("/transfer_function/confirmation");
+    }
+  }
   return (
-    <div className="flex flex-col gap-6">
-      <h1>Token</h1>
+    <>
+      <div className="my-4 font-bold">Token</div>
       <Input
         variant="bordered"
-        value={token}
-        onClick={() => showPopup(true)}
+        readOnly
+        value={currentToken?.name}
+        onClick={() => onOpen()}
         startContent={<EthSVG />}
         endContent={<DropArrow />}
+        className="mb-4"
       />
+      <Modal
+        isOpen={isOpen}
+        placement="bottom"
+        className="text-white"
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex justify-center items-center text-base">
+                Token
+              </ModalHeader>
+              <ModalBody className="px-4 pb-10">
+                <Listbox
+                  items={calcTokens}
+                  aria-label="Dynamic Actions"
+                  onAction={(key) => {
+                    const find = calcTokens.find((item) => item.tokenId == key);
+                    setCurrentToken(find!);
+                    onClose();
+                  }}
+                >
+                  {(item) => (
+                    <ListboxItem
+                      key={item.tokenId}
+                      className={classNames(
+                        "mb-4",
+                        currentToken?.tokenId === item.tokenId
+                          ? "text-[#4FAAEB]"
+                          : ""
+                      )}
+                    >
+                      <div className="flex items-center">
+                        <Image
+                          src={item.icon}
+                          alt="logo"
+                          width={40}
+                          height={40}
+                          className="mr-4"
+                        />
+                        <div className="flex-1 font-bold text-base">
+                          {item.name}
+                        </div>
+                        <div>
+                          <p>{item.amount}</p>
+                          <p>${item.usdValue}</p>
+                        </div>
+                      </div>
+                    </ListboxItem>
+                  )}
+                </Listbox>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <Input
         label="Amount"
         variant="bordered"
         value={amount}
         onChange={(e) => {
-          updateAmount(e.target.value);
+          setAmount(e.target.value);
         }}
-      ></Input>
-      <div className="flex items-center gap-4">
-        <p className="text-sm">$0 USD</p>
-        <p className="text-sm">
-          <b>Balance:</b>9.9909 ETH
-        </p>
-        <Button size="sm" className=" bg-mainPurpleBlue/30 text-mainPurpleBlue" >Transfer all</Button>
-      </div>
-      <Button className=" bg-[#456ADE]" size="lg" as={Link} href="confirmation">Next</Button>
-      <Popup position={"bottom"} open={isPopup}>
-        <Header title="Token" />
-        <div className="overflow-y-auto h-[350px] max-h-[350px]">
-          <div className="px-8 flex flex-col gap-5">
-            <TokenItem
-              tokenAvatarUrl={""}
-              tokenName={"ETH"}
-              tokenLabel={"Ethereum"}
-              amount={"9.0807"}
-              price={"4,498.65"}
-              isChosen={true}
-              clickEvent={() => showPopup(false)}
-              pickToken={pickToken}
-            />
-          </div>
+        className="mb-4"
+      />
+
+      <div className="flex items-center mb-4">
+        <div className="flex-1 flex">
+          <p className="text-sm">${usdBan} USD</p>
+          <p className="text-sm mx-4">
+            <span>Balance:</span>
+            <span>{currentToken?.amount}</span>
+            <span>{currentToken?.name}</span>
+          </p>
         </div>
-      </Popup>
-    </div>
+        {currentToken ? (
+          <Button
+            size="sm"
+            className=" bg-mainPurpleBlue/30 text-mainPurpleBlue"
+            onClick={handleTransferAll}
+          >
+            Transfer all
+          </Button>
+        ) : null}
+      </div>
+      <div className="absolute bottom-8 left-8 right-8">
+        <Button
+          onClick={handleNext}
+          fullWidth
+          size="lg"
+          className="bg-[#819DF5] rounded-3xl"
+        >
+          Next
+        </Button>
+      </div>
+    </>
   );
-}
+};
+export default Token;

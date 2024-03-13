@@ -1,180 +1,116 @@
 "use client";
-import Header from "@/components/Header";
 import DropArrow from "@/components/Icons/DropArrow";
-import EthSVG from "@/components/Icons/EthSVG";
-import { Popup } from "@/components/Popup";
-import { Avatar, Button, Input } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Input,
+  Listbox,
+  ListboxItem,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
+import { FC } from "react";
+import { IChain, useChains } from "@/store/useChains";
+import Image from "next/image";
+import MarkSVG from "@/components/Icons/MarkSVG";
 
-function formattedAddr(address: string | null) {
-  return address?.substring(0, 7) + "..." + address?.substring(38);
+interface ISendProps {
+  address?: string;
+  chain?: IChain;
+  setAddress: (address: string) => void;
+  setChain: (chain: IChain) => void;
 }
+const Sent: FC<ISendProps> = (props) => {
+  const { address, chain, setAddress, setChain } = props;
+  const { chains } = useChains((state) => state);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-export function PersonComponent() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-
-  const address = searchParams.get('address')
-  const blockchain = searchParams.get('blockchain')
-  const name = searchParams.get('name')
-
-  function handleBack() {
-    router.back();
-  }
   return (
-    <div className="flex justify-bettwen items-center">
-      <div className="flex gap-4 items-center ">
-        <Avatar className="" size="lg"></Avatar>
-        <div className="flex flex-col">
-          <p className="">{name ? name : 'Alice'}</p>
-          <p className="">
-            {formattedAddr(address)}
-          </p>
-        </div>
-      </div>
-      <div className="w-28 opacity-0">gap</div>
-      <Button className=" bg-transparent" isIconOnly onClick={ handleBack }>
-        X
-      </Button>
-    </div>
-  );
-}
-
-function BlockChainItem({
-  blockChainLogoUrl,
-  blockChainLabel,
-  clickEvent,
-}: {
-  blockChainLogoUrl: string;
-  blockChainLabel: string;
-  clickEvent: (blockchain) => void;
-}) {
-  return (
-    <div
-      className="flex justify-start cursor-pointer hover:bg-slate-500/30 rounded transition-all p-2"
-      onClick={() => {
-        clickEvent(blockChainLabel);
-      }}
-    >
-      <div className="flex gap-2 items-center">
-        <Avatar radius="sm" src={blockChainLogoUrl}></Avatar>
-        <div className="">
-          <p>{blockChainLabel}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function BlockchainPopUp({
-  isPopup,
-  pickBlockchain,
-  clickEvent,
-}: {
-  isPopup: boolean;
-  pickBlockchain: (blockchain) => void;
-  clickEvent: (booleanValue) => void;
-}) {
-  return (
-    <Popup position={"bottom"} open={isPopup}>
-      <Header title="Blockchain"></Header>
-      <div className=" overflow-y-auto h-[350px] max-h-[350px]">
-        <div className="flex flex-col gap-4 p-4">
-          <BlockChainItem
-            clickEvent={(blockchain) => {
-              pickBlockchain(blockchain);
-              clickEvent(false);
-            }}
-            blockChainLogoUrl={""}
-            blockChainLabel={"Ethereum"}
-          />
-          <BlockChainItem
-            clickEvent={(blockchain) => {
-              pickBlockchain(blockchain);
-              clickEvent(false);
-            }}
-            blockChainLogoUrl={""}
-            blockChainLabel={"Polkchat"}
-          />
-        </div>
-      </div>
-    </Popup>
-  );
-}
-
-function InfoComponent({
-  isPopup,
-  clickEvent,
-  addressValue,
-  inputAddress,
-  blockchainValue,
-  pickBlockchain,
-}: {
-  isPopup: boolean;
-  clickEvent: (booleanValue) => void;
-  addressValue: string;
-  inputAddress: (addr) => void;
-  blockchainValue: string;
-  pickBlockchain: (blockchain) => void;
-}) {
-  return (
-    <>
-      <div className="flex flex-col gap-2">
-        <p className="text-sm">Address</p>
+    <div className="flex flex-col gap-5">
+      <div className="font-bold text-base">Send To</div>
+      <div>
+        <p className="text-sm mb-2">Address</p>
         <Input
           variant="bordered"
           label="Enter wallet address"
-          value={addressValue}
+          value={address}
           classNames={{ input: ["purpleBlue"] }}
-          onChange={e => inputAddress(e.target.value)}
+          onChange={(e) => setAddress(e.target.value)}
           isClearable
-          onClear={() => inputAddress('')}
+          onClear={() => setAddress("")}
         ></Input>
       </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-sm">Blockchain</p>
+      <div>
+        <p className="text-sm mb-2">Blockchain</p>
         <Input
-          startContent={<EthSVG />}
+          isReadOnly
           endContent={<DropArrow />}
-          value={blockchainValue}
+          value={chain?.name}
           variant="bordered"
           placeholder="Select the target chain"
-          onClick={() => clickEvent(true)}
-          className=" cursor-pointer"
+          onClick={() => onOpen()}
+          className="cursor-pointer"
         ></Input>
-        <BlockchainPopUp isPopup={isPopup} pickBlockchain={pickBlockchain} clickEvent={clickEvent} />
+        <Modal
+          isOpen={isOpen}
+          placement="bottom"
+          className="text-white"
+          onOpenChange={onOpenChange}
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex justify-center items-center text-base">
+                  Blockchain
+                </ModalHeader>
+                <ModalBody className="px-4 pb-10">
+                  <Listbox
+                    items={chains}
+                    aria-label="Dynamic Actions"
+                    onAction={(key) => {
+                      const find = chains.find((item) => item.ID === +key);
+                      setChain(find);
+                      onClose();
+                    }}
+                  >
+                    {(item) => (
+                      <ListboxItem key={item.ID} className="mb-4">
+                        <div className="flex items-center">
+                          <div className="flex-1 flex items-center">
+                            <Image
+                              src={item.icon}
+                              alt="logo"
+                              width={20}
+                              height={20}
+                              className="mr-4"
+                            />
+                            <div
+                              className={
+                                item.ID === chain?.ID ? " text-[#819DF5]" : ""
+                              }
+                            >
+                              {item.name}
+                            </div>
+                          </div>
+                          <div
+                            className={`${
+                              item.ID === chain?.ID ? "" : "hidden"
+                            }`}
+                          >
+                            <MarkSVG />
+                          </div>
+                        </div>
+                      </ListboxItem>
+                    )}
+                  </Listbox>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
-    </>
-  );
-}
-
-export default function Sent() {
-  const [isPopup, showPopup] = useState(false);
-  const [addressValue, inputAddress] = useState<string>("");
-  const [blockchainValue, pickBlockchain] = useState<string>("");
-  const router = useRouter();
-  function handleGo() {
-    if(addressValue !== "" && blockchainValue !== "") {
-      router.push(`/transfer_function/choosetoken?address=${addressValue}&blockchain=${blockchainValue}`)
-    }
-  }
-  useEffect(() => {
-    handleGo();
-  },[addressValue, blockchainValue])
-  return (
-    <div className="flex flex-col gap-5">
-      <h1 className="text-bold">Send To</h1>
-      <InfoComponent
-        isPopup={isPopup}
-        clickEvent={(booleanValue) => {
-          showPopup(booleanValue);
-        }}
-        addressValue={addressValue}
-        inputAddress={(addr) => inputAddress(addr)}
-        blockchainValue={blockchainValue}
-        pickBlockchain={(blockchain) => pickBlockchain(blockchain)}
-      />
     </div>
   );
-}
+};
+export default Sent;

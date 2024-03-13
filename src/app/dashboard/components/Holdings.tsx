@@ -75,7 +75,7 @@ function Item({ data }: { data: ITokenBalance & IToken }) {
         <span className="text-md">{name}</span>
       </div>
       <div className="flex items-center" onClick={handleToDetail}>
-        <div>
+        <div className="text-right">
           <div>$ {formatValue(amount)} </div>
           <div className="text-sm text-[#819DF580]">
             {formatValue(usdValue)} usd

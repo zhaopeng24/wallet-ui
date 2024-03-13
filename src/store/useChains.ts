@@ -6,9 +6,11 @@ export interface IToken {
   tokenId: number;
   name: string;
   type: number;
+  fee: number;
   address: string;
   decimal: number;
   icon: string;
+  tokenPaymasterAddress?: string;
 }
 
 export interface IChain {
@@ -79,8 +81,10 @@ export const useChains = create<IStore>((set) => ({
   currentChain: null,
   setCurrentChain: (id) => {
     set((store) => {
+      const current = store.chains.find((item) => item.ID === id);
+      Global.account.setBlockchainRpc(current?.rpcApi!);
       return {
-        currentChain: store.chains.find((item) => item.ID === id),
+        currentChain: current,
         currentBalance:
           store.balances.find(
             (item) =>

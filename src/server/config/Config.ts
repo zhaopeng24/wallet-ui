@@ -9,10 +9,6 @@ export interface Asset {
   decimals: number;
 }
 
-class Assets {
-  [key: string]: Asset;
-}
-
 export class Config {
   public static ADDRESS_SIMPLE_ACCOUNT_FACTORY: string;
   public static ADDRESS_TOKEN_PAYMASTER: string;
@@ -46,8 +42,7 @@ export class Config {
     // 这里尽量保留旧代码的了，因为怕修改成新的会对代码有影响；注释掉的是查无使用的
     this.ADDRESS_SIMPLE_ACCOUNT_FACTORY =
       configData.erc4337ContractAddress.simpleAccountFactory;
-    this.ADDRESS_TOKEN_PAYMASTER =
-      configData.erc4337ContractAddress.tokenPaymaster.swt;
+    // this.ADDRESS_TOKEN_PAYMASTER = configData.erc4337ContractAddress.tokenPaymaster.swt;
     this.BUNDLER_API = configData.bundlerApi;
     this.RPC_API = configData.rpcApi;
     this.CREATEWALLET_API = configData.createWalletApi;

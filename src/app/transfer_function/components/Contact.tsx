@@ -4,7 +4,7 @@ import DropArrow from "@/components/Icons/DropArrow";
 import { Popup } from "@/components/Popup";
 import { Avatar, Button, Input } from "@nextui-org/react";
 import { useState } from "react";
-import { BlockchainPopUp } from "./Sent";
+// import { BlockchainPopUp } from "./Sent";
 import { useRouter } from "next/navigation";
 
 function formattedAddr(address: string) {
@@ -22,14 +22,14 @@ function ContactItem({
   avatarUrl: string;
   name: string;
   address: string;
-  blockChain: string
+  blockChain: string;
   blockChainAvatarUrl: string;
   clickEvent: (address: string, blockchain: string, name: string) => void;
 }) {
   return (
     <div
       className="flex justify-between items-center hover:cursor-pointer hover:bg-gray-500/30 transition-all rounded-lg p-2"
-      onClick={() => clickEvent(address,blockChain,name)}
+      onClick={() => clickEvent(address, blockChain, name)}
     >
       <Avatar size="lg" src={avatarUrl}></Avatar>
       <p>{name}</p>
@@ -52,7 +52,9 @@ function ContactBox({
           name={"Jaden"}
           address={"0x07de349505E858EEF3d1B797326f78eB0fE457b5"}
           blockChainAvatarUrl={""}
-          clickEvent={clickEvent} blockChain={"Ethereum"}        />
+          clickEvent={clickEvent}
+          blockChain={"Ethereum"}
+        />
       </div>
     </div>
   );
@@ -71,8 +73,8 @@ export default function Contact() {
     );
   }
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex justify-between">
+    <div>
+      <div className="flex justify-between my-4">
         <h1 className="font-bold">Or Choose Contact</h1>
         <button
           onClick={() => {
@@ -120,13 +122,13 @@ export default function Contact() {
               value={blockchainValue}
               onClick={() => showBlockChainPopup(true)}
             />
-            <BlockchainPopUp
+            {/* <BlockchainPopUp
               isPopup={isBlockChainPopup}
               pickBlockchain={pickBlockchain}
               clickEvent={() => {
                 showBlockChainPopup(false);
               }}
-            />
+            /> */}
           </div>
           <div className="flex justify-center gap-4">
             <Button

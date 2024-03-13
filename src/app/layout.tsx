@@ -4,9 +4,6 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { classNames } from "@/utils/classNames";
 import { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Global } from "@/server/Global";
 const inter = Inter({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
