@@ -88,7 +88,6 @@ export const ErrorDetail = ({}: ErrorDetailProps) => {};
 export const SuccessDetail = ({ className }: SuccessDetailProps) => {
   // 获取当前时间
   const currentTime = dayjs();
-
   // 格式化时间
   const formattedTime = currentTime.format("HH:mm MMM DD YYYY");
   const data = [

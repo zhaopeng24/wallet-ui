@@ -53,16 +53,18 @@ export interface IBalance {
   sumBalanceUSD: string;
   NativeBalance: ITokenBalance;
   tokenBalance: ITokenBalance[];
+  past1Hour: string;
+  past7Day: string;
 }
 
 interface IStore {
   chains: IChain[];
   setChains: (data: IChain[]) => void;
-  currentChain: IChain | null;
+  currentChain?: IChain;
   setCurrentChain: (id: number) => void;
   balances: IBalance[];
   setBalances: (balances: IBalance[]) => void;
-  currentBalance: IBalance | null;
+  currentBalance?: IBalance;
 }
 
 export const useChains = create<IStore>((set) => ({
@@ -78,7 +80,7 @@ export const useChains = create<IStore>((set) => ({
       };
     });
   },
-  currentChain: null,
+  currentChain: undefined,
   setCurrentChain: (id) => {
     set((store) => {
       const current = store.chains.find((item) => item.ID === id);
@@ -90,7 +92,7 @@ export const useChains = create<IStore>((set) => ({
             (item) =>
               item.chainName ===
               store.chains.find((item) => item.ID === id)?.name
-          ) || null,
+          ) || undefined,
       };
     });
   },
@@ -102,9 +104,9 @@ export const useChains = create<IStore>((set) => ({
         currentBalance:
           balances.find(
             (item) => item.chainName === store.currentChain?.name
-          ) || null,
+          ) || undefined,
       };
     });
   },
-  currentBalance: null,
+  currentBalance: undefined,
 }));

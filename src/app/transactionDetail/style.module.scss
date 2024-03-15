@@ -1,5 +1,7 @@
 .transaction {
   height: 100%;
+  flex: 1;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -10,6 +12,7 @@
     rgba(6, 41, 128, 0.5) 72.4%,
     rgba(89, 126, 255, 0.5) 100%
   );
+  padding: 16px;
 }
 
 .status {

@@ -3,7 +3,6 @@ import { WalletSvg, SettingSvg, TransferSvg } from "../Icons";
 import { useRouter } from "next/navigation";
 
 export const Menu = ({ active = "dashboard" }) => {
-  // const { currentMenu, setMenu } = useMenu((state) => state);
   const router = useRouter();
   const menus = [
     { key: "dashboard", icon: WalletSvg, url: "/dashboard" },

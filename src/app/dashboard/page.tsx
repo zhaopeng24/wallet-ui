@@ -10,6 +10,30 @@ import { IBalance, useChains } from "@/store/useChains";
 import { useAddress } from "@/store/useAddress";
 import { LoadingContext } from "../providers";
 import { getBalance } from "@/api/assets";
+import { getTxDetail } from "@/api/assets";
+
+export interface ITx {
+  chainName: string;
+  tokenId: number;
+  tokenName: string;
+  blockNumber: number;
+  timeStamp: number;
+  txHash: string;
+  from: string;
+  to: string;
+  value: string;
+  amount: string;
+  currentAmount: string;
+  status: number;
+  gasFee: {
+    tokenId: number;
+    amount: string;
+    usdValue: string;
+  };
+  transactionType: number;
+  tradeDirection: number;
+  extraInfo: string;
+}
 
 export default function DashBoardLayout() {
   const { currentChain, chains, setBalances, currentBalance } = useChains(
@@ -17,6 +41,7 @@ export default function DashBoardLayout() {
   );
   const { currentAddress, addressList } = useAddress((state) => state);
   const { setLoading } = useContext(LoadingContext);
+  const [transactionlist, setTransactionlist] = useState<ITx[]>([]);
 
   console.log(currentChain, currentAddress, currentBalance);
 
@@ -53,6 +78,20 @@ export default function DashBoardLayout() {
     init();
   }, []);
 
+  useEffect(() => {
+    async function init() {
+      if (currentChain && currentAddress) {
+        setLoading(true);
+        const res = await getTxDetail(currentChain?.ID, currentAddress);
+        const data = res.body.result || [];
+        sessionStorage.setItem("txList", JSON.stringify(data));
+        setTransactionlist(data);
+        setLoading(false);
+      }
+    }
+    init();
+  }, [currentAddress]);
+
   return (
     <MainLayout activeMenu="dashboard">
       <div className="p-6">
@@ -61,11 +100,7 @@ export default function DashBoardLayout() {
           setChainId={resetFetch}
           setCurrentChainId={setCurrentChainId}
         />
-        <Asset
-          balance={currentBalance?.sumBalanceUSD || "0"}
-          PastDay={currentBalance?.pastDay || "0"}
-          InTotal={currentBalance?.inTotal || "0"}
-        />
+        <Asset data={currentBalance} />
         <div className="flex mt-8 mb-2 text-base border-b-1 border-b-slate-500 border-opacity-30">
           <div
             className="flex-1 text-center cursor-pointer"
@@ -106,7 +141,7 @@ export default function DashBoardLayout() {
             </div>
           </div>
         </div>
-        {isHoldings ? <Holdings /> : <Transactions />}
+        {isHoldings ? <Holdings /> : <Transactions list={transactionlist} />}
       </div>
     </MainLayout>
   );

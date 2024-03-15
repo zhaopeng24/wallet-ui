@@ -14,37 +14,18 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import DropArrow from "@/components/Icons/DropArrow";
-import { use, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAddress } from "@/store/useAddress";
 import { IChain, useChains } from "@/store/useChains";
 import { AATx, GetEstimateFee } from "@/api/aaTxRecord";
 import Image from "next/image";
-import MarkSVG from "@/components/Icons/MarkSVG";
 import { BundlerRpc } from "sw-fe-sdk";
 import { classNames } from "@/utils/classNames";
 import { ITransferParams, transfer } from "@/utils/transferUtils";
-import { BigNumber } from "ethers";
 import { Global } from "@/server/Global";
 import Toast from "@/utils/toast";
-
-function formattedAddr(formatNum: number, address: string | null) {
-  return (
-    address?.substring(0, formatNum) +
-    "..." +
-    address?.substring(address.length - 4)
-  );
-}
-
-function Person({ name, address }: { name: string; address: string }) {
-  return (
-    <div className="flex flex-col items-center">
-      <p className="font-bold text-base p-1 font-mono">{name}</p>
-      <p className="bg-[#819DF54D] text-[#819DF5] rounded-full text-xs px-2 py-1">
-        {formattedAddr(4, address)}
-      </p>
-    </div>
-  );
-}
+import { formatAddress } from "@/utils/format";
+import Person from "@/components/Person";
 
 function Tab({
   name,
@@ -65,7 +46,7 @@ function Tab({
         <Avatar src={userAvatar} className="mr-2"></Avatar>
         <div>
           <p className=" font-bold">{name}</p>
-          <p className="text-[#819DF5] text-sm">{formattedAddr(7, address)}</p>
+          <p className="text-[#819DF5] text-sm">{formatAddress(address)}</p>
         </div>
       </div>
       <div className="flex flex-col items-end">
@@ -226,7 +207,7 @@ export default function ConfirmBox() {
           address={"0x876ffC3f41F20a4B5A78d375F5FA3a1299daD640"}
         />
         <div className="flex-1 flex flex-col items-center">
-          <p className="text-[#4FAAEB] font-mono">{100} USDT</p>
+          <p className="text-[#4FAAEB] text-sm font-bold">{100} USDT</p>
           <ArrowIcon />
           <p className="text-[#819DF5] text-xs">Direct Transfer</p>
         </div>
