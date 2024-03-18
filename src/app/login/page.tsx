@@ -26,8 +26,8 @@ const LoginPage = () => {
   const { setMpcAddress, setAddressList, setCurrentAddress } = useAddress(
     (state) => state
   );
-  const [password, setPasswork] = useState("");
-  const [email, setEmail] = useState("");
+  const [password, setPasswork] = useState("haha123123");
+  const [email, setEmail] = useState("doracatk@gmail.com");
   const [code, setCode] = useState("");
   const { setLoading } = useContext(LoadingContext);
 
@@ -71,6 +71,7 @@ const LoginPage = () => {
       await Global.account.initAccount(JSONBigInt.stringify(mpcKey1));
       localStorage.setItem("email", email);
       const mpcAddress = await Global.account.getOwnerAddress();
+      console.log("mpcAddress", mpcAddress);
       setMpcAddress(mpcAddress);
       const res = await CalcWalletAddress(mpcAddress);
       const data = res.body.result;

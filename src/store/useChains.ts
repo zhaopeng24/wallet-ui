@@ -6,9 +6,11 @@ export interface IToken {
   tokenId: number;
   name: string;
   type: number;
+  fee: number;
   address: string;
   decimal: number;
   icon: string;
+  tokenPaymasterAddress?: string;
 }
 
 export interface IChain {
@@ -51,16 +53,18 @@ export interface IBalance {
   sumBalanceUSD: string;
   NativeBalance: ITokenBalance;
   tokenBalance: ITokenBalance[];
+  past1Hour: string;
+  past7Day: string;
 }
 
 interface IStore {
   chains: IChain[];
   setChains: (data: IChain[]) => void;
-  currentChain: IChain | null;
+  currentChain?: IChain;
   setCurrentChain: (id: number) => void;
   balances: IBalance[];
   setBalances: (balances: IBalance[]) => void;
-  currentBalance: IBalance | null;
+  currentBalance?: IBalance;
 }
 
 export const useChains = create<IStore>((set) => ({
@@ -76,17 +80,19 @@ export const useChains = create<IStore>((set) => ({
       };
     });
   },
-  currentChain: null,
+  currentChain: undefined,
   setCurrentChain: (id) => {
     set((store) => {
+      const current = store.chains.find((item) => item.ID === id);
+      Global.account.setBlockchainRpc(current?.rpcApi!);
       return {
-        currentChain: store.chains.find((item) => item.ID === id),
+        currentChain: current,
         currentBalance:
           store.balances.find(
             (item) =>
               item.chainName ===
               store.chains.find((item) => item.ID === id)?.name
-          ) || null,
+          ) || undefined,
       };
     });
   },
@@ -98,9 +104,9 @@ export const useChains = create<IStore>((set) => ({
         currentBalance:
           balances.find(
             (item) => item.chainName === store.currentChain?.name
-          ) || null,
+          ) || undefined,
       };
     });
   },
-  currentBalance: null,
+  currentBalance: undefined,
 }));

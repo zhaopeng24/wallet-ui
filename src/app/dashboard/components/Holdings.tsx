@@ -4,6 +4,7 @@ import Image from "next/image";
 import { IToken, ITokenBalance, useChains } from "@/store/useChains";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { formatValue } from "@/utils/format";
 
 export default function Holdings() {
   const { currentChain, currentBalance } = useChains((state) => state);
@@ -52,15 +53,12 @@ export default function Holdings() {
 
 function Item({ data }: { data: ITokenBalance & IToken }) {
   const { name, icon, amount, usdValue } = data;
+  const { currentChain } = useChains((state) => state);
   const route = useRouter();
-  const formatValue = (s: string): string => {
-    if (s.length > 5) {
-      return s.slice(0, 5);
-    }
-    return s;
-  };
-  function handleToDetail() {
-    route.push(`/holdings/${name}`);
+
+  function handleToDetail(data: IToken) {
+    sessionStorage.setItem("holding_token", JSON.stringify(data));
+    route.push(`/holdings/${currentChain?.name}/${data.name}`);
   }
   return (
     <div className="flex items-center justify-between py-4">
@@ -74,14 +72,16 @@ function Item({ data }: { data: ITokenBalance & IToken }) {
         />
         <span className="text-md">{name}</span>
       </div>
-      <div className="flex items-center" onClick={handleToDetail}>
-        <div>
-          <div>$ {formatValue(amount)} </div>
+      <div className="flex items-center">
+        <div className="text-right">
+          <div>{formatValue(amount)} </div>
           <div className="text-sm text-[#819DF580]">
             {formatValue(usdValue)} usd
           </div>
         </div>
-        <LinkArrowSVG />
+        <div className="py-4 px-2" onClick={() => handleToDetail(data)}>
+          <LinkArrowSVG />
+        </div>
       </div>
     </div>
   );

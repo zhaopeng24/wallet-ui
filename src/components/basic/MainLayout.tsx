@@ -6,9 +6,11 @@ export default function MainLayout({
   className,
   children,
   activeMenu,
+  showMenu = true,
 }: {
   className?: string;
   activeMenu?: string;
+  showMenu?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -19,7 +21,7 @@ export default function MainLayout({
       )}
     >
       <div className="flex-1 overflow-auto">{children}</div>
-      <Menu active={activeMenu} />
+      {showMenu ? <Menu active={activeMenu} /> : null}
     </div>
   );
 }

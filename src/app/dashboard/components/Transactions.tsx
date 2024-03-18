@@ -1,90 +1,42 @@
 import ArrowUpSVG from "@/components/Icons/ArrowUp";
 import ArrowDownSVG from "@/components/Icons/ArrowDown";
 import LinkArrowSVG from "@/components/Icons/LinkArrow";
-import { useContext, useEffect, useState } from "react";
 import { timeToNow } from "@/utils/days";
-import { useAddress } from "@/store/useAddress";
-import { useChains } from "@/store/useChains";
-import { getTxDetail } from "@/api/assets";
-import { LoadingContext } from "@/app/providers";
+import { formatAddress, formatValue } from "@/utils/format";
+import { useRouter } from "next/navigation";
+import { ITx } from "../page";
 
-interface ITx {
-  chainName: string;
-  tokenId: number;
-  tokenName: string;
-  blockNumber: number;
-  timeStamp: number;
-  txHash: string;
-  from: string;
-  to: string;
-  value: string;
-  amount: string;
-  currentAmount: string;
-  status: number;
-  gasFee: {
-    tokenId: number;
-    amount: string;
-    usdValue: string;
-  };
-  transactionType: number;
-  tradeDirection: number;
-  extraInfo: string;
+interface ITransactionProps {
+  list: ITx[];
 }
-
-export default function Transactions() {
-  const { currentAddress } = useAddress((state) => state);
-  const { currentChain } = useChains((state) => state);
-  const { setLoading } = useContext(LoadingContext);
-  const [list, setList] = useState<ITx[]>([]);
-  console.log(currentChain, currentAddress);
-
-  useEffect(() => {
-    async function init() {
-      if (currentChain && currentAddress) {
-        setLoading(true);
-        const res = await getTxDetail(currentChain?.ID, currentAddress);
-        const data = res.body.result || [];
-        setList(data);
-        setLoading(false);
-      }
-    }
-    init();
-  }, [currentAddress]);
+export default function Transactions(props: ITransactionProps) {
+  const { list = [] } = props;
 
   return (
-    <div className="flex flex-col w-full justify-center items-center px-4 py-5 gap-y-8">
+    <div className="flex flex-col w-full justify-center items-center py-4 px-2">
       {list.map((item, index) => (
-        <TxItem
-          key={index}
-          amount={item.amount}
-          currentAmount={item.currentAmount}
-          status={item.status}
-          tradeDirection={item.tradeDirection}
-          timeStamp={item.timeStamp}
-          chainName={item.chainName}
-        />
+        <TxItem key={index} data={item} />
       ))}
     </div>
   );
 }
 export interface ItemProps {
-  amount: string | number;
-  currentAmount: string;
-  status: number;
-  tradeDirection: number;
-  timeStamp: number;
-  chainName: string;
+  data: ITx;
 }
-export function TxItem({
-  amount,
-  currentAmount,
-  status,
-  tradeDirection,
-  timeStamp,
-  chainName,
-}: ItemProps) {
+export function TxItem(props: ItemProps) {
+  const { data } = props;
+  const router = useRouter();
+  const { timeStamp, amount, status, tradeDirection, tokenName, to, value } =
+    data;
+
+  const directText = tradeDirection === 1 ? "Sent to" : "Received from";
+  function handleToDetail(data: ITx) {
+    sessionStorage.setItem("transaction_detail", JSON.stringify(data));
+    router.push(`/transactionDetail`);
+  }
+
   return (
-    <div className="flex flex-row justify-between w-full">
+    <div className="flex flex-row w-full mb-6 items-center">
       <div className="flex flex-row gap-x-3">
         <div className="flex justify-center items-center">
           {status === 1 && tradeDirection === 1 ? <ArrowUpSVG /> : ""}
@@ -92,21 +44,23 @@ export function TxItem({
           {status === 0 ? <ArrowUpSVG /> : ""}
         </div>
         <div className="flex flex-col">
-          <div>Sent on {chainName}</div>
-          <div className="text-[#819DF580]">{timeToNow(timeStamp)}</div>
+          <div>
+            <div>{directText}</div>
+            <div>{formatAddress(to)}</div>
+          </div>
+          <div className="text-[#819DF580]">{timeToNow(timeStamp)} ago</div>
         </div>
       </div>
-
-      <div className="flex flex-row">
-        <div className="flex flex-col justify-center items-center">
-          <div className="text-lg">
-            {tradeDirection === 1 ? "-" : "+"} ${amount}{" "}
+      <div className="text-sm flex-1">
+        <div className="text-right">
+          <div>
+            {tradeDirection === 1 ? "-" : "+"} {formatValue(value)} {tokenName}
           </div>
-          <div className="text-[#819DF580] text-sm">${currentAmount}</div>
+          <div className="text-[#819DF580]">${formatValue(amount)}</div>
         </div>
-        <div className="">
-          <LinkArrowSVG />
-        </div>
+      </div>
+      <div className="py-4 px-2" onClick={() => handleToDetail(data)}>
+        <LinkArrowSVG />
       </div>
     </div>
   );

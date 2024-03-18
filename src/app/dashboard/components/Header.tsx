@@ -64,7 +64,7 @@ export default function Header({ address }: HeaderProps) {
           {formatAddress(address)}
         </div>
       </div>
-      <ChainDropDown address={address} />
+      <ChainDropDown />
     </div>
   );
 }
