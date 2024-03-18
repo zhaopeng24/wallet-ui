@@ -64,7 +64,7 @@ const Sent: FC<ISendProps> = (props) => {
                 <ModalHeader className="flex justify-center items-center text-base">
                   Blockchain
                 </ModalHeader>
-                <ModalBody className="px-4 pb-10">
+                <ModalBody className="px-4 pb-4">
                   <Listbox
                     items={chains}
                     aria-label="Dynamic Actions"

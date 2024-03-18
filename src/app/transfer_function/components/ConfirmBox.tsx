@@ -14,7 +14,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import DropArrow from "@/components/Icons/DropArrow";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useAddress } from "@/store/useAddress";
 import { IChain, useChains } from "@/store/useChains";
 import { AATx, GetEstimateFee } from "@/api/aaTxRecord";
@@ -24,19 +24,22 @@ import { classNames } from "@/utils/classNames";
 import { ITransferParams, transfer } from "@/utils/transferUtils";
 import { Global } from "@/server/Global";
 import Toast from "@/utils/toast";
-import { formatAddress } from "@/utils/format";
+import { formatAddress, formatValue } from "@/utils/format";
 import Person from "@/components/Person";
+import { LoadingContext } from "@/app/providers";
 
 function Tab({
   name,
   address,
   userAvatar,
   amount,
+  tokenName,
   coinValue,
 }: {
   name: string;
   address: string;
   userAvatar?: string;
+  tokenName: string;
   amount: string;
   coinValue: string;
 }) {
@@ -50,8 +53,10 @@ function Tab({
         </div>
       </div>
       <div className="flex flex-col items-end">
-        <p className="text-[#819DF5] font-semibold">{amount} USDT</p>
-        <p className="text-white/30 text-sm">${coinValue}</p>
+        <p className="text-[#819DF5] font-semibold">
+          {amount} {tokenName}
+        </p>
+        <p className="text-white/30 text-sm">{coinValue}</p>
       </div>
     </div>
   );
@@ -107,9 +112,9 @@ function AmountPlaneItem({
 }
 
 export default function ConfirmBox() {
-  const { currentAddress, addressList } = useAddress();
+  const { addressList } = useAddress();
   const { chains } = useChains();
-
+  const { setLoading } = useContext(LoadingContext);
   const [gasFeeList, setGasFeeList] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentGasFee, setCurrentGasFee] = useState<any>(null);
@@ -136,6 +141,7 @@ export default function ConfirmBox() {
       chain: findChain,
       chainId,
       chainAddress,
+      toName: "",
     };
   }, []);
   const gasPriceRef = useRef(0);
@@ -165,9 +171,9 @@ export default function ConfirmBox() {
       payGasFeeTokenAddress: currentGasFee?.token?.address || "",
       tokenAddress: transferData.token?.address || "",
     };
-    // const rpc = Global.account.getBlockchainRpc();
+    setLoading(true);
+    const rpc = Global.account.getBlockchainRpc();
     Global.account.setBlockchainRpc(transferData.chain?.rpcApi!);
-
     const op = await transfer(params);
     console.log("gooooood op", op);
     const res = await BundlerRpc.sendUserOperation(
@@ -191,29 +197,47 @@ export default function ConfirmBox() {
           toName: "test",
         },
       };
-      const ares = await AATx(txParams);
+      const aares = await AATx(txParams);
+      if (aares.body.result) {
+        Toast("Transfer Success");
+      }
+      setLoading(false);
     } else {
+      setLoading(false);
       Toast(res.body.error.message || "something wrong!");
     }
-
-    // Global.account.setBlockchainRpc(rpc);
+    Global.account.setBlockchainRpc(rpc);
   }
+
+  const total = useMemo(() => {
+    if (currentGasFee && transferData) {
+      if (currentGasFee.token.name === transferData.token?.name) {
+        const total = formatValue(
+          `${+currentGasFee.needAmount + +transferData.amount!}`
+        );
+        return `${total} ${transferData.token?.name} `;
+      }
+      return `${transferData.amount!} ${transferData.token?.name} + ${
+        currentGasFee.needAmount
+      } ${currentGasFee.token.name}`;
+    }
+    return "";
+  }, [currentGasFee, transferData]);
 
   return (
     <div className="flex flex-col justify-between">
       <div className="flex items-center justify-center border-b-1 border-gray-500/30 px-4 pb-4">
-        <Person
-          name={"You"}
-          address={"0x876ffC3f41F20a4B5A78d375F5FA3a1299daD640"}
-        />
+        <Person name={"You"} address={transferData.chainAddress || ""} />
         <div className="flex-1 flex flex-col items-center">
-          <p className="text-[#4FAAEB] text-sm font-bold">{100} USDT</p>
+          <p className="text-[#4FAAEB] text-sm font-bold">
+            {transferData?.amount || ""} {transferData.token?.name || ""}
+          </p>
           <ArrowIcon />
           <p className="text-[#819DF5] text-xs">Direct Transfer</p>
         </div>
         <Person
-          name={"Other"}
-          address={"0x876ffC3f41F20a4B5A78d375F5FA3a1299daD640"}
+          name={transferData?.toName || "NoName"}
+          address={transferData.address || ""}
         />
       </div>
 
@@ -223,19 +247,21 @@ export default function ConfirmBox() {
             <div className="w-[50px] text-center mr-2">From</div>
             <Tab
               name={"You"}
-              address={"0x876ffC3f41F20a4B5A78d375F5FA3a1299daD640"}
-              amount={"100"}
-              coinValue={"100"}
+              address={transferData.chainAddress || ""}
+              amount={transferData?.amount || ""}
+              tokenName={transferData?.token?.name || ""}
+              coinValue={""}
             />
           </div>
           {/* <GapLine /> */}
           <div className="flex justify-between items-center">
             <div className="w-[50px] text-center mr-2">To</div>
             <Tab
-              name={"Alice"}
-              address={"0x876ffC3f41F20a4B5A78d375F5FA3a1299daD640"}
-              amount={"100"}
-              coinValue={"100"}
+              name={transferData?.toName || "NoName"}
+              address={transferData.address || ""}
+              tokenName={transferData?.token?.name || ""}
+              amount={transferData?.amount || ""}
+              coinValue={""}
             />
           </div>
         </div>
@@ -246,7 +272,13 @@ export default function ConfirmBox() {
             title={"Transfer Amount"}
             isBold={false}
             needArrow={false}
-            amount={""}
+            amount={
+              transferData
+                ? `${formatValue(transferData?.amount!)} ${
+                    transferData.token?.name
+                  }`
+                : ""
+            }
             coinValue={""}
           />
           <AmountPlaneItem
@@ -258,7 +290,9 @@ export default function ConfirmBox() {
             }}
             amount={
               currentGasFee
-                ? `${currentGasFee?.needAmount} ${currentGasFee?.token?.name}`
+                ? `${formatValue(currentGasFee?.needAmount)} ${
+                    currentGasFee?.token?.name
+                  }`
                 : "0"
             }
             coinValue={""}
@@ -275,7 +309,7 @@ export default function ConfirmBox() {
                   <ModalHeader className="flex justify-center items-center text-base">
                     Gas Fee
                   </ModalHeader>
-                  <ModalBody className="px-4 pb-10">
+                  <ModalBody className="px-4 pb-4">
                     <Listbox
                       items={gasFeeList}
                       aria-label="Dynamic Actions"
@@ -326,7 +360,7 @@ export default function ConfirmBox() {
             title={"Total Amount"}
             isBold={true}
             needArrow={false}
-            amount={""}
+            amount={total}
             coinValue={""}
           />
         </div>

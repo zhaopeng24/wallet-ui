@@ -19,6 +19,7 @@ import { FC, useMemo, useState } from "react";
 import Image from "next/image";
 import { classNames } from "@/utils/classNames";
 import { useRouter } from "next/navigation";
+import { formatValue } from "@/utils/format";
 
 export function TokenItem({
   tokenAvatarUrl,
@@ -132,7 +133,7 @@ const Token: FC<ITokenProps> = (props) => {
               <ModalHeader className="flex justify-center items-center text-base">
                 Token
               </ModalHeader>
-              <ModalBody className="px-4 pb-10">
+              <ModalBody className="px-4 pb-4">
                 <Listbox
                   items={calcTokens}
                   aria-label="Dynamic Actions"
@@ -163,9 +164,11 @@ const Token: FC<ITokenProps> = (props) => {
                         <div className="flex-1 font-bold text-base">
                           {item.name}
                         </div>
-                        <div>
-                          <p>{item.amount}</p>
-                          <p>${item.usdValue}</p>
+                        <div className="text-right">
+                          <p className="font-bold">
+                            {formatValue(item.amount)}
+                          </p>
+                          <p>${formatValue(item.usdValue)}</p>
                         </div>
                       </div>
                     </ListboxItem>
@@ -188,10 +191,10 @@ const Token: FC<ITokenProps> = (props) => {
 
       <div className="flex items-center mb-4">
         <div className="flex-1 flex">
-          <p className="text-sm">${usdBan} USD</p>
+          <p className="text-sm">{formatValue(usdBan + "")} USD</p>
           <p className="text-sm mx-4">
-            <span>Balance:</span>
-            <span>{currentToken?.amount}</span>
+            <span className="font-bold">Balance:</span>
+            <span>{formatValue(currentToken?.amount || "0")}</span>
             <span>{currentToken?.name}</span>
           </p>
         </div>

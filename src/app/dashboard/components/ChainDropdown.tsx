@@ -46,7 +46,7 @@ export default function ChainDropDown() {
               <ModalHeader className="flex justify-center items-center text-base">
                 Network
               </ModalHeader>
-              <ModalBody className="px-4 pb-10">
+              <ModalBody className="px-4 pb-4">
                 <Listbox
                   items={chains}
                   aria-label="Dynamic Actions"
