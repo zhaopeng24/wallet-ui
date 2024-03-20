@@ -1,21 +1,23 @@
 export enum EMessage {
 	MSG = 'msg',
-	TRANSFER = 'transferAbstraction',
+	SWAP = 'swap',
+	TRANSFER = 'chain-internal-transfer',
 	CROSSCHAIN = 'crossChainAbstraction'
 }
 
 export interface IConversations {
 	content: string;
 	msgType?: EMessage;
-	response?: IResult;
+	response?: IResult["detail"];
 }
 
 export interface MessageItemProps extends IConversations {
-	handleConfirmTx: () => void;
-	handleConfirmCrossChain: () => void;
+	handleConfirmTx: (response: IResult["detail"]) => void;
+	handleConfirmCrossChain: (response: IResult["detail"]) => void;
 }
 interface IOps {
 	type: string;
+	raw_response: string;
 	source_chain: string;
 	token: string;
 	amount: string;
@@ -25,6 +27,7 @@ interface IOps {
 export interface IResult {
 	// category: EMessage;
 	category: String;
+	summary: String;
 	detail: {
 		reply: string;
 		ops: IOps[];

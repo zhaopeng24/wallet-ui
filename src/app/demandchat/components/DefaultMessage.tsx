@@ -7,7 +7,10 @@ interface IDefaultMessageProps {
 const defaultCommands = [
 	'I want to stake my balance',
 	'I want to trade SWT with 5% return',
-	'I want to send 200 USDC to Alice'
+	'I want to send 200 USDC to Alice',
+	// 'I want to transfer 1USDC to 0x567a5c7c6812bf9a8fbb048f310f3707637e454e on target chain mumbai',
+	// 'I want to transfer 0.01SWT to 0x567a5c7c6812bf9a8fbb048f310f3707637e454e on target chain mumbai',
+	// 'I want to transfer 1SWT to 0x567a5c7c6812bf9a8fbb048f310f3707637e454e on target chain fuji',
 ];
 
 const DefaultMessage: React.FC<IDefaultMessageProps> = ({ commandCb }) => {

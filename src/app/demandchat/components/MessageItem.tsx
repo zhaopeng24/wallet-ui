@@ -1,7 +1,7 @@
 import { Image, Button } from '@nextui-org/react';
 import { MessageItemProps, EMessage } from '../tyeps';
 
-const MessageItem: React.FC<MessageItemProps> = ({ content, msgType, handleConfirmTx, handleConfirmCrossChain }) => {
+const MessageItem: React.FC<MessageItemProps> = ({ content, msgType, response, handleConfirmTx, handleConfirmCrossChain }) => {
 	return (
 		<div>
 			{msgType ? (
@@ -11,13 +11,14 @@ const MessageItem: React.FC<MessageItemProps> = ({ content, msgType, handleConfi
 					</div>
 					<div className='rounded-lg px-5 py-4 m-6 bg-[#0E1437]'>
 						{content}
+						{/* {(msgType === EMessage.SWAP || msgType === EMessage.TRANSFER) && ( */}
 						{msgType === EMessage.TRANSFER && (
 							<div className='w-auto flex mt-2'>
 								<Button
 									fullWidth
 									radius='full'
 									className='bg-[#819DF5] bg-opacity-10 text-white'
-									onClick={handleConfirmTx}
+									onClick={e => handleConfirmTx(response)}
 								>
 									Confirm
 								</Button>
@@ -29,7 +30,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ content, msgType, handleConfi
 									fullWidth
 									radius='md'
 									className='bg-[#456ADE] text-white'
-									onClick={handleConfirmCrossChain}
+									onClick={ e => handleConfirmCrossChain(response)}
 								>
 									ok
 								</Button>

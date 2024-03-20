@@ -6,13 +6,11 @@ import { Button } from "@nextui-org/button";
 import { useContext, useEffect, useState } from "react";
 import { LoadingContext } from "@/app/providers";
 import { Global } from "@/server/Global";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Image } from "@nextui-org/react";
 import { getAssetBalance } from "@/api/hold";
 import { useClientFetchData } from "@/lib/hooks/useClientFetchData";
 import { Response, AssetBalance } from "@/api/types/hold";
-import { Menu } from "@/components/Menu";
 import Toast from "@/utils/toast";
 import MainLayout from "@/components/basic/MainLayout";
 
@@ -29,7 +27,7 @@ const DemandPage = () => {
     Toast("Comming soon...");
   };
 
-  const data = [
+  const functionData = [
     {
       id: "transfer",
       label: "Transfer",
@@ -85,111 +83,79 @@ const DemandPage = () => {
   const balance = result ? result.result.sumBalanceUSD : "0";
   const balanceFix2 = parseFloat(balance).toFixed(2);
 
+  const handle2Chat = () => {
+    router.push("/demandchat");
+  }
   return (
     <MainLayout activeMenu="demand">
       <div className="">
         <Header title="Demand" showBack={false} />
         <div
-          className={classNames(`${Style.transaction} mian p-4 m-4 rounded-lg`)}
+          className={classNames(`${Style.transaction} mian px-6 py-4 m-4 rounded-[25px]`)}
         >
-          <div className="text-[#819DF5] text-xs text-center leading-loose">
-            Deposit your balance
+          <div className="font-poppins text-[20px] font-bold text-center leading-relaxed">
+            Deposit your balance to earn
           </div>
-          <div className="text-xl font-normal text-center leading-6 mt-2 mb-4">
-            $ {balanceFix2}
-          </div>
-          <div className="text-white text-opacity-50 text-xs text-center leading-tight">
-            Earn stable return everyday
-          </div>
-          <div className="text-white text-opacity-50 text-xs text-center leading-tight">
-            Retrieve flexibly at any time
-          </div>
-          <div className={classNames(`${Style.deliver}`)}></div>
-
           <div className="grid grid-cols-2 gap-3 mt-4">
-            <div
-              className={classNames(
-                `${Style.stakeAnytime} flex flex-col rounded-lg text-center`
-              )}
-            >
-              <div className="flex justify-end">
-                <div
-                  className={classNames(
-                    `${Style.aprBoxShadow} 
-                    flex-end text-xs text-[#479CE8] bg-white w-16 leading-6
-                  rounded-[8px] rounded-tl-none rounded-br-none`
-                  )}
-                >
-                  Flexible
-                </div>
-              </div>
-              {/* center */}
-              <div className="text-white text-xs text-left mx-auto">
-                <div className="leading-tight">up to</div>
-                <div className="leading-tight">
-                  <span className="leading-normal text-[32px]">5.7%</span>
-                  <span> APR</span>
-                </div>
-              </div>
-              <div className="m-1 mt-0">
-                <Button
-                  fullWidth
-                  className={classNames(
-                    `${Style.stakeAnytimeBtn} 
-                    rounded-lg`
-                  )}
-                  onClick={handleCommingSoon}
-                >
-                  Stake Now
-                  <span className="text-[14px] ml-3"> {">"} </span>
-                </Button>
-              </div>
+            <div className="font-poppins text-[16px] font-bold leading-6">
+              Earn
             </div>
-
-            <div
-              className={classNames(
-                `${Style.stakeFlexible} flex flex-col rounded-lg text-center`
-              )}
-            >
-              <div className="flex justify-end">
-                <div
-                  className={classNames(
-                    `${Style.aprBoxShadow} 
-                    flex-end text-xs text-[#2FB9B9] bg-white w-16 leading-6
-                    rounded-[8px] rounded-tl-none rounded-br-none`
-                  )}
-                >
-                  Term
-                </div>
-              </div>
-              {/* center */}
-              <div className="text-white text-xs text-left mx-auto">
-                <div className="leading-tight">up to</div>
-                <div className="leading-tight">
-                  <span className="leading-normal text-[32px]">9.2%</span>
-                  <span>APR</span>
-                </div>
-              </div>
-
-              <div className="m-1 mt-0">
-                <Button
-                  fullWidth
-                  className={classNames(
-                    `${Style.stakeFlexibleBtn} 
-                    rounded-lg`
-                  )}
-                  onClick={handleCommingSoon}
-                >
-                  Stake Now
-                  <span className="text-[14px] ml-3"> {">"} </span>
-                </Button>
-              </div>
+            <div className="font-poppins text-[16px] font-bold leading-6">
+              Retrieve
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mt-1">
+            <div className="font-poppins text-[#4FAAEB] text-[30px] font-bold leading-8">
+              Everyday
+            </div>
+            <div className="font-poppins text-[#3DC8C8] text-[30px] font-bold leading-8">
+              Anytime
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3  mt-5">
+            <div className="font-poppins text-[16px] font-bold leading-6">
+              Return
+            </div>
+            <div className="font-poppins text-[16px] font-bold leading-6">
+              Risks
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="font-poppins text-xs font-bold leading-4">
+              up to
+            </div>
+            <div className="font-poppins text-xs font-bold leading-4">
+              up to
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="font-poppins font-bold">
+              <span className="leading-normal text-[36px] text-[#4FAAEB]">5.7% </span>
+              <span className="text-xs"> APR</span>
+            </div>
+            <div className="font-poppins text-[#3DC8C8] text-[36px] font-bold">
+              <span className="leading-normal">0.1%</span>
+            </div>
+           
+          </div>
+          <div className="mx-2 mt-4">
+            <Button
+              fullWidth
+              className="rounded-[15px] bg-[#949CBF]"
+              onClick={handleCommingSoon}
+            >
+              View
+              <span className="text-[14px] ml-2"> {">"} </span>
+            </Button>
           </div>
         </div>
         <div className={classNames(`mian p-4 m-4 rounded-lg text-xs`)}>
-          <div className="grid grid-cols-4 gap-4 ">
-            {data.map((item) => (
+          <div className="grid grid-cols-3 gap-5">
+            {functionData.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-col items-center mb-1"
@@ -212,20 +178,19 @@ const DemandPage = () => {
             ))}
           </div>
 
-          <Link href="/demandchat">
-            <Button
-              fullWidth
-              size="lg"
-              className="mt-4 text-sm flex justify-between rounded-md text-white bg-[#819DF5] bg-opacity-50"
-            >
-              How can we help?
-              <Image
-                className=""
-                src={`/imgs/demand-microphone.png`}
-                alt="microphone"
-              />
-            </Button>
-          </Link>
+          <Button
+            fullWidth
+            size="lg"
+            className="mt-4 text-sm flex justify-between rounded-md text-white bg-[#819DF5] bg-opacity-50"
+            onClick={handle2Chat}
+          >
+            How can we help?
+            <Image
+              className=""
+              src={`/imgs/demand-microphone.png`}
+              alt="microphone"
+            />
+          </Button>
         </div>
       </div>
     </MainLayout>

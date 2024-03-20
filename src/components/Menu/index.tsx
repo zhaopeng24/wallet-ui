@@ -19,7 +19,7 @@ export const Menu = ({ active = "dashboard" }) => {
             className="cursor-pointer flex text-center flex-1 justify-center"
             onClick={() => {
               if (item.key !== active) {
-                router.replace(item.url);
+                router.push(item.url);
               }
             }}
           >

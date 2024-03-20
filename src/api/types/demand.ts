@@ -1,6 +1,6 @@
-type BalanceInfo = {
+export type BalanceInfo = {
 	symbol: string;
-	balance: number;
+	balance: string | number;
 };
 
 export type ChainBalances = {
