@@ -45,16 +45,20 @@ export interface ITokenBalance {
   usdValue: string;
 }
 
+interface pastDay {
+  percentage: string;
+  value: string;
+}
 export interface IBalance {
   chainName: string;
   inTotal: string;
   owner: string;
-  pastDay: string;
+  pastDay: pastDay;
   sumBalanceUSD: string;
   NativeBalance: ITokenBalance;
   tokenBalance: ITokenBalance[];
-  past1Hour: string;
-  past7Day: string;
+  past1Hour: pastDay;
+  past7Day: pastDay;
 }
 
 interface IStore {

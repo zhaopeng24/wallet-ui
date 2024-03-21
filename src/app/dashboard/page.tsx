@@ -81,12 +81,10 @@ export default function DashBoardLayout() {
   useEffect(() => {
     async function init() {
       if (currentChain && currentAddress) {
-        setLoading(true);
         const res = await getTxDetail(currentChain?.ID, currentAddress);
         const data = res.body.result || [];
         sessionStorage.setItem("txList", JSON.stringify(data));
         setTransactionlist(data);
-        setLoading(false);
       }
     }
     init();
