@@ -1,18 +1,17 @@
-import { formatAddress } from "@/utils/format";
-
 export default function Person({
   name,
-  address,
+  amount,
+  tokenName,
 }: {
   name: string;
-  address: string;
+  amount: string
+  tokenName: string;
 }) {
   return (
     <div className="flex flex-col items-center">
-      <p className="font-bold text-base p-1 font-mono">{name}</p>
-      <p className="bg-[#819DF54D] text-[#819DF5] rounded-full text-xs px-2 py-1">
-        {formatAddress(address)}
-      </p>
+      <p className="font-poppins text-base font-bold leading-6 text-center">{name}</p>
+      <p className="font-poppins text-lg font-semibold leading-6 text-center text-[#8197F5]">{amount}</p>
+      <p className="font-poppins text-xs font-normal leading-6 text-white opacity-80">{tokenName}</p>
     </div>
   );
 }
