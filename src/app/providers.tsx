@@ -57,6 +57,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       });
 
       setChains(chain);
+      localStorage.setItem("wallet_chains", JSON.stringify(chain));
       setLoading(false);
       setInited(true);
       // 如果未登录，先到首页去

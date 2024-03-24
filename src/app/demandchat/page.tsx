@@ -14,6 +14,7 @@ import { chatInitApi, chatApi, vertifyWalletBalanceApi } from "@/api/demand";
 import { CtxBalanceReq, ChainBalances, BalanceInfo } from "@/api/types/demand";
 import { useChains } from "@/store/useChains";
 import { useAddress } from "@/store/useAddress";
+import { complexTransfer } from "@/utils/complexTransferUtils";
 
 const CIDNAME = "X-Smartwallet-Cid";
 
@@ -78,6 +79,7 @@ const DemandChatPage = () => {
       baseChain: "mumbai",
       balances: assetBalance,
     };
+    debugger;
     console.log(chatHeader, "header");
     const { status, body } = await vertifyWalletBalanceApi(param, chatHeader);
     console.log(status, "status");
@@ -144,6 +146,11 @@ const DemandChatPage = () => {
 
     // const detail = detail1;
     const { ops, reply } = detail;
+    debugger;
+
+    const mop = await complexTransfer(ops);
+
+    console.log(mop, "mop");
 
     if (!ops || !ops.length) {
       const newMsg = {
@@ -212,7 +219,7 @@ const DemandChatPage = () => {
   const confirmTx = async (detail: IResult["detail"]) => {
     const tagetOp = detail.ops && detail.ops[0];
     const targetChain = chains.find(
-      (chain) => chain.name == tagetOp.source_chain
+      (chain) => chain.ID == tagetOp.target_chain_id
     );
     if (!targetChain) return "";
     const targetToken = targetChain.tokens.find(
