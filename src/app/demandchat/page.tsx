@@ -146,10 +146,8 @@ const DemandChatPage = () => {
 
     // const detail = detail1;
     const { ops, reply } = detail;
-    debugger;
-
-    const mop = await complexTransfer(ops);
-
+    // 调用交易构建
+    // const mop = await complexTransfer(ops);
     console.log(mop, "mop");
 
     if (!ops || !ops.length) {

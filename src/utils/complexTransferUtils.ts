@@ -6,6 +6,8 @@ import { IChain } from "@/store/useChains";
 import { BigNumber, ethers } from "ethers";
 import { BundlerRpc } from "sw-fe-sdk";
 import erc20Abi from "sw-fe-sdk/dist/data/IERC20";
+import sourceChainSenderAbi from "sw-fe-sdk/dist/data/SourceChainSender";
+
 import Toast from "./toast";
 
 export async function complexTransfer(ops: any[]) {
@@ -34,7 +36,6 @@ export async function complexTransfer(ops: any[]) {
 
   let tokenPaymasterAddress = "";
   let payGasFeeTokenAddress = "";
-  debugger;
   for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     // 根据source_token，target_token拿到它们的地址
@@ -129,6 +130,92 @@ export async function complexTransfer(ops: any[]) {
         tokenPaymasterAddress = feeToken?.tokenPaymasterAddress;
         payGasFeeTokenAddress = feeToken?.address;
       }
+    }
+    if (type === "cross-chain-transfer") {
+      // 暂时只支持CCIP
+      const {
+        raw_response,
+        source_chain_id,
+        token,
+        amount,
+        receiver,
+        targer_chain_id,
+      } = op;
+
+      // 目前仅支持用mumbai的swt作为手续费，若swt不足，则提示手续费不足，然后结束
+      const res = await GetEstimateFee("1");
+      const { gasPrice, payFeeByToken } = res.body.result;
+      feeToken = payFeeByToken.find((t: any) => t.token.name === "SWT").token;
+      _gasPrice = gasPrice;
+
+      const findChain = chains.find((c) => c.ID == source_chain_id)!;
+      bundlerApi = findChain.bundlerApi;
+      chainId = findChain.ID;
+      const tokens = findChain?.tokens;
+      const findToken = tokens?.find((t) => t.name === token);
+
+      walletAddress = addresslist.find(
+        (address) => address.chainId == source_chain_id
+      )!.walletAddress;
+      entryPointAddress = findChain.erc4337ContractAddress.entrypoint;
+
+      let useNative = feeToken?.type !== 1;
+      if (useNative) {
+        tokenPaymasterAddress = "";
+        payGasFeeTokenAddress = "";
+      } else {
+        tokenPaymasterAddress = feeToken?.tokenPaymasterAddress;
+        payGasFeeTokenAddress = feeToken?.address;
+      }
+
+      let erc20ContractAddress = findToken?.address;
+      let sourceChainSenderAddress =
+        raw_response?.result?.[0]?.config?.contractAddress?.sourceChainSender ||
+        "";
+      let destChainReceiverAddress =
+        raw_response?.result?.[0]?.config?.contractAddress?.destChainReceiver ||
+        "";
+      let destChainSelector =
+        raw_response?.result?.[0]?.config?.destchainSelector || "";
+      let receiverAddress = receiver;
+
+      params.push(
+        ...[
+          {
+            ethValue: BigNumber.from(0),
+            callContractAbi: erc20Abi,
+            callContractAddress: erc20ContractAddress,
+            callFunc: "approve",
+            callParams: [sourceChainSenderAddress, BigNumber.from(0)],
+          },
+          // approve
+          {
+            ethValue: BigNumber.from(0),
+            callContractAbi: erc20Abi,
+            callContractAddress: erc20ContractAddress,
+            callFunc: "approve",
+            callParams: [
+              sourceChainSenderAddress,
+              BigNumber.from(amount * Math.pow(10, findToken?.decimal!)),
+            ],
+          },
+          // function sendMessage(uint64 destinationChainSelector,address receiver,payFeesIn feeToken,address to,uint256 amount) external returns (bytes32 messageId)
+          {
+            ethValue: BigNumber.from(0),
+            callContractAbi: sourceChainSenderAbi,
+            callContractAddress: sourceChainSenderAddress,
+            callFunc: "sendMessage",
+            // feeToken: 1-Link
+            callParams: [
+              BigNumber.from(destChainSelector),
+              destChainReceiverAddress,
+              1,
+              receiverAddress,
+              BigNumber.from(amount * Math.pow(10, findToken?.decimal!)),
+            ],
+          },
+        ]
+      );
     }
   }
   debugger;
