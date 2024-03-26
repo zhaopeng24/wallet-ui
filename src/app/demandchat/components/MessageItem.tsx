@@ -11,7 +11,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ content, msgType, response, h
 					</div>
 					<div className='rounded-lg px-5 py-4 m-6 bg-[#0E1437]'>
 						{content}
-						{(msgType === EMessage.SWAP || msgType === EMessage.TRANSFER) && (
+						{ msgType === EMessage.TRANSFER  && (
 							<div className='w-auto flex mt-2'>
 								<Button
 									fullWidth
