@@ -14,6 +14,7 @@ import { chatInitApi, chatApi, vertifyWalletBalanceApi } from "@/api/demand";
 import { CtxBalanceReq, ChainBalances, BalanceInfo } from "@/api/types/demand";
 import { useChains } from "@/store/useChains";
 import { useAddress } from "@/store/useAddress";
+import { complexTransfer } from "@/utils/complexTransferUtils";
 
 const CIDNAME = "X-Smartwallet-Cid";
 
@@ -78,6 +79,7 @@ const DemandChatPage = () => {
       baseChain: "mumbai",
       balances: assetBalance,
     };
+    debugger;
     console.log(chatHeader, "header");
     const { status, body } = await vertifyWalletBalanceApi(param, chatHeader);
     console.log(status, "status");
@@ -118,32 +120,10 @@ const DemandChatPage = () => {
     console.log(body, "handleRequest body");
     const { category, detail } = body as IResult;
 
-    // 	const detail1 = {
-    // 			"reply": "Ok I will transfer 30 USDC to 0x5134F00C95b8e794db38E1eE39397d8086cee7Ed on mumbai",
-    // 			"ops": [
-    // 					{
-    // 							"type": "chain-internal-transfer",
-    // 							"raw_response": "",
-    // 							"source_chain": "mumbai",
-    // 							"token": "USDC",
-    // 							"amount": "30",
-    // 							"receiver": "0x5134F00C95b8e794db38E1eE39397d8086cee7Ed",
-    // 							"target_chain": "mumbai"
-    // 					}
-    // 			]
-    // 	}
-    // 	const detail2 = {
-    // 		"type": "swap",
-    // 		"raw_response": null,
-    // 		"source_token": "MATIC",
-    // 		"target_token": "SWT",
-    // 		"dex": "uniswap",
-    // 		"swap_in": "",
-    // 		"swap_out": "1"
-    // }
-
-    // const detail = detail1;
     const { ops, reply } = detail;
+    // 调用交易构建
+    // const mop = await complexTransfer(ops);
+    console.log(ops, "ops");
 
     if (!ops || !ops.length) {
       const newMsg = {
@@ -155,8 +135,8 @@ const DemandChatPage = () => {
     } else {
       // 目前只考虑第一种策略
       const targetOp = ops[0];
-      let msgType;
-      switch (targetOp.type) {
+      let msgType = category || targetOp.type;
+      switch (category) {
         case EMessage.SWAP:
           msgType = EMessage.SWAP;
           break;
@@ -170,7 +150,9 @@ const DemandChatPage = () => {
           // 处理未知类型
           break;
       }
-      const newMsg = { content: reply, msgType: msgType, response: detail };
+      console.log(msgType || EMessage.MSG, 'msgType || EMessage.MSG')
+      const newMsg = { content: reply, msgType: msgType || EMessage.MSG, response: detail };
+
       setConversation((pre) => [...pre, newMsg]);
     }
   };
@@ -212,7 +194,7 @@ const DemandChatPage = () => {
   const confirmTx = async (detail: IResult["detail"]) => {
     const tagetOp = detail.ops && detail.ops[0];
     const targetChain = chains.find(
-      (chain) => chain.name == tagetOp.source_chain
+      (chain) => chain.ID == tagetOp.target_chain_id
     );
     if (!targetChain) return "";
     const targetToken = targetChain.tokens.find(

@@ -2,7 +2,7 @@ import { Global } from "@/server/Global";
 import { Config } from "@/server/config/Config";
 import { create } from "zustand";
 
-interface Address {
+export interface IAddress {
   chainId: number;
   walletAddress: string;
 }
@@ -10,8 +10,8 @@ interface Address {
 interface IStore {
   mpcAddress: string;
   setMpcAddress: (address: string) => void;
-  addressList: Address[];
-  setAddressList: (data: Address[]) => void;
+  addressList: IAddress[];
+  setAddressList: (data: IAddress[]) => void;
   currentAddress: string | null;
   setCurrentAddress: (chainId: number) => void;
 }
@@ -29,6 +29,7 @@ export const useAddress = create<IStore>((set) => {
     addressList: [],
     setAddressList: (data) => {
       set(() => {
+        localStorage.setItem("wallet_addressList", JSON.stringify(data));
         return {
           addressList: data,
         };
@@ -41,7 +42,11 @@ export const useAddress = create<IStore>((set) => {
           (item) => item.chainId === chainId
         )?.walletAddress;
         if (address) {
-          Global.account.deployContractWalletIfNotExist(address);
+          Global.account.deployContractWalletIfNotExist(chainId, address);
+          localStorage.setItem("wallet_currentAddress", address);
+        } else {
+          console.error("Address not found");
+          localStorage.setItem("wallet_currentAddress", "");
         }
         return {
           currentAddress: address,
