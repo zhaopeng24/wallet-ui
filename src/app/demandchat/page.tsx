@@ -225,8 +225,9 @@ const DemandChatPage = () => {
       }, 100);
     } else {
       setLoading(true);
-      const tran = complexTransfer(detail.ops);
+      const tran = await complexTransfer(detail.ops);
       setLoading(false);
+      router.push("/dashboard");
     }
   };
 

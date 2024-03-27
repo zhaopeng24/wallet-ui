@@ -11,12 +11,10 @@ import { SendEmailCode, Login, CalcWalletAddress } from "@/api/auth";
 
 import { Global } from "@/server/Global";
 import { JSONBigInt } from "@/server/js/common_utils";
-import { AccountInterface } from "@/server/account/AccountInterface";
 import { useRouter } from "next/navigation";
 import Toast from "@/utils/toast";
 import { useChains } from "@/store/useChains";
 import { useAddress } from "@/store/useAddress";
-import { Config } from "@/server/config/Config";
 
 const CountdownTime = 60;
 
@@ -26,8 +24,8 @@ const LoginPage = () => {
   const { setMpcAddress, setAddressList, setCurrentAddress } = useAddress(
     (state) => state
   );
-  const [password, setPasswork] = useState("haha123123");
-  const [email, setEmail] = useState("doracatk@gmail.com");
+  const [password, setPasswork] = useState("");
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const { setLoading } = useContext(LoadingContext);
 
