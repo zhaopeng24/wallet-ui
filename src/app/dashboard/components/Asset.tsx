@@ -1,5 +1,5 @@
 import { IBalance } from "@/store/useChains";
-import { formatValue } from "@/utils/format";
+import { formatValue2 } from "@/utils/format";
 import { cn } from "@/utils/util";
 
 interface AssetProps {
@@ -38,7 +38,7 @@ export default function Asset(props: AssetProps) {
   return (
     <div className="mt-8 ml-4 text-sm">
       <div className="flex">
-        <div className="text-5xl font-bold">${formatValue(sumBalanceUSD)}</div>
+        <div className="text-5xl font-bold">${formatValue2(sumBalanceUSD)}</div>
         <div className="ml-2">
           <span>USD</span>
         </div>
@@ -53,7 +53,7 @@ export default function Asset(props: AssetProps) {
           )}
         >
           ${past1HourValueIsGreaterThanZero ? "+" : ""}
-          {formatValue(past1HourValue)}
+          {formatValue2(past1HourValue)}
         </span>
         <span
           className={cn(
@@ -63,7 +63,7 @@ export default function Asset(props: AssetProps) {
               : "text-[#FF8266]"
           )}
         >
-          {formatValue(past1HourPercentage)}%
+          {formatValue2(past1HourPercentage)}%
         </span>
         <span className="text-[#819DF580]">Last Hour</span>
       </div>
@@ -78,9 +78,9 @@ export default function Asset(props: AssetProps) {
           >
             <span className="mr-2">
               ${pastDayValueIsGreaterThanZero ? "+" : ""}
-              {formatValue(pastDayValue)}
+              {formatValue2(pastDayValue)}
             </span>
-            <span className="mr-2">{formatValue(pastDayPercentage)}%</span>
+            <span className="mr-2">{formatValue2(pastDayPercentage)}%</span>
           </div>
           <div className="mr-1">Last Day</div>
         </div>
@@ -94,9 +94,9 @@ export default function Asset(props: AssetProps) {
           >
             <span className="mr-2">
               ${past7DayValueIsGreaterThanZero ? "+" : ""}
-              {formatValue(past7DayValue)}
+              {formatValue2(past7DayValue)}
             </span>
-            <span className="mr-2">{formatValue(past7DayPercentage)}%</span>
+            <span className="mr-2">{formatValue2(past7DayPercentage)}%</span>
           </div>
           <div className="mr-1">Last Week</div>
         </div>

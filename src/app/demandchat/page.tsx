@@ -29,11 +29,9 @@ const DemandChatPage = () => {
     [CIDNAME]: "",
   });
   const { chains, balances } = useChains((state) => state);
-  const { currentAddress, addressList } = useAddress((state) => state);
+  const { currentAddress } = useAddress((state) => state);
   const [assetBalance, setAssetBalance] = useState<ChainBalances>({}); // 资产余额
   const cacheChainMap = new Map();
-
-  // const balances: ChainBalances = useMemo(() => {});
 
   const getTokenName = (chainName: string, tokenId: number) => {
     const cacheTokenName = cacheChainMap.get(`${chainName}-${tokenId}`);
@@ -112,18 +110,15 @@ const DemandChatPage = () => {
   };
 
   const handleRequest = async (inputDemandText: string) => {
+    setLoading(true);
     const res = await vertifyWalletBalance();
-
     if (!res) return false;
-    const { status, body } = await chatApi(inputDemandText, chatHeader);
-    console.log(status, "handleRequest status");
-    console.log(body, "handleRequest body");
+    const { body } = await chatApi(inputDemandText, chatHeader);
     const { category, detail } = body as IResult;
-
     const { ops, reply } = detail;
     // 调用交易构建
     console.log(ops, "ops");
-
+    setLoading(false);
     if (!ops || !ops.length) {
       const newMsg = {
         content: reply,
@@ -133,6 +128,7 @@ const DemandChatPage = () => {
       setConversation((pre) => [...pre, newMsg]);
     } else {
       // 目前只考虑第一种策略
+      // todo 调整
       const targetOp = ops[0];
       let msgType = category || targetOp.type;
       switch (category) {
@@ -149,7 +145,6 @@ const DemandChatPage = () => {
           // 处理未知类型
           break;
       }
-      console.log(msgType || EMessage.MSG, "msgType || EMessage.MSG");
       const newMsg = {
         content: reply,
         msgType: msgType || EMessage.MSG,

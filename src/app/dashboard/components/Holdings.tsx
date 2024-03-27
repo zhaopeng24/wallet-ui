@@ -76,7 +76,7 @@ function Item({ data }: { data: ITokenBalance & IToken }) {
         <div className="text-right">
           <div>{formatValue(amount)} </div>
           <div className="text-sm text-[#819DF580]">
-            {formatValue(usdValue)} usd
+            {formatValue(usdValue)} USD
           </div>
         </div>
         <div className="py-4 px-2" onClick={() => handleToDetail(data)}>

@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import Toast from "./toast";
 
 export const ETH = (value: string) => {
   return ethers.utils.parseEther(value);
@@ -328,6 +329,8 @@ export function copyToClipboard(value: string) {
 
   // 移除textarea元素
   document.body.removeChild(textarea);
+
+  Toast("Copied to clipboard");
 }
 
 export function cn(...inputs: ClassValue[]) {

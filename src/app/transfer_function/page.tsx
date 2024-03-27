@@ -26,7 +26,7 @@ export default function Transfer_Function() {
         setAddress={setAddress}
         setChain={setChain}
       />
-      <Contact />
+      {/* <Contact /> */}
       <div className="absolute bottom-8 left-8 right-8">
         <Button
           onClick={handleNext}

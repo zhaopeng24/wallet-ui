@@ -1,5 +1,7 @@
 "use client";
+import { copyToClipboard } from "@/utils/util";
 import ChainDropDown from "./ChainDropdown";
+import { formatAddress } from "@/utils/format";
 
 interface HeaderProps {
   userName?: string;
@@ -9,15 +11,6 @@ interface HeaderProps {
 }
 
 export default function Header({ address }: HeaderProps) {
-  const formatAddress = (s: string) => {
-    if (s) {
-      const head = s.slice(0, 7);
-      const tail = s.slice(s.length - 4, s.length);
-      return head + "..." + tail;
-    }
-    return "...";
-  };
-
   return (
     <div className="w-full flex items-center mt-4">
       <div className="p-2 rounded-full bg-black mr-2 border border-white border-opacity-20">
@@ -60,7 +53,10 @@ export default function Header({ address }: HeaderProps) {
       </div>
       <div className="flex-1 flex flex-col mr-2 overflow-hidden">
         <div className="text-base">New Friend</div>
-        <div className="w-full text-[#819DF580] text-ellipsis">
+        <div
+          className="w-full text-[#819DF580] text-ellipsis"
+          onClick={() => copyToClipboard(address)}
+        >
           {formatAddress(address)}
         </div>
       </div>
