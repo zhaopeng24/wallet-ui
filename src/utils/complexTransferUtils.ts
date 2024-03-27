@@ -9,11 +9,15 @@ import erc20Abi from "sw-fe-sdk/dist/data/IERC20";
 import sourceChainSenderAbi from "sw-fe-sdk/dist/data/SourceChainSender";
 
 import Toast from "./toast";
+import { CrossTx } from "@/api/crossChain";
+import { ITransactionRecord } from "@/api/types/transactionRecord";
 
 export async function complexTransfer(ops: any[]) {
   const params = [];
 
   const rpc = Global.account.getBlockchainRpc();
+
+  let extraData: ITransactionRecord[] = [];
 
   let chainsData = localStorage.getItem("wallet_chains");
   let addressListData = localStorage.getItem("wallet_addressList");
@@ -36,13 +40,16 @@ export async function complexTransfer(ops: any[]) {
 
   let tokenPaymasterAddress = "";
   let payGasFeeTokenAddress = "";
+
+  let _crossChainId = 0;
   for (let i = 0; i < ops.length; i++) {
     const op = ops[i];
     // 根据source_token，target_token拿到它们的地址
     const { type } = op;
 
     if (type === "swap") {
-      const { chain_id, source_token, target_token, swap_in, swap_out } = op;
+      const { chain_id, source_token, target_token, swap_in, swap_out, dex } =
+        op;
       const findChain = chains.find((chain) => chain.ID == chain_id)!;
       const walletAddress = addresslist.find(
         (address) => address.chainId == chain_id
@@ -61,12 +68,18 @@ export async function complexTransfer(ops: any[]) {
         amount: swap_in,
         // recipient: walletAddress,
       };
+      // 目前仅支持用mumbai的swt作为手续费，若swt不足，则提示手续费不足，然后结束
+      const res = await GetEstimateFee("1");
+      const { gasPrice, payFeeByToken, chainId } = res.body.result;
+
+      feeToken = payFeeByToken.find((t: any) => t.token.name === "SWT");
+      _gasPrice = gasPrice;
+
       const swapOp = await Swap(swapParams);
       const p = swapOp.body.result;
       const { callContractAddress, calldata } = p;
 
       let fromNative = finTokenIn?.type !== 1;
-      debugger;
       if (!fromNative) {
         params.push({
           ethValue: BigNumber.from(0),
@@ -82,9 +95,35 @@ export async function complexTransfer(ops: any[]) {
         callContractAddress,
         calldataHex: calldata,
       });
+
+      extraData.push({
+        type: "swap",
+        dex: dex,
+        source_token_name: source_token,
+        source_token_id: finTokenIn?.tokenId!,
+        target_token_name: target_token,
+        target_token_id: finTokenOut?.tokenId!,
+        swap_in: swap_in,
+        swap_out: swap_out,
+        to_name: "",
+        from_address: walletAddress,
+        to_address: walletAddress,
+        amount: swap_in,
+        chain_id: findChain.ID,
+        chain_name: findChain.name,
+        create_date: new Date().getTime() + "",
+        fee: {
+          chain_id: findChain.ID,
+          chain_name: findChain.name,
+          token_id: feeToken.token.tokenId,
+          token_name: feeToken.token.name,
+          amount: feeToken.needAmount,
+        },
+      });
     }
     if (type === "chain-internal-transfer") {
-      const { source_chain_id, token, amount, receiver } = op;
+      const { source_chain_id, source_chain_name, token, amount, receiver } =
+        op;
 
       // 目前仅支持用mumbai的swt作为手续费，若swt不足，则提示手续费不足，然后结束
       const res = await GetEstimateFee("1");
@@ -130,6 +169,26 @@ export async function complexTransfer(ops: any[]) {
         tokenPaymasterAddress = feeToken?.tokenPaymasterAddress;
         payGasFeeTokenAddress = feeToken?.address;
       }
+      extraData.push({
+        type: "internalTransfer",
+        from_address: walletAddress,
+        to_name: "",
+        to_address: receiver,
+        amount: amount,
+        token_id: finTokenIn?.tokenId!,
+        token_name: finTokenIn?.name!,
+        chain_id: source_chain_id,
+        chain_name: source_chain_name,
+        create_date: new Date().getTime() + "",
+        fee: {
+          chain_id: source_chain_id,
+          chain_name: source_chain_name,
+          token_id: feeToken.tokenId,
+          token_name: feeToken.name,
+          amount: payFeeByToken.find((t: any) => t.token.name === "SWT")
+            .needAmount,
+        },
+      });
     }
     if (type === "cross-chain-transfer") {
       // 暂时只支持CCIP
@@ -139,12 +198,16 @@ export async function complexTransfer(ops: any[]) {
         token,
         amount,
         receiver,
-        targer_chain_id,
+        source_chain_name,
+        target_chain_id,
+        target_chain_name,
       } = op;
+
+      _crossChainId = raw_response?.result[0].ID;
 
       // 目前仅支持用mumbai的swt作为手续费，若swt不足，则提示手续费不足，然后结束
       const res = await GetEstimateFee("1");
-      const { gasPrice, payFeeByToken } = res.body.result;
+      const { gasPrice, payFeeByToken, chainId: _chainId } = res.body.result;
       feeToken = payFeeByToken.find((t: any) => t.token.name === "SWT").token;
       _gasPrice = gasPrice;
 
@@ -216,6 +279,30 @@ export async function complexTransfer(ops: any[]) {
           },
         ]
       );
+      extraData.push({
+        type: "crossChain",
+        crossId: _crossChainId, // 跨链ID，当保存跨链信息到https://cc-dev.web3idea.xyz/api/v1/cross-tx可获得该值
+        source_chain_id: source_chain_id, // 源链chain id
+        source_chain_name: source_chain_name, // 源链chain id
+        source_chain_amount: amount, // 源链交易的token数量
+        target_chain_id: target_chain_id, // 目标链chain id
+        target_chain_name: target_chain_name, // 目标链chain id
+        to_name: "",
+        from_address: walletAddress,
+        to_address: receiver,
+        amount: amount,
+        token_id: feeToken.tokenId,
+        token_name: token,
+        create_date: new Date().getTime() + "",
+        fee: {
+          chain_id: findChain.ID,
+          chain_name: findChain.name,
+          token_id: findToken?.tokenId!,
+          token_name: findToken?.name!,
+          amount: payFeeByToken.find((t: any) => t.token.name === "SWT")
+            .needAmount,
+        },
+      });
     }
   }
   debugger;
@@ -242,11 +329,16 @@ export async function complexTransfer(ops: any[]) {
       chainid: chainId!,
       txSource: 1,
       userOperationHash: opHase,
-      extraData: {
-        type: "swap test",
-      },
+      extraData: extraData,
     };
     const aares = await AATx(txParams);
+    if (_crossChainId) {
+      await CrossTx({
+        crossChainConfigId: _crossChainId,
+        sourceChainUserOperationHash: opHase,
+        crossChainDetails: {},
+      });
+    }
     if (aares.body.result) {
       Toast("Transfer Success");
     }

@@ -122,7 +122,6 @@ const DemandChatPage = () => {
 
     const { ops, reply } = detail;
     // 调用交易构建
-    // const mop = await complexTransfer(ops);
     console.log(ops, "ops");
 
     if (!ops || !ops.length) {
@@ -150,8 +149,12 @@ const DemandChatPage = () => {
           // 处理未知类型
           break;
       }
-      console.log(msgType || EMessage.MSG, 'msgType || EMessage.MSG')
-      const newMsg = { content: reply, msgType: msgType || EMessage.MSG, response: detail };
+      console.log(msgType || EMessage.MSG, "msgType || EMessage.MSG");
+      const newMsg = {
+        content: reply,
+        msgType: msgType || EMessage.MSG,
+        response: detail,
+      };
 
       setConversation((pre) => [...pre, newMsg]);
     }
@@ -193,25 +196,38 @@ const DemandChatPage = () => {
 
   const confirmTx = async (detail: IResult["detail"]) => {
     const tagetOp = detail.ops && detail.ops[0];
-    const targetChain = chains.find(
-      (chain) => chain.ID == tagetOp.target_chain_id
-    );
-    if (!targetChain) return "";
-    const targetToken = targetChain.tokens.find(
-      (token) => token.name == tagetOp.token
-    );
-    if (!targetToken) return "";
+    if (
+      detail.ops &&
+      detail.ops.length == 1 &&
+      detail.ops[0].type == "chain-internal-transfer"
+    ) {
+      const targetChain = chains.find(
+        (chain) => chain.ID == tagetOp.target_chain_id
+      );
+      if (!targetChain) return "";
+      const targetToken = targetChain.tokens.find(
+        (token) => token.name == tagetOp.token
+      );
+      if (!targetToken) return "";
 
-    sessionStorage.setItem("transfer_amount", tagetOp.amount); // 转账数量
-    sessionStorage.setItem("transfer_address", tagetOp.receiver); // 转账地址
-    sessionStorage.setItem("transfer_name", ""); // 转账名称
-    sessionStorage.setItem("transfer_tokenId", targetToken.tokenId.toString()); // 转账tokenId
-    sessionStorage.setItem("transfer_chainId", targetChain.ID.toString()); // 转账chainId
-    // 这里主要逻辑为跳转
-    const routerQuery = {};
-    setTimeout(() => {
-      router.push("/transfer_function/confirmation", routerQuery);
-    }, 100);
+      sessionStorage.setItem("transfer_amount", tagetOp.amount); // 转账数量
+      sessionStorage.setItem("transfer_address", tagetOp.receiver); // 转账地址
+      sessionStorage.setItem("transfer_name", ""); // 转账名称
+      sessionStorage.setItem(
+        "transfer_tokenId",
+        targetToken.tokenId.toString()
+      ); // 转账tokenId
+      sessionStorage.setItem("transfer_chainId", targetChain.ID.toString()); // 转账chainId
+      // 这里主要逻辑为跳转
+      const routerQuery = {};
+      setTimeout(() => {
+        router.push("/transfer_function/confirmation", routerQuery);
+      }, 100);
+    } else {
+      setLoading(true);
+      const tran = complexTransfer(detail.ops);
+      setLoading(false);
+    }
   };
 
   const confirmCrossChain = async () => {

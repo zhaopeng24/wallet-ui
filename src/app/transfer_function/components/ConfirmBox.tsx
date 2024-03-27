@@ -27,6 +27,8 @@ import Toast from "@/utils/toast";
 import { formatAddress, formatValue } from "@/utils/format";
 import Person from "@/components/Person";
 import { LoadingContext } from "@/app/providers";
+import { IInternalTransferData } from "@/api/types/transactionRecord";
+import { useRouter } from "next/navigation";
 
 function Tab({
   name,
@@ -71,6 +73,13 @@ function GapLine() {
       <Divider />
     </div>
   );
+}
+
+interface IAATxParams {
+  chainid: number;
+  txSource: number;
+  userOperationHash: string;
+  extraData: IInternalTransferData[];
 }
 
 function AmountPlaneItem({
@@ -118,7 +127,7 @@ export default function ConfirmBox() {
   const [gasFeeList, setGasFeeList] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentGasFee, setCurrentGasFee] = useState<any>(null);
-
+  const router = useRouter();
   const transferData = useMemo(() => {
     const amount = sessionStorage.getItem("transfer_amount");
     const address = sessionStorage.getItem("transfer_address") || "";
@@ -184,22 +193,36 @@ export default function ConfirmBox() {
     console.log("res", res);
     if (res.body.result) {
       const opHase = res.body.result;
-      const txParams = {
+      const txParams: IAATxParams = {
         chainid: +transferData.chainId!,
         txSource: 1,
         userOperationHash: opHase,
-        extraData: {
-          from: params.walletAddress,
-          to: params.receiveAddress,
-          amount: params.amount,
-          tokenId: transferData.token?.tokenId,
-          isDirectTransfer: true,
-          toName: "test",
-        },
+        extraData: [
+          {
+            type: "internalTransfer",
+            from_address: params.walletAddress,
+            to_name: transferData.name,
+            to_address: params.receiveAddress,
+            amount: params.amount,
+            token_id: transferData.token?.tokenId!,
+            token_name: transferData.token?.name!,
+            chain_id: +transferData.chainId!,
+            chain_name: transferData.chain?.name!,
+            create_date: new Date().getTime() + "",
+            fee: {
+              chain_id: +transferData.chainId!,
+              chain_name: transferData.chain?.name!,
+              token_id: currentGasFee.token.tokenId,
+              token_name: currentGasFee.token.name,
+              amount: currentGasFee.needAmount,
+            },
+          },
+        ],
       };
       const aares = await AATx(txParams);
       if (aares.body.result) {
         Toast("Transfer Success");
+        router.push("/dashboard");
       }
       setLoading(false);
     } else {
