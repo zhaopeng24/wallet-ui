@@ -1,4 +1,4 @@
-interface IInternalTransferData {
+export interface IInternalTransferData {
   type: "internalTransfer";
   to_name: string;
   from_address: string;
@@ -11,13 +11,14 @@ interface IInternalTransferData {
   create_date: string;
   fee: {
     chain_id: number;
+    chain_name: string;
     token_id: number;
+    token_name: string;
     amount: string;
   };
-  transaction_hash: string;
 }
 
-interface ISwapData {
+export interface ISwapData {
   type: "swap";
   dex: string; // swap方式，目前只支持uniswap
   source_token_name: string;
@@ -30,22 +31,20 @@ interface ISwapData {
   from_address: string;
   to_address: string;
   amount: string;
-  token_id: number;
-  token_name: string;
   chain_id: number;
   chain_name: string;
   create_date: string;
   fee: {
     chain_id: number;
+    chain_name: string;
     token_id: number;
+    token_name: string;
     amount: string;
   };
-  transaction_hash: string;
 }
 
-interface ICrossData {
+export interface ICrossData {
   type: "crossChain";
-  dex: string; // swap方式，目前只支持uniswap
   crossId: number; // 跨链ID，当保存跨链信息到https://cc-dev.web3idea.xyz/api/v1/cross-tx可获得该值
   source_chain_id: number; // 源链chain id
   source_chain_name: number; // 源链chain id
@@ -58,15 +57,14 @@ interface ICrossData {
   amount: string;
   token_id: number;
   token_name: string;
-  chain_id: number;
-  chain_name: string;
   create_date: string;
   fee: {
     chain_id: number;
+    chain_name: string;
     token_id: number;
+    token_name: string;
     amount: string;
   };
-  transaction_hash: string;
 }
 
 export type ITransactionRecord = IInternalTransferData | ISwapData | ICrossData;
