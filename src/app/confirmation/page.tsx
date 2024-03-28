@@ -11,7 +11,8 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-
+import Header from "@/components/Header";
+import MainLayout from "@/components/basic/MainLayout";
 import DropArrow from "@/components/Icons/DropArrow";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useAddress } from "@/store/useAddress";
@@ -258,170 +259,173 @@ export default function Confirmation() {
   }, [currentGasFee, transferData]);
 
   return (
-    <div className="p-6">
-      <div className="flex flex-col justify-between">
-        <div className="flex items-center justify-center border-b-1 border-gray-500/30 px-4 pb-4">
-          <Person name={"You"} address={transferData.chainAddress || ""} />
-          <div className="flex-1 flex flex-col items-center">
-            <p className="text-[#4FAAEB] text-sm font-bold">
-              {transferData?.amount || ""} {transferData.token?.name || ""}
-            </p>
-            <svg
-              width="126"
-              height="24"
-              viewBox="0 0 126 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M107 12L97 6.2265V17.7735L107 12ZM19 13H21V11H19V13ZM25 13H29V11H25V13ZM33 13H37V11H33V13ZM41 13L45 13V11L41 11V13ZM49 13L53 13V11L49 11V13ZM57 13L61 13V11L57 11V13ZM65 13L69 13V11L65 11V13ZM73 13L77 13V11H73V13ZM81 13H85V11L81 11V13ZM89 13H93V11H89V13ZM97 13H101V11H97V13Z"
-                fill="white"
-              />
-            </svg>
-            <p className="text-[#819DF5] text-xs">Direct Transfer</p>
+    <MainLayout showMenu={false}>
+      <Header title="Transfer" showBack></Header>
+      <div className="p-6">
+        <div className="flex flex-col justify-between">
+          <div className="flex items-center justify-center border-b-1 border-gray-500/30 px-4 pb-4">
+            <Person name={"You"} address={transferData.chainAddress || ""} />
+            <div className="flex-1 flex flex-col items-center">
+              <p className="text-[#4FAAEB] text-sm font-bold">
+                {transferData?.amount || ""} {transferData.token?.name || ""}
+              </p>
+              <svg
+                width="126"
+                height="24"
+                viewBox="0 0 126 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M107 12L97 6.2265V17.7735L107 12ZM19 13H21V11H19V13ZM25 13H29V11H25V13ZM33 13H37V11H33V13ZM41 13L45 13V11L41 11V13ZM49 13L53 13V11L49 11V13ZM57 13L61 13V11L57 11V13ZM65 13L69 13V11L65 11V13ZM73 13L77 13V11H73V13ZM81 13H85V11L81 11V13ZM89 13H93V11H89V13ZM97 13H101V11H97V13Z"
+                  fill="white"
+                />
+              </svg>
+              <p className="text-[#819DF5] text-xs">Direct Transfer</p>
+            </div>
+            <Person
+              name={transferData?.toName || "NoName"}
+              address={transferData.address || ""}
+            />
           </div>
-          <Person
-            name={transferData?.toName || "NoName"}
-            address={transferData.address || ""}
-          />
-        </div>
 
-        <div className="my-8">
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center mb-4">
-              <div className="w-[50px] text-center mr-2">From</div>
-              <Tab
-                name={"You"}
-                address={transferData.chainAddress || ""}
-                amount={transferData?.amount || ""}
-                tokenName={transferData?.token?.name || ""}
+          <div className="my-8">
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center mb-4">
+                <div className="w-[50px] text-center mr-2">From</div>
+                <Tab
+                  name={"You"}
+                  address={transferData.chainAddress || ""}
+                  amount={transferData?.amount || ""}
+                  tokenName={transferData?.token?.name || ""}
+                  coinValue={""}
+                />
+              </div>
+              {/* <GapLine /> */}
+              <div className="flex justify-between items-center">
+                <div className="w-[50px] text-center mr-2">To</div>
+                <Tab
+                  name={transferData?.toName || "NoName"}
+                  address={transferData.address || ""}
+                  tokenName={transferData?.token?.name || ""}
+                  amount={transferData?.amount || ""}
+                  coinValue={""}
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="flex bg-[#819DF533] rounded-xl flex-col px-4 py-2">
+              <AmountPlaneItem
+                title={"Transfer Amount"}
+                isBold={false}
+                needArrow={false}
+                amount={
+                  transferData
+                    ? `${formatValue(transferData?.amount!)} ${
+                        transferData.token?.name
+                      }`
+                    : ""
+                }
                 coinValue={""}
               />
-            </div>
-            {/* <GapLine /> */}
-            <div className="flex justify-between items-center">
-              <div className="w-[50px] text-center mr-2">To</div>
-              <Tab
-                name={transferData?.toName || "NoName"}
-                address={transferData.address || ""}
-                tokenName={transferData?.token?.name || ""}
-                amount={transferData?.amount || ""}
+              <AmountPlaneItem
+                title={"Gas Fee"}
+                isBold={false}
+                needArrow={true}
+                clickEvent={() => {
+                  onOpen();
+                }}
+                amount={
+                  currentGasFee
+                    ? `${formatValue(currentGasFee?.needAmount)} ${
+                        currentGasFee?.token?.name
+                      }`
+                    : "0"
+                }
+                coinValue={""}
+              />
+              <Modal
+                isOpen={isOpen}
+                placement="bottom"
+                className="text-white"
+                onOpenChange={onOpenChange}
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader className="flex justify-center items-center text-base">
+                        Gas Fee
+                      </ModalHeader>
+                      <ModalBody className="px-4 pb-4">
+                        <Listbox
+                          items={gasFeeList}
+                          aria-label="Dynamic Actions"
+                          onAction={(key) => {
+                            const find = gasFeeList.find(
+                              (item: any) => item.token.tokenId == key
+                            );
+                            setCurrentGasFee(find);
+                            onClose();
+                          }}
+                        >
+                          {(item: any) => (
+                            <ListboxItem
+                              key={item.token.tokenId}
+                              className={classNames(
+                                "mb-4",
+                                currentGasFee?.token.tokenId ===
+                                  item.token.tokenId
+                                  ? "text-[#4FAAEB]"
+                                  : ""
+                              )}
+                            >
+                              <div className="flex items-center">
+                                <Image
+                                  src={item.token.icon}
+                                  alt="logo"
+                                  width={40}
+                                  height={40}
+                                  className="mr-4"
+                                />
+                                <div className="flex-1 font-bold text-base">
+                                  {item.token.name}
+                                </div>
+                                <div>
+                                  <p>{item.needAmount}</p>
+                                  {/* <p>${item.usdValue}</p> */}
+                                </div>
+                              </div>
+                            </ListboxItem>
+                          )}
+                        </Listbox>
+                      </ModalBody>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
+              <Divider className="my-2" />
+              <AmountPlaneItem
+                title={"Total Amount"}
+                isBold={true}
+                needArrow={false}
+                amount={total}
                 coinValue={""}
               />
             </div>
           </div>
-        </div>
-        <div>
-          <div className="flex bg-[#819DF533] rounded-xl flex-col px-4 py-2">
-            <AmountPlaneItem
-              title={"Transfer Amount"}
-              isBold={false}
-              needArrow={false}
-              amount={
-                transferData
-                  ? `${formatValue(transferData?.amount!)} ${
-                      transferData.token?.name
-                    }`
-                  : ""
-              }
-              coinValue={""}
-            />
-            <AmountPlaneItem
-              title={"Gas Fee"}
-              isBold={false}
-              needArrow={true}
-              clickEvent={() => {
-                onOpen();
-              }}
-              amount={
-                currentGasFee
-                  ? `${formatValue(currentGasFee?.needAmount)} ${
-                      currentGasFee?.token?.name
-                    }`
-                  : "0"
-              }
-              coinValue={""}
-            />
-            <Modal
-              isOpen={isOpen}
-              placement="bottom"
-              className="text-white"
-              onOpenChange={onOpenChange}
+          <div className="absolute bottom-8 left-8 right-8">
+            <Button
+              onClick={handleConfirm}
+              fullWidth
+              size="lg"
+              className="bg-[#819DF5] rounded-3xl"
             >
-              <ModalContent>
-                {(onClose) => (
-                  <>
-                    <ModalHeader className="flex justify-center items-center text-base">
-                      Gas Fee
-                    </ModalHeader>
-                    <ModalBody className="px-4 pb-4">
-                      <Listbox
-                        items={gasFeeList}
-                        aria-label="Dynamic Actions"
-                        onAction={(key) => {
-                          const find = gasFeeList.find(
-                            (item: any) => item.token.tokenId == key
-                          );
-                          setCurrentGasFee(find);
-                          onClose();
-                        }}
-                      >
-                        {(item: any) => (
-                          <ListboxItem
-                            key={item.token.tokenId}
-                            className={classNames(
-                              "mb-4",
-                              currentGasFee?.token.tokenId ===
-                                item.token.tokenId
-                                ? "text-[#4FAAEB]"
-                                : ""
-                            )}
-                          >
-                            <div className="flex items-center">
-                              <Image
-                                src={item.token.icon}
-                                alt="logo"
-                                width={40}
-                                height={40}
-                                className="mr-4"
-                              />
-                              <div className="flex-1 font-bold text-base">
-                                {item.token.name}
-                              </div>
-                              <div>
-                                <p>{item.needAmount}</p>
-                                {/* <p>${item.usdValue}</p> */}
-                              </div>
-                            </div>
-                          </ListboxItem>
-                        )}
-                      </Listbox>
-                    </ModalBody>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
-            <Divider className="my-2" />
-            <AmountPlaneItem
-              title={"Total Amount"}
-              isBold={true}
-              needArrow={false}
-              amount={total}
-              coinValue={""}
-            />
+              Confirm and Send
+            </Button>
           </div>
-        </div>
-        <div className="absolute bottom-8 left-8 right-8">
-          <Button
-            onClick={handleConfirm}
-            fullWidth
-            size="lg"
-            className="bg-[#819DF5] rounded-3xl"
-          >
-            Confirm and Send
-          </Button>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 }
