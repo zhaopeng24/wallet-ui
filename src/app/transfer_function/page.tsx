@@ -15,7 +15,7 @@ export default function Transfer_Function() {
     if (address && chain) {
       sessionStorage.setItem("transfer_address", address);
       sessionStorage.setItem("transfer_chainId", chain.ID + "");
-      router.push("/transfer_function/chooseToken");
+      router.push("/chooseToken");
     }
   }
   return (

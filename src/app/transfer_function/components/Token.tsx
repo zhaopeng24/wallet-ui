@@ -106,7 +106,7 @@ const Token: FC<ITokenProps> = (props) => {
     if (currentToken) {
       sessionStorage.setItem("transfer_tokenId", currentToken.tokenId + "");
       sessionStorage.setItem("transfer_amount", amount);
-      router.push("/transfer_function/confirmation");
+      router.push("/confirmation");
     }
   }
   return (

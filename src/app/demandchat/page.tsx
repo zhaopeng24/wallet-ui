@@ -216,7 +216,7 @@ const DemandChatPage = () => {
       // 这里主要逻辑为跳转
       const routerQuery = {};
       setTimeout(() => {
-        router.push("/transfer_function/confirmation", routerQuery);
+        router.push("/confirmation", routerQuery);
       }, 100);
     } else {
       setLoading(true);
