@@ -77,11 +77,7 @@ const DemandChatPage = () => {
       baseChain: "mumbai",
       balances: assetBalance,
     };
-    debugger;
-    console.log(chatHeader, "header");
     const { status, body } = await vertifyWalletBalanceApi(param, chatHeader);
-    console.log(status, "status");
-    console.log(body, "body");
     if (status && status === 200) {
       return true;
     } else {

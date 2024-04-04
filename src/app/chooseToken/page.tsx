@@ -39,9 +39,9 @@ export default function ChooseToken() {
         <div className="font-bold mb-2">Send To</div>
         <div className="flex justify-bettwen items-center">
           <div className="flex items-center ">
-            <Avatar className="mr-4"></Avatar>
+            <Avatar className="mr-4" src="/imgs/icon.png"></Avatar>
             <div className="flex flex-col">
-              <p className="">{transferData.name || "NoName"}</p>
+              <p className="">{transferData.name || "New Friend"}</p>
               <p className="">{formatAddress(transferData.address)}</p>
             </div>
           </div>

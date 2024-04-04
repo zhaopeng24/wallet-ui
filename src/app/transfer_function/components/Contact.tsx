@@ -31,7 +31,7 @@ function ContactItem({
       className="flex justify-between items-center hover:cursor-pointer hover:bg-gray-500/30 transition-all rounded-lg p-2"
       onClick={() => clickEvent(address, blockChain, name)}
     >
-      <Avatar size="lg" src={avatarUrl}></Avatar>
+      <Avatar size="lg" src="/imgs/icon.png"></Avatar>
       <p>{name}</p>
       <p className="text-purpleBlue/50">{formattedAddr(address)}</p>
       <Avatar size="sm" src={blockChainAvatarUrl}></Avatar>

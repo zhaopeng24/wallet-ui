@@ -15,7 +15,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
           <div className="absolute bottom-0 left-[15px] size-[22px]">
             <Image className="" src={`/imgs/msg-prefix.png`} alt="msg prefix" />
           </div>
-          <div className="rounded-lg px-5 py-4 m-6 bg-[#0E1437]">
+          <div className="rounded-lg px-5 py-4 m-6 bg-[#0E1437] break-all">
             {content}
             {msgType === EMessage.TRANSFER && (
               <div className="w-auto flex mt-2">

@@ -48,7 +48,7 @@ function Tab({
   return (
     <div className="flex-1 flex">
       <div className="flex flex-1">
-        <Avatar src={userAvatar} className="mr-2"></Avatar>
+        <Avatar src="/imgs/icon.png" className="mr-2"></Avatar>
         <div>
           <p className=" font-bold">{name}</p>
           <p className="text-[#819DF5] text-sm">{formatAddress(address)}</p>
@@ -139,6 +139,7 @@ export default function Confirmation() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentGasFee, setCurrentGasFee] = useState<any>(null);
   const router = useRouter();
+  const [showSuccess, setShowSuccess] = useState(false);
   const transferData = useMemo(() => {
     const amount = sessionStorage.getItem("transfer_amount");
     const address = sessionStorage.getItem("transfer_address") || "";
@@ -167,9 +168,12 @@ export default function Confirmation() {
   const gasPriceRef = useRef(0);
   useEffect(() => {
     async function get() {
+      setLoading(true);
       const res = await GetEstimateFee(transferData.chainId!);
+      setLoading(false);
       const { gasPrice, payFeeUsdValue, payFeeByToken } = res.body.result;
       setGasFeeList(payFeeByToken);
+      setCurrentGasFee(payFeeByToken[0]);
       gasPriceRef.current = gasPrice;
     }
     get();
@@ -232,8 +236,10 @@ export default function Confirmation() {
       };
       const aares = await AATx(txParams);
       if (aares.body.result) {
-        Toast("Transfer Success");
-        router.push("/dashboard");
+        setShowSuccess(true);
+        setTimeout(() => {
+          router.push("/transfer_function");
+        }, 3000);
       }
       setLoading(false);
     } else {
@@ -284,7 +290,7 @@ export default function Confirmation() {
               <p className="text-[#819DF5] text-xs">Direct Transfer</p>
             </div>
             <Person
-              name={transferData?.toName || "NoName"}
+              name={transferData?.toName || "New Friend"}
               address={transferData.address || ""}
             />
           </div>
@@ -305,7 +311,7 @@ export default function Confirmation() {
               <div className="flex justify-between items-center">
                 <div className="w-[50px] text-center mr-2">To</div>
                 <Tab
-                  name={transferData?.toName || "NoName"}
+                  name={transferData?.toName || "New Friend"}
                   address={transferData.address || ""}
                   tokenName={transferData?.token?.name || ""}
                   amount={transferData?.amount || ""}
@@ -426,6 +432,28 @@ export default function Confirmation() {
           </div>
         </div>
       </div>
+      {showSuccess ? (
+        <div className="absolute top-0 bottom-0 left-0 right-0 bg-black/80">
+          <div
+            className="absolute text-center top-1/2 left-10 right-10 -translate-y-1/2 rounded-3xl bg-[#597EFF] py-8"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(0, 10, 20, 1) 24.72%, rgba(1, 8, 64, 1) 39.88%, rgba(6, 41, 128, 1) 72.4%, rgba(89, 126, 255, 1) 100%)",
+            }}
+          >
+            <div className="text-center">
+              <img
+                className="inline-block w-[196px] mb-2"
+                src="/imgs/Transaction submitted.png"
+                alt=""
+              />
+              <div className="text-xs text-white/50">
+                Redirecting to My Transfers in 3s
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </MainLayout>
   );
 }

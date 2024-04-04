@@ -1,4 +1,5 @@
 // import { useMenu } from "@/store/useMenu";
+import Toast from "@/utils/toast";
 import { WalletSvg, SettingSvg, TransferSvg } from "../Icons";
 import { useRouter } from "next/navigation";
 
@@ -18,6 +19,9 @@ export const Menu = ({ active = "dashboard" }) => {
             key={item.key}
             className="cursor-pointer flex text-center flex-1 justify-center"
             onClick={() => {
+              if (!item.url) {
+                Toast("Coming soon");
+              }
               if (item.key !== active) {
                 router.push(item.url);
               }

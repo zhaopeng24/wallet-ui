@@ -305,7 +305,6 @@ export async function complexTransfer(ops: any[]) {
       });
     }
   }
-  debugger;
   let op = await Global.account.buildTxCallContract(
     walletAddress,
     entryPointAddress,
