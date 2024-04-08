@@ -95,8 +95,11 @@ const Token: FC<ITokenProps> = (props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const usdBan = currentToken
-    ? (+currentToken?.usdValue / +currentToken?.amount) * +amount
+    ? currentToken?.amount != 0
+      ? (+currentToken?.usdValue / +currentToken?.amount) * +amount
+      : 0
     : 0;
+
   function handleTransferAll() {
     if (currentToken) {
       setAmount(currentToken.amount);
@@ -139,12 +142,17 @@ const Token: FC<ITokenProps> = (props) => {
                   aria-label="Dynamic Actions"
                   onAction={(key) => {
                     const find = calcTokens.find((item) => item.tokenId == key);
+                    if (parseFloat(find?.amount!) == 0) {
+                      return;
+                    }
                     setCurrentToken(find!);
                     onClose();
                   }}
                 >
                   {(item) => (
                     <ListboxItem
+                      // 不可点击
+                      isDisabled={parseFloat(item.amount) == 0}
                       key={item.tokenId}
                       className={classNames(
                         "mb-4",

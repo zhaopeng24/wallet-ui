@@ -110,11 +110,11 @@ const DemandChatPage = () => {
     const res = await vertifyWalletBalance();
     if (!res) return false;
     const { body } = await chatApi(inputDemandText, chatHeader);
+    setLoading(false);
     const { category, detail } = body as IResult;
     const { ops, reply } = detail;
     // 调用交易构建
     console.log(ops, "ops");
-    setLoading(false);
     if (!ops || !ops.length) {
       const newMsg = {
         content: reply,

@@ -47,6 +47,9 @@ export function TxItem(props: ItemProps) {
   const isCreate = transactionType === 3;
 
   function handleToDetail(data: ITx) {
+    if (isCreate) {
+      return;
+    }
     sessionStorage.setItem("transaction_detail", JSON.stringify(data));
     router.push(`/transactionDetail`);
   }
