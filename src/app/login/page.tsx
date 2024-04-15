@@ -166,9 +166,9 @@ const LoginPage = () => {
             {countdownTime == CountdownTime ? "Send" : `${countdownTime} s`}
           </Button>
         </div>
-        <div className="text-[#819DF5] text-xs text-right">
+        {/* <div className="text-[#819DF5] text-xs text-right">
           Login on another device?
-        </div>
+        </div> */}
       </div>
       <div className="mt-8 p-8 text-xs">
         <div className="mb-4 text-center">
