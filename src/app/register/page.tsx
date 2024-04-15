@@ -112,7 +112,9 @@ const Register = () => {
       setLoading(false);
       return;
     }
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
     // 8.跳转到创建成功页面
     router.replace("/register/success");
     // todo 创建成功
