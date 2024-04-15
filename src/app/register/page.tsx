@@ -13,6 +13,7 @@ import { JSONBigInt } from "@/server/js/common_utils";
 import { parseNumbers } from "@/server/js/mpc_wasm_utils";
 import { useRouter } from "next/navigation";
 import Toast from "@/utils/toast";
+import { Link } from "@nextui-org/react";
 
 const CountdownTime = 60;
 
@@ -213,9 +214,10 @@ const Register = () => {
 
         <div className="mb-4 text-center">
           <span className="opacity-50">Existing account? </span>
-          <span onClick={handleLogin} className="text-white">
+          {/* <span onClick={handleLogin} className="text-white">
             Log In
-          </span>
+          </span> */}
+          <Link href="#" onClick={handleLogin} className="text-white" >Log In</Link>
         </div>
 
         <Button
