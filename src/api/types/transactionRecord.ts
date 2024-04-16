@@ -1,5 +1,11 @@
+export enum TxTypeEnum {
+  CROSS_CHAIN = "crossChain",
+  INTERNAL_TRANSFER = "internalTransfer",
+  SWAP = "swap"
+}
+
 export interface IInternalTransferData {
-  type: "internalTransfer";
+  type: TxTypeEnum.INTERNAL_TRANSFER;
   to_name: string;
   from_address: string;
   to_address: string;
@@ -19,7 +25,7 @@ export interface IInternalTransferData {
 }
 
 export interface ISwapData {
-  type: "swap";
+  type: TxTypeEnum.SWAP;
   dex: string; // swap方式，目前只支持uniswap
   source_token_name: string;
   source_token_id: number; // swap from token id
@@ -31,6 +37,8 @@ export interface ISwapData {
   from_address: string;
   to_address: string;
   amount: string;
+  token_id: number;
+  token_name: string;
   chain_id: number;
   chain_name: string;
   create_date: string;
@@ -44,7 +52,8 @@ export interface ISwapData {
 }
 
 export interface ICrossData {
-  type: "crossChain";
+  type: TxTypeEnum.CROSS_CHAIN;
+  dex: string; // swap方式，目前只支持uniswap
   crossId: number; // 跨链ID，当保存跨链信息到https://cc-dev.web3idea.xyz/api/v1/cross-tx可获得该值
   source_chain_id: number; // 源链chain id
   source_chain_name: number; // 源链chain id
@@ -57,6 +66,8 @@ export interface ICrossData {
   amount: string;
   token_id: number;
   token_name: string;
+  chain_id: number;
+  chain_name: string;
   create_date: string;
   fee: {
     chain_id: number;
