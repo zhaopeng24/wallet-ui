@@ -8,7 +8,7 @@ export const AccountPattern =
 
 // export const PwdPattern = /^(?![a-zA-Z]+$)(?![0-9]+$)(?![.,?!':~@;"/\-_)(+=`^\\&%*#\[\]<>{}|·¡¿$¥£€–´＂＇¢฿]+$)[a-zA-Z0-9.,?!':~@;"/\-_)(+=`^\\&%*#\[\]<>{}|·¡¿$¥£€–´＂＇¢฿]{8,16}$/;
 // export const PwdPattern = /^[a-zA-Z0-9]{8,16}$/;
-export const PwdPattern = /^[a-zA-Z0-9@#$_.-]{8,16}$/;
+export const PwdPattern = /^[a-zA-Z0-9@#$_.-]{8,}$/;
 
 export const RequiredPattern = /^[\s\S]*.*[^\s][\s\S]*$/;
 
