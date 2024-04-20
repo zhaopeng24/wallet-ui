@@ -209,17 +209,17 @@ const Register = () => {
         </div>
       </div>
       <div className="p-8 text-xs">
-        <div className="mb-4 text-center opacity-80">
+        {/* <div className="mb-4 text-center opacity-80">
           By proceeding, you agree to our{" "}
           <span className="text-white font-bold">Term and Conditions</span>
-        </div>
+        </div> */}
 
         <div className="mb-4 text-center">
           <span className="opacity-50">Existing account? </span>
           {/* <span onClick={handleLogin} className="text-white">
             Log In
           </span> */}
-          <Link href="#" onClick={handleLogin} className="text-white" >Log In</Link>
+          <Link href="#" onClick={handleLogin} className="text-white text-xs" >Log In</Link>
         </div>
 
         <Button
