@@ -7,9 +7,10 @@ import { PwdPattern } from "@/consts/pattern";
 interface PasswordInputProps extends InputProps {
   firstPassword?: string;
   passwordType?: "first" | "comfirm";
+  isShowTip?: boolean;
 }
 const PasswordInput: FC<PasswordInputProps> = (props) => {
-  const { value, firstPassword, passwordType = "first" } = props;
+  const { value, firstPassword, passwordType = "first", isShowTip = true } = props;
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -18,12 +19,14 @@ const PasswordInput: FC<PasswordInputProps> = (props) => {
 
   const isInvalid = useMemo(() => {
     if (value === "") return false;
+    if(!isShowTip) return false;
     if (passwordType === "comfirm" && firstPassword !== value) return true;
     return validatePassword(value) ? false : true;
   }, [value]);
 
   const tip = useMemo(() => {
     if (value === "") return "";
+    if(!isShowTip) return false;
     if (!isInvalid) {
       if (passwordType === "comfirm") return "";
       return (

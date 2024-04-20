@@ -136,6 +136,7 @@ const LoginPage = () => {
           onValueChange={setPasswork}
           className="mb-6"
           label="Password"
+          isShowTip={false}
         />
         <EmailInput
           value={email}
