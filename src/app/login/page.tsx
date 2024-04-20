@@ -90,7 +90,7 @@ const LoginPage = () => {
     }
     if (email.match(EmailPattern)) {
       setLoading(true, "Sending Code...");
-      const res = await SendEmailCode(email);
+      const res = await SendEmailCode(email, 2);
       setLoading(false);
       if (res.body.code == 200) {
         setCountdownTime(CountdownTime - 1);

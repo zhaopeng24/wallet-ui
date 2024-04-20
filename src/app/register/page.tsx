@@ -128,7 +128,7 @@ const Register = () => {
     }
     if (email.match(EmailPattern)) {
       setLoading(true, "Sending Code...");
-      const res = await SendEmailCode(email);
+      const res = await SendEmailCode(email, 1);
       setLoading(false);
       if (res.body.code == 200) {
         setCountdownTime(CountdownTime - 1);
@@ -219,7 +219,9 @@ const Register = () => {
           {/* <span onClick={handleLogin} className="text-white">
             Log In
           </span> */}
-          <Link href="#" onClick={handleLogin} className="text-white text-xs" >Log In</Link>
+          <Link href="#" onClick={handleLogin} className="text-white text-xs">
+            Log In
+          </Link>
         </div>
 
         <Button

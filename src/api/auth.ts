@@ -16,9 +16,10 @@ export function Register(email: string, code: string) {
   });
 }
 
-export function SendEmailCode(email: string) {
+export function SendEmailCode(email: string, scene: number) {
   return HttpUtils.post(`${HOST}/api/v1/sw/user/email-code`, {
     email: email,
+    scene: scene,
   });
 }
 
