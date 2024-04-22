@@ -10,6 +10,12 @@ const Home = () => {
   function handleRegister() {
     router.replace("/register");
   }
+  function isRegistered() {
+  // 如果本地保存的key不为空，则表示已注册过账号
+  // 否则表示未注册过账号
+  const result = localStorage.getItem('mpc_key_local');
+  return Boolean(result);
+}
   return (
     <div className="container h-full bg-[url(/imgs/home-bg.png)] bg-cover">
       <div className="main p-8 mb-32">
@@ -47,6 +53,7 @@ const Home = () => {
         </div>
       </div>
       <div className="p-8 text-xs">
+        {isRegistered()?
         <Button
           fullWidth
           size="lg"
@@ -54,7 +61,7 @@ const Home = () => {
           className="text-xs bg-white rounded-3xl text-black font-semibold mb-5 "
         >
           Login
-        </Button>
+        </Button>:null}
         <Button
           fullWidth
           size="lg"
