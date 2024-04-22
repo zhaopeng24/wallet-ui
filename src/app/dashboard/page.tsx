@@ -11,6 +11,7 @@ import { useAddress } from "@/store/useAddress";
 import { LoadingContext } from "../providers";
 import { getBalance } from "@/api/assets";
 import { getTxDetail } from "@/api/assets";
+import Title from "@/components/Header";
 
 export interface ITx {
   chainName: string;
@@ -45,8 +46,8 @@ export default function DashBoardLayout() {
 
   console.log(currentChain, currentAddress, currentBalance);
 
-  function setCurrentChainId() {}
-  function resetFetch() {}
+  function setCurrentChainId() { }
+  function resetFetch() { }
 
   const [isHoldings, setIsHoldings] = useState<boolean>(true);
 
@@ -92,7 +93,8 @@ export default function DashBoardLayout() {
 
   return (
     <MainLayout activeMenu="dashboard">
-      <div className="p-6">
+      <div className="p-6 pt-0">
+        <Title title="Wallet" />
         <Header
           address={currentAddress!}
           setChainId={resetFetch}

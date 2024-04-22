@@ -107,7 +107,7 @@ const Register = () => {
     if (save2Server.body["code"] != 200) {
       Toast(
         "Save MPC key to wallet server error. Details: " +
-          save2Server.body["message"]
+        save2Server.body["message"]
       );
       setLoading(false);
       return;
@@ -145,6 +145,10 @@ const Register = () => {
             return t - 1;
           });
         }, 1000);
+      } else {
+        Toast(
+          res.body.message
+        )
       }
     } else {
       Toast("Please enter the correct email address");
