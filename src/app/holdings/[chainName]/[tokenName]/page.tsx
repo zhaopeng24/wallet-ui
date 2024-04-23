@@ -39,7 +39,7 @@ export default function Page(params: {
   return (
     <MainLayout showMenu={false}>
       <div className="flex flex-col h-full">
-        <Header title={chainName} showBack />
+        <Header title={TokenName} showBack />
         <div className="px-6">
           <div className="flex flex-col justify-center items-center text-white">
             <div className="text-2xl font-bold mb-2">
