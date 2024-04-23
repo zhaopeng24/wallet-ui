@@ -79,9 +79,9 @@ function Item({ data }: { data: ITokenBalance & IToken }) {
             {formatValue(usdValue)} USD
           </div>
         </div>
-        {/* <div className="py-4 px-2" onClick={() => handleToDetail(data)}>
+        <div className="py-4 px-2 cursor-pointer" onClick={() => handleToDetail(data)}>
           <LinkArrowSVG />
-        </div> */}
+        </div>
       </div>
     </div>
   );

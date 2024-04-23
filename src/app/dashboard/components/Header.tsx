@@ -54,7 +54,7 @@ export default function Header({ address }: HeaderProps) {
       <div className="flex-1 flex flex-col mr-2 overflow-hidden">
         <div className="text-base">New Friend</div>
         <div
-          className="w-full text-[#819DF580] text-ellipsis"
+          className="w-full text-[#819DF580] text-ellipsis cursor-pointer"
           onClick={() => copyToClipboard(address)}
         >
           {formatAddress(address)}
