@@ -1,10 +1,11 @@
 "use client";
 import Sent from "./components/Sent";
-import Contact from "./components/Contact";
+import Contact, { ConfirmFunc, ContactData } from "./components/Contact";
 import { Button } from "@nextui-org/react";
 import { useState } from "react";
 import { IChain } from "@/store/useChains";
 import { useRouter } from "next/navigation";
+import Toast from "@/utils/toast";
 
 export default function Transfer_Function() {
   const [address, setAddress] = useState("");
@@ -12,21 +13,42 @@ export default function Transfer_Function() {
   const router = useRouter();
 
   function handleNext() {
+    if (!/^(0x)?[0-9a-fA-F]{40}$/.test(address)) {
+      Toast("The address format is incorrect")
+      return
+    }
+
     if (address && chain) {
+      const _cl = localStorage.getItem("contact_list")
+      const contactList = _cl ? JSON.parse(_cl) : [];
+      const contact = contactList.find(
+        (item: ContactData) => item.address == address && item.chain.id == chain.ID.toString()
+      )
+      sessionStorage.setItem("transfer_name", contact?.name || "")
       sessionStorage.setItem("transfer_address", address);
-      sessionStorage.setItem("transfer_chainId", chain.ID + "");
+      sessionStorage.setItem("transfer_chainId", chain.ID.toString());
       router.push("/chooseToken");
     }
   }
+  const confirmContact: ConfirmFunc = ({
+    addr,
+    chain_id,
+    name
+  }) => {
+    sessionStorage.setItem("transfer_address", addr);
+    sessionStorage.setItem("transfer_chainId", chain_id.toString());
+    sessionStorage.setItem("transfer_name", name);
+    router.push("/chooseToken");
+  }
   return (
-    <div className="p-6">
+    <div className="w-full">
       <Sent
         address={address}
         chain={chain}
         setAddress={setAddress}
         setChain={setChain}
       />
-      {/* <Contact /> */}
+      <Contact confirmContact={confirmContact} />
       <div className="absolute bottom-8 left-8 right-8">
         <Button
           onClick={handleNext}
