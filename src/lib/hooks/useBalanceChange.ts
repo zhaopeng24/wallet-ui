@@ -1,31 +1,30 @@
 import dayjs from "dayjs";
 import { useMemo } from "react";
-
-const useBalanceChanges = (historyList: any[]) => {
+import { ITx } from "@/app/dashboard/page";
+const useBalanceChanges = (historyList: ITx[]) => {
   const balanceChanges = useMemo(() => {
-    // 定义“现在”的起始时间
+    // 定义现在的起始时间
     const now = dayjs().startOf("day");
     const oneDayAgo = now.subtract(1, "day");
     const oneWeekAgo = now.subtract(1, "week");
     const oneMonthAgo = now.subtract(1, "month");
-
     // 定义时间段过滤
     const transactionsUpToNow = historyList.filter(
-      (tx: { timeStamp: number }) => dayjs.unix(tx.timeStamp).isBefore(now)
+      (tx: ITx) => dayjs.unix(tx.timeStamp).isBefore(now)
     );
     const transactionsUpToOneDayAgo = historyList.filter(
-      (tx: { timeStamp: number }) => dayjs.unix(tx.timeStamp).isAfter(oneDayAgo)
+      (tx: ITx) => dayjs.unix(tx.timeStamp).isAfter(oneDayAgo)
     );
     const transactionsUpToOneWeekAgo = historyList.filter(
-      (tx: { timeStamp: number }) =>
+      (tx: ITx) =>
         dayjs.unix(tx.timeStamp).isAfter(oneWeekAgo)
     );
     const transactionsUpToOneMonthAgo = historyList.filter(
-      (tx: { timeStamp: number }) =>
+      (tx: ITx) =>
         dayjs.unix(tx.timeStamp).isAfter(oneMonthAgo)
     );
     // 计算每个时间段的累积总额，根据 tradeDirection 来决定是累加还是累减
-    const calculateTotal = (transactions: any[]) => {
+    const calculateTotal = (transactions: ITx[]) => {
       return transactions.reduce(
         (totals, tx) => {
           const value = parseFloat(tx.value);
@@ -53,11 +52,9 @@ const useBalanceChanges = (historyList: any[]) => {
     const totalNow = calculateTotal(transactionsUpToNow);
     const totalDayAgo = calculateTotal(transactionsUpToOneDayAgo);
     const totalWeekAgo = calculateTotal(transactionsUpToOneWeekAgo);
-    debugger;
     const totalMonthAgo = calculateTotal(transactionsUpToOneMonthAgo);
 
-
-    // 计算变化
+    // 计算变化+format结果
     const valueChangeDay = formatChange(totalDayAgo.totalValue);
     const amountChangeDay = formatChange(totalDayAgo.totalAmount);
     const valueChangeWeek = formatChange(totalWeekAgo.totalValue);
