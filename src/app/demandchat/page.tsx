@@ -241,7 +241,7 @@ const DemandChatPage = () => {
       >
         <DefaultMessage commandCb={handleCommandCb} />
 
-        <div className="msg-container">
+        <div className="msg-container pb-12">
           {conversation.map((item, index) => (
             <MessageItem
               key={index}
