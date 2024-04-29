@@ -63,6 +63,7 @@ const LoginPage = () => {
         return;
       }
 
+      localStorage.setItem("authorization", result.body["result"])
       Global.authorization = result.body["result"];
       Global.account.setAuthorization(Global.authorization);
       Global.account.setBlockchainRpc(currentChain?.rpcApi!);
