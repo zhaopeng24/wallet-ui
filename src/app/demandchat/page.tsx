@@ -254,7 +254,7 @@ const DemandChatPage = () => {
       >
         <DefaultMessage commandCb={handleCommandCb} />
 
-        <div className="msg-container">
+        <div className="msg-container pb-12">
           {conversation.map((item, index) => (
             <MessageItem
               key={index}
@@ -267,7 +267,7 @@ const DemandChatPage = () => {
           ))}
         </div>
       </div>
-      <div className="bg-[#0E1422] fixed bottom-0 w-full flex flex-row items-center p-4 z-100">
+      <div className="bg-[#0E1422] absolute bottom-0 w-full flex flex-row items-center p-4 z-100">
         <div className="flex-1 mr-4 text-opacity-50 ">
           <Textarea
             className="text-blue-500 text-opacity-50 bg-opacity-10 leading-snug"
