@@ -5,6 +5,7 @@ import { timeToNow } from "@/utils/days";
 import { formatAddress, formatValue } from "@/utils/format";
 import { useRouter } from "next/navigation";
 import { ITx } from "../page";
+import UserSVG from "@/components/Icons/User";
 
 interface ITransactionProps {
   list: ITx[];
@@ -58,7 +59,7 @@ export function TxItem(props: ItemProps) {
     <div className="flex flex-row w-full mb-6 items-center">
       <div className="flex flex-row gap-x-3">
         <div className="flex justify-center items-center">
-          {isCreate ? null : (
+          {isCreate ? <UserSVG /> : (
             <>
               {status === 1 && tradeDirection === 1 ? <ArrowUpSVG /> : ""}
               {status === 1 && tradeDirection === 2 ? <ArrowDownSVG /> : ""}
@@ -88,7 +89,7 @@ export function TxItem(props: ItemProps) {
         )}
       </div>
       <div className="py-4 px-2" onClick={() => handleToDetail(data)}>
-        <LinkArrowSVG />
+         {isCreate ? null: <LinkArrowSVG />}
       </div>
     </div>
   );

@@ -1,18 +1,16 @@
 import DropArrow from "@/components/Icons/DropArrow";
 import EthSVG from "@/components/Icons/EthSVG";
-import { IToken, ITokenBalance, useChains } from "@/store/useChains";
+import { IToken, ITokenBalance } from "@/store/useChains";
 import {
   Avatar,
   Button,
   Input,
-  Link,
   Listbox,
   ListboxItem,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
-  Select,
   useDisclosure,
 } from "@nextui-org/react";
 import { FC, useMemo, useState } from "react";
@@ -95,7 +93,7 @@ const Token: FC<ITokenProps> = (props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const usdBan = currentToken
-    ? currentToken?.amount != 0
+    ? Number(currentToken?.amount) != 0
       ? (+currentToken?.usdValue / +currentToken?.amount) * +amount
       : 0
     : 0;
@@ -118,9 +116,18 @@ const Token: FC<ITokenProps> = (props) => {
       <Input
         variant="bordered"
         readOnly
-        value={currentToken?.name}
+        value={currentToken?.name || ""}
         onClick={() => onOpen()}
-        startContent={<EthSVG />}
+        startContent={
+          currentToken ?
+            <Image
+              src={currentToken?.icon}
+              alt="logo"
+              width={36}
+              height={36}
+              className="mr-4"
+            /> : null
+        }
         endContent={<DropArrow />}
         className="mb-4"
       />
@@ -154,6 +161,7 @@ const Token: FC<ITokenProps> = (props) => {
                       // 不可点击
                       isDisabled={parseFloat(item.amount) == 0}
                       key={item.tokenId}
+                      textValue={item.name}
                       className={classNames(
                         "mb-4",
                         currentToken?.tokenId === item.tokenId

@@ -1,4 +1,5 @@
 "use client";
+import dayjs from "dayjs";
 import { TxItem } from "@/app/dashboard/components/Transactions";
 import BalanceItem from "../../components/BalanceItem";
 import MainLayout from "@/components/basic/MainLayout";
@@ -7,7 +8,7 @@ import { useMemo } from "react";
 import { ITx } from "@/app/dashboard/page";
 import { IToken, ITokenBalance } from "@/store/useChains";
 import { formatValue } from "@/utils/format";
-
+import useBalanceChanges from "@/lib/hooks/useBalanceChange";
 export default function Page(params: {
   params: { chainName: string; tokenName: string };
 }) {
@@ -36,6 +37,7 @@ export default function Page(params: {
     return undefined;
   }, []);
 
+  const balanceChanges = useBalanceChanges(historyList);
   return (
     <MainLayout showMenu={false}>
       <div className="flex flex-col h-full">
@@ -55,9 +57,21 @@ export default function Page(params: {
               Balance Variation
             </div>
             <div className="flex flex-row justify-between">
-              <BalanceItem name="Past Day" amount="99" value="110" />
-              <BalanceItem name="Past Week" amount="99" value="110" />
-              <BalanceItem name="Past Month" amount="99" value="110" />
+              <BalanceItem
+                name="Past Day"
+                amount={balanceChanges.pastDay.amountChange}
+                value={balanceChanges.pastDay.valueChange}
+              />
+              <BalanceItem
+                name="Past Week"
+                amount={balanceChanges.pastWeek.amountChange}
+                value={balanceChanges.pastWeek.valueChange}
+              />
+              <BalanceItem
+                name="Past Month"
+                amount={balanceChanges.pastMonth.amountChange}
+                value={balanceChanges.pastMonth.valueChange}
+              />
             </div>
             <div className="text-2xl text-[#819DF5] font-bold mt-10">
               Historical transactions
