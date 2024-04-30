@@ -29,11 +29,10 @@ const DemandChatPage = () => {
   const [chatHeader, setChatHeader] = useState<{ [CIDNAME]: string }>({
     [CIDNAME]: "",
   });
-  const { chains, balances } = useChains((state) => state);
+  const { currentChain,chains, balances } = useChains((state) => state);
   const { currentAddress } = useAddress((state) => state);
   const [assetBalance, setAssetBalance] = useState<ChainBalances>({}); // 资产余额
   const cacheChainMap = new Map();
-
   const getTokenName = (chainName: string, tokenId: number) => {
     const cacheTokenName = cacheChainMap.get(`${chainName}-${tokenId}`);
     if (cacheTokenName) return cacheTokenName;
@@ -75,7 +74,7 @@ const DemandChatPage = () => {
     const param: CtxBalanceReq = {
       address: currentAddress || "",
       // 目前固定写死 mumbai
-      baseChain: "mumbai",
+      baseChain:currentChain?.name as string,
       balances: assetBalance,
     };
     const { status, body } = await vertifyWalletBalanceApi(param, chatHeader);
