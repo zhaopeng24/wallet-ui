@@ -15,6 +15,7 @@ import { CtxBalanceReq, ChainBalances, BalanceInfo } from "@/api/types/demand";
 import { useChains } from "@/store/useChains";
 import { useAddress } from "@/store/useAddress";
 import { complexTransfer } from "@/utils/complexTransferUtils";
+import { ContactData } from "../transfer_function/components/Contact";
 
 const CIDNAME = "X-Smartwallet-Cid";
 
@@ -201,9 +202,21 @@ const DemandChatPage = () => {
       );
       if (!targetToken) return "";
 
+      let receiver = tagetOp.receiver;
+      let name = "";
+      const _cl = localStorage.getItem("contact_list")
+      if (_cl && !receiver.startsWith("0x")) {
+        const contactList = JSON.parse(_cl)
+        const contact = contactList.find((item: ContactData) => item.name == receiver)
+        if (contact) {
+          receiver = contact.address;
+          name = contact.name;
+        }
+      }
+
       sessionStorage.setItem("transfer_amount", tagetOp.amount); // 转账数量
       sessionStorage.setItem("transfer_address", tagetOp.receiver); // 转账地址
-      sessionStorage.setItem("transfer_name", ""); // 转账名称
+      sessionStorage.setItem("transfer_name", name); // 转账名称
       sessionStorage.setItem(
         "transfer_tokenId",
         targetToken.tokenId.toString()
