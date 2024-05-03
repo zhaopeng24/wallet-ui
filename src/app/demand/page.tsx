@@ -188,12 +188,12 @@ const DemandPage = () => {
 
                     <div style={{
                         position: 'sticky',
-                        bottom: '0',
+                        bottom: '10px'
                     }}>
                         <Button
                             fullWidth
                             size="lg"
-                            className="mt-4 text-sm flex justify-between rounded-md text-white bg-[#819DF5] bg-opacity-50"
+                            className="mt-4 text-sm flex justify-between rounded-md text-white bg-[#819DF5] "
                             onClick={handle2Chat}
                         >
                             How can we help?
