@@ -4,7 +4,9 @@ import { useAddress } from "@/store/useAddress";
 import { truncateString } from "@/utils/util";
 import { User } from "@nextui-org/react";
 import dayjs from "dayjs";
-import { ITx } from "../dashboard/page";
+import { ITx } from "@/app/dashboard/page";
+import { formatAddress } from "@/utils/format";
+
 
 type TransferUserInfoProps = {
   type?: "out" | "in" | "text";
@@ -68,8 +70,8 @@ const TransferUserInfo = ({ type = "out" }: TransferUserInfoProps) => {
         )}
         {type !== "text" && (
           <>
-            <img className="w-4 mr-2" src={img} />{" "}
-            <span style={{ color }}>{transactionDetail.amount} USDT</span>
+            <img className="w-4 mr-2" src={img} />
+            <span style={{ color }}>{Number(transactionDetail?.amount).toFixed(4)} USDT</span>
           </>
         )}
       </div>
