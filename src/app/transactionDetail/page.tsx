@@ -21,11 +21,11 @@ const Status = ({ type = "success", time, className }: StatusProps) => {
   const map = {
     success: {
       style: Style.success,
-      text: "Failed",
+      text: "Succeed",
     },
     fail: {
       style: Style.fail,
-      text: "Succeed",
+      text: "Failed",
     },
     pending: {
       style: Style.pending,

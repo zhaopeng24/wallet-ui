@@ -1,7 +1,10 @@
+import { useEffect, useMemo } from "react";
 import { Arrow } from "@/components/Arrow";
+import { useAddress } from "@/store/useAddress";
 import { truncateString } from "@/utils/util";
 import { User } from "@nextui-org/react";
 import dayjs from "dayjs";
+import { ITx } from "../dashboard/page";
 
 type TransferUserInfoProps = {
   type?: "out" | "in" | "text";
@@ -25,10 +28,29 @@ const TransferUserInfo = ({ type = "out" }: TransferUserInfoProps) => {
     text: { img: "/imgs/in.png" },
   };
   const { img, color } = map[type];
+  const { currentAddress} = useAddress();
+  const transactionDetail = useMemo(() => {
+    let _data = sessionStorage.getItem("transaction_detail");
+    if (_data) {
+      return JSON.parse(_data) as ITx;
+    }
+    return undefined;
+  }, []);
+  let name = "Other"; // Default to "Other"
+  if (transactionDetail) {
+    if (type==="out"&&currentAddress === transactionDetail.from) {
+      name = "You";
+    }
+    if (type==="in"&&currentAddress === transactionDetail.to) {
+      name = "You";
+    }
+  }
+
+ 
   return (
     <div className="flex flex-row items-center w-full bg-[#819DF533] justify-between px-4 py-2 rounded-lg">
       <User
-        name="You"
+        name={name}
         avatarProps={{
           src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
           style: {
@@ -47,7 +69,7 @@ const TransferUserInfo = ({ type = "out" }: TransferUserInfoProps) => {
         {type !== "text" && (
           <>
             <img className="w-4 mr-2" src={img} />{" "}
-            <span style={{ color }}>100.36 USDT</span>
+            <span style={{ color }}>{transactionDetail.amount} USDT</span>
           </>
         )}
       </div>
