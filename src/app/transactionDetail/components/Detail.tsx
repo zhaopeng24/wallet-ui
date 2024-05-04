@@ -81,6 +81,7 @@ const TransferUserInfo = ({ type = "out" }: TransferUserInfoProps) => {
 };
 
 const TransferDetailInfo = ({ type, data = [] }: TransferDetailInfoProps) => {
+
   // 获取当前时间
   const currentTime = dayjs();
 
@@ -117,14 +118,20 @@ const TransferDetailInfo = ({ type, data = [] }: TransferDetailInfoProps) => {
 
 export const ErrorDetail = ({}: ErrorDetailProps) => {};
 export const SuccessDetail = ({ className }: SuccessDetailProps) => {
+  const transactionDetail = useMemo(() => {
+    let _data = sessionStorage.getItem("transaction_detail");
+    if (_data) {
+      return JSON.parse(_data) as ITx;
+    }
+    return undefined;
+  }, []);
   // 获取当前时间
-  const currentTime = dayjs();
   // 格式化时间
-  const formattedTime = currentTime.format("HH:mm MMM DD YYYY");
+  const formattedTime = dayjs((transactionDetail?.timeStamp || 0 ) * 1000).format("HH:mm MMM DD YYYY");
   const data = [
     {
       label: "Transaction fees",
-      value: "0.12 USDT",
+      value: Number(transactionDetail?.gasFee?.usdValue).toFixed(4).toString()+ " USDT"||"0 USDT",
     },
     {
       label: "Time",
