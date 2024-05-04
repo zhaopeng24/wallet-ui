@@ -196,57 +196,62 @@ export default function Confirmation() {
       tokenAddress: transferData.token?.address || "",
     };
     setLoading(true);
-    const rpc = Global.account.getBlockchainRpc();
-    Global.account.setBlockchainRpc(transferData.chain?.rpcApi!);
-    const op = await transfer(params);
-    console.log("gooooood op", op);
-    const res = await BundlerRpc.sendUserOperation(
-      bundlerApi,
-      op,
-      entryPointAddress
-    );
-    console.log("res", res);
-    if (res.body.result) {
-      const opHase = res.body.result;
-      const txParams: IAATxParams = {
-        chainid: +transferData.chainId!,
-        txSource: 1,
-        userOperationHash: opHase,
-        extraData: [
-          {
-            type: "internalTransfer",
-            from_address: params.walletAddress,
-            to_name: transferData.name,
-            to_address: params.receiveAddress,
-            amount: params.amount,
-            token_id: transferData.token?.tokenId!,
-            token_name: transferData.token?.name!,
-            chain_id: +transferData.chainId!,
-            chain_name: transferData.chain?.name!,
-            create_date: new Date().getTime() + "",
-            fee: {
+    try {
+      const rpc = Global.account.getBlockchainRpc();
+      Global.account.setBlockchainRpc(transferData.chain?.rpcApi!);
+      const op = await transfer(params);
+      console.log("gooooood op", op);
+      const res = await BundlerRpc.sendUserOperation(
+        bundlerApi,
+        op,
+        entryPointAddress
+      );
+      console.log("res", res);
+      if (res.body.result) {
+        const opHase = res.body.result;
+        const txParams: IAATxParams = {
+          chainid: +transferData.chainId!,
+          txSource: 1,
+          userOperationHash: opHase,
+          extraData: [
+            {
+              type: "internalTransfer",
+              from_address: params.walletAddress,
+              to_name: transferData.name,
+              to_address: params.receiveAddress,
+              amount: params.amount,
+              token_id: transferData.token?.tokenId!,
+              token_name: transferData.token?.name!,
               chain_id: +transferData.chainId!,
               chain_name: transferData.chain?.name!,
-              token_id: currentGasFee.token.tokenId,
-              token_name: currentGasFee.token.name,
-              amount: currentGasFee.needAmount,
+              create_date: new Date().getTime() + "",
+              fee: {
+                chain_id: +transferData.chainId!,
+                chain_name: transferData.chain?.name!,
+                token_id: currentGasFee.token.tokenId,
+                token_name: currentGasFee.token.name,
+                amount: currentGasFee.needAmount,
+              },
             },
-          },
-        ],
-      };
-      const aares = await AATx(txParams);
-      if (aares.body.result) {
-        setShowSuccess(true);
-        setTimeout(() => {
-          router.push("/transfer_function");
-        }, 3000);
+          ],
+        };
+        const aares = await AATx(txParams);
+        if (aares.body.result) {
+          setShowSuccess(true);
+          setTimeout(() => {
+            router.push("/transfer_function");
+          }, 3000);
+        }
+        setLoading(false);
+      } else {
+        setLoading(false);
+        Toast(res.body.error.message || "something wrong!");
       }
+      Global.account.setBlockchainRpc(rpc);
+    } catch (error) {
       setLoading(false);
-    } else {
-      setLoading(false);
-      Toast(res.body.error.message || "something wrong!");
+      throw error
     }
-    Global.account.setBlockchainRpc(rpc);
   }
 
   const total = useMemo(() => {

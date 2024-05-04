@@ -3,14 +3,25 @@ import Header from "@/components/Header";
 import MainLayout from "@/components/basic/MainLayout";
 import { Avatar } from "@nextui-org/react";
 import Token from "../transfer_function/components/Token";
-import { IChain, IToken, ITokenBalance, useChains } from "@/store/useChains";
-import { useContext, useEffect, useState } from "react";
+import { IBalance, IChain, IToken, ITokenBalance, useChains } from "@/store/useChains";
+import { useMemo, useContext, useEffect, useState } from "react";
 import { formatAddress } from "@/utils/format";
 import CloseIcon from "@/components/Icons/Close";
 import { useRouter } from "next/navigation";
 import { getBalance } from "@/api/assets";
 import { useAddress } from "@/store/useAddress";
 import { LoadingContext } from "../providers";
+
+const crossChainSwt = (banlance: ITokenBalance[], balance: IBalance | undefined) => {
+  if (!balance) return;
+  const _banlance = [];
+  if (balance.NativeBalance) _banlance.push(balance.NativeBalance);
+  if (balance.tokenBalance) _banlance.push(...balance.tokenBalance);
+  const currentSwt = _banlance.find(({tokenId}) => tokenId === 2);
+  if (!currentSwt) return;
+  const index = banlance.findIndex((b) => b.tokenId === 2);
+  if (index!== -1) banlance.splice(index, 1, currentSwt);
+}
 
 export default function ChooseToken() {
   const { setLoading } = useContext(LoadingContext);
