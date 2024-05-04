@@ -38,6 +38,7 @@ const TransferUserInfo = ({ type = "out" }: TransferUserInfoProps) => {
     }
     return undefined;
   }, []);
+
   let name = "Other"; // Default to "Other"
   if (transactionDetail) {
     if (type==="out"&&currentAddress === transactionDetail.from) {
@@ -85,13 +86,19 @@ const TransferDetailInfo = ({ type, data = [] }: TransferDetailInfoProps) => {
 
   // 格式化时间
   const formattedTime = currentTime.format("HH:mm MMM DD YYYY");
-
+   const currentToken = useMemo(() => {
+    let _data = sessionStorage.getItem("holding_token");
+    if (_data) {
+      return JSON.parse(_data) ;
+    }
+    return undefined;
+  }, []);
   return (
     <div className="px-4 py-1 flex flex-row">
       <div className="w-9 mr-8 bg-cover flex justify-center items-center">
         <Arrow
           type={type}
-          src={"https://i.pravatar.cc/150?u=a04258114e29026702d"}
+          src={currentToken?.icon}
         ></Arrow>
       </div>
       <div className="flex-1 flex flex-col items-center py-1">
