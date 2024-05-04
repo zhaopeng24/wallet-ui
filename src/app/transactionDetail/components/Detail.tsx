@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { Arrow } from "@/components/Arrow";
 import { useAddress } from "@/store/useAddress";
-import { truncateString } from "@/utils/util";
+import { copyToClipboard, truncateString } from "@/utils/util";
 import { User } from "@nextui-org/react";
 import dayjs from "dayjs";
 import { ITx } from "@/app/dashboard/page";
@@ -107,7 +107,12 @@ const TransferDetailInfo = ({ type, data = [] }: TransferDetailInfoProps) => {
           {data.map((item, index) => (
             <div key={index} className="text-[10px] py-1">
               <span className="text-[#FFFFFF80] mr-1">{item.label}:</span>
-              <span>{item.value}</span>
+              {
+                item.label==="Transaction hash" ?<span className="cursor-pointer text-[#819DF5]" onClick={()=>{
+                    copyToClipboard(item.value);
+                }}>{formatAddress(item.value)}</span> : <span>{item.value}</span>
+              }
+              
             </div>
           ))}
         </div>
@@ -131,11 +136,15 @@ export const SuccessDetail = ({ className }: SuccessDetailProps) => {
   const data = [
     {
       label: "Transaction fees",
-      value: Number(transactionDetail?.gasFee?.usdValue).toFixed(4).toString()+ " USDT"||"0 USDT",
+      value: Number(transactionDetail?.gasFee?.usdValue).toFixed(4).toString()+ " USDT" || "0 USDT",
     },
     {
       label: "Time",
       value: formattedTime,
+    },
+     {
+      label: "Transaction hash",
+      value: transactionDetail?.txHash|| "",
     },
   ];
   return (
