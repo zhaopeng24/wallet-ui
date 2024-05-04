@@ -84,7 +84,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       setLoading(false);
       setInited(true);
       // 如果未注册，到注册页面去
-      if (!localStorage.getItem("authorization")) {
+      if (!localStorage.getItem("mpc_key_local")) {
         Toast("Please register first");
         router.replace("/register");
         return;
