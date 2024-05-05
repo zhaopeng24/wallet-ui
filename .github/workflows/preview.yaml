@@ -4,21 +4,33 @@ on:
   push:
     branches:
       - dev
-  pull_request:
+  pull_request_target:
     branches:
       - dev
 
 jobs:
-  deploy:
+  deploy_on_push:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-
       - name: Install Vercel CLI
         run: npm i -g vercel
-
       - name: Deploy to Vercel
         run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+
+  deploy_on_pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Vercel CLI
+        run: npm i -g vercel
+      - name: Deploy to Vercel
+        run: vercel --token ${{ secrets.VERCEL_TOKEN }} --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
