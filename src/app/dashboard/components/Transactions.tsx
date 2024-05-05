@@ -61,8 +61,8 @@ export function TxItem(props: ItemProps) {
         <div className="flex justify-center items-center">
           {isCreate ? <UserSVG /> : (
             <>
-              {status === 1 && tradeDirection === 1 ? <ArrowUpSVG /> : ""}
-              {status === 1 && tradeDirection === 2 ? <ArrowDownSVG /> : ""}
+              {(status === 1 || status===2) && tradeDirection === 1 ? <ArrowUpSVG /> : ""}
+              {(status === 1 || status===2) && tradeDirection === 2 ? <ArrowDownSVG /> : ""}
               {status === 0 ? <ArrowUpSVG /> : ""}
             </>
           )}
