@@ -33,7 +33,6 @@ const Status = ({ type, time, className }: StatusProps) => {
       text: "Pending",
     },
   };
-  debugger;
   const { style, text } = map[type];
   return (
     <div className={classNames(className, Style.status, style)}>
