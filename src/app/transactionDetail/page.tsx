@@ -10,7 +10,10 @@ import { ITx } from "../dashboard/page";
 import dayjs from "dayjs";
 import Person from "@/components/Person";
 import { useAddress } from "@/store/useAddress";
-
+import utc  from 'dayjs/plugin/utc';
+import timezone  from 'dayjs/plugin/timezone';
+dayjs.extend(utc)
+dayjs.extend(timezone)
 type AmountProps = { num: number | string } & StyleType;
 
 type StatusProps = {
@@ -66,7 +69,7 @@ export default function TransactionDetail() {
   }
 
   const time = transactionDetail?.timeStamp
-    ? dayjs(transactionDetail?.timeStamp * 1000).toLocaleString()
+    ? dayjs(transactionDetail?.timeStamp * 1000).utc().format("HH:mm MMM DD YYYY").toLocaleString()
     : "";
   let inName = "Other";
   let outName = "Other";
@@ -78,9 +81,9 @@ export default function TransactionDetail() {
       inName = "You";
     }
   }
-let currentStatus = transactionDetail.status == 2 ? "fail" : 
+let currentStatus : StatusProps['type'] = transactionDetail.status == 2 ? "fail" : 
                    transactionDetail.status == 1 ? "success" : 
-                   transactionDetail.status == 3 ? "pending" : "success";
+                   transactionDetail.status == 3 ? "pending" : "success" ;
   return (
     <MainLayout showMenu={false}>
       <div className="flex flex-col h-full">
