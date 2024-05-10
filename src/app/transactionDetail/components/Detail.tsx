@@ -66,7 +66,7 @@ const TransferUserInfo = ({ type = "out" }: TransferUserInfoProps) => {
           },
         }}
       />
-      <div className="text-[12px] flex flex-row items-center">
+      <div className="text-[12px] flex flex-col ">
         {type === "text" && (
           <div className="max-w-[180px]">
             charged <em className="text-[#FF8266] not-italic">0.24 USDT</em> for
@@ -75,8 +75,12 @@ const TransferUserInfo = ({ type = "out" }: TransferUserInfoProps) => {
         )}
         {type !== "text" && (
           <>
-            <img className="w-4 mr-2" src={img} />
-            <span style={{ color }}>{Number(transactionDetail?.amount).toFixed(4)} USDT</span>
+          <div>
+            <img  className="w-4 mr-2 inline-block" src={img} />
+            <span className="font-bold inline-block" style={{ color }}>{transactionDetail?.value} {transactionDetail?.tokenName}</span>
+            <div className="text-right"> ${Number(transactionDetail?.amount).toFixed(2)}</div>
+          </div>
+           
           </>
         )}
       </div>
